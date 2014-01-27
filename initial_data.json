@@ -1,0 +1,65 @@
+[
+  {
+    "model": "konecta2app.dificultad",
+    "pk": 1,
+    "fields": {
+      "nombre": "Muy facil"
+    }
+  },
+  {
+    "model": "konecta2app.dificultad",
+    "pk": 2,
+    "fields": {
+      "nombre": "Facil"
+    }
+  },
+  {
+    "model": "konecta2app.dificultad",
+    "pk": 3,
+    "fields": {
+      "nombre": "Medio"
+    }
+  },
+  {
+    "model": "konecta2app.dificultad",
+    "pk": 4,
+    "fields": {
+      "nombre": "Dificil"
+    }
+  },
+  {
+    "model": "konecta2app.dificultad",
+    "pk": 5,
+    "fields": {
+      "nombre": "Muy dificil"
+    }
+  },
+  {
+    "model": "konecta2app.tiposejercicios",
+    "pk": 1,
+    "fields": {
+      "nombre": "Exámenes"
+    }
+  },	
+  {
+    "model": "konecta2app.tiposejercicios",
+    "pk": 2,
+    "fields": {
+      "nombre": "Controles"
+    }
+  },
+  {
+    "model": "konecta2app.tiposejercicios",
+    "pk": 3,
+    "fields": {
+      "nombre": "Ejercicios de clase"
+    }
+  },
+  {
+    "model": "konecta2app.tiposejercicios",
+    "pk": 4,
+    "fields": {
+      "nombre": "Globales"
+    }
+  }
+]

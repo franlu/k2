@@ -1,0 +1,4 @@
+con todos los campos menos la fecha
+cuando fecha y tipo no estan
+cuando fecha , tipo, idalumno no estan
+cuando fecha , tipo, idalumno, idtema no estan
