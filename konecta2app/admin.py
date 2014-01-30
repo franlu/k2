@@ -1,5 +1,6 @@
 from django.contrib import admin
-from konecta2app.models import TiposEjercicios, Permisos, Dificultad, Tema, MateriasEjercicios, CursosEjercicios, Cursos, Profesor, Alumno, Invitado, Ejercicios
+from konecta2app.models import TiposEjercicios, Permisos, Dificultad, Tema, MateriasEjercicios, CursosEjercicios, Cursos, Profesor, Alumno, Invitado, Ejercicios, Examenes
+from django.contrib.auth.models import User
 
 admin.site.register(Cursos)
 admin.site.register(MateriasEjercicios)
@@ -12,3 +13,4 @@ admin.site.register(Dificultad)
 admin.site.register(Tema)
 admin.site.register(TiposEjercicios)
 admin.site.register(Ejercicios)
+admin.site.register(Examenes)

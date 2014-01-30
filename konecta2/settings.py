@@ -15,8 +15,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': config.db,                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': '/home/frannlu/PycharmProjects/konecta2django/dbsqlite',                     # Or path to database file if using sqlite3.
         'USER': config.usuario,                      # Not used with sqlite3.
         'PASSWORD': config.contrasena,                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -131,7 +131,8 @@ INSTALLED_APPS = (
     'konecta2profesor',
     'konecta2correccion',
     'django.contrib.admin',
-    'django_extensions',
+    #'django_extensions',
+    'south',
     
 )
 
