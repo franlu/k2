@@ -8,8 +8,8 @@ import os
 
 PROJECT_PATH = os.path.dirname("__file__")
 
-class Permisos(models.Model):
-    idusuario					= models.ForeignKey(User)
+class Permisos (models.Model):
+    idusuario                   = models.ForeignKey(User)
     crear_usuario				= models.CharField(max_length=5)
     ver_todos_usuarios          = models.CharField(max_length=5)
     modificar_usuario			= models.CharField(max_length=5)
@@ -145,7 +145,7 @@ class TiposEjercicios(models.Model):
 class EjerciciosClase(models.Model):
     idejercicioclase            = models.AutoField(primary_key=True)
     idejercicio                 = models.ForeignKey(Ejercicios)
-    fecha                       = models.CharField(max_length=100)
+    fecha                       = models.DateTimeField()
     idusuario                   = models.ForeignKey(User)
     idprofesor                  = models.ForeignKey(Profesor)
     idclase                     = models.ForeignKey(Cursos)
@@ -193,7 +193,7 @@ class Examenes(models.Model):
 class Globales(models.Model):
     idglobales                  = models.AutoField(primary_key=True)
     idejercicio                 = models.ForeignKey(Ejercicios)
-    fecha                       = models.CharField(max_length=100)
+    fecha                       = models.DateTimeField(max_length=100)
     idusuario                   = models.ForeignKey(User)
     idprofesor                  = models.ForeignKey(Profesor)
     idclase                     = models.ForeignKey(Cursos)
@@ -229,7 +229,7 @@ class EjerciciosPendientes(models.Model):
     idejercicio                 = models.ForeignKey(Ejercicios)
     idalumno                    = models.ForeignKey(User)
     idcorregir                  = models.ForeignKey(Corregir)
-    fecha                       = models.CharField(max_length=200)
+    fecha                       = models.CharField(max_length=100)
     def __unicode__(self):
         return self.idpendientes
     
