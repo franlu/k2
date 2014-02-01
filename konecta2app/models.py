@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
 #from django.forms import ModelForm
@@ -14,10 +15,10 @@ dificultad
 Ejercicio
 Ejercicios pendientes alumno """
 
-
 PROJECT_PATH = os.path.dirname("__file__")
 
-class Permisos (models.Model):
+
+class Permisos(models.Model):
     idusuario = models.ForeignKey(User)
     crear_usuario = models.CharField(max_length=5)
     ver_todos_usuarios = models.CharField(max_length=5)
@@ -30,7 +31,7 @@ class Permisos (models.Model):
     eliminar_ejercicio = models.CharField(max_length=5)
 
     def __unicode__(self):
-        return unicode(self.idusuario)
+        return self.idusuario
 
 
 class Tokenregister(models.Model):
@@ -40,14 +41,16 @@ class Tokenregister(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return unicode(self.tokenid)
+        return self.tokenid
+
 
 class Cursos(models.Model):
     idcurso = models.AutoField(primary_key=True)
     nombre_curso = models.CharField(max_length=50)
 
     def __unicode__(self):
-        return unicode(self.nombre_curso)
+        return self.nombre_curso
+
 
 class Invitado(models.Model):
     idusuario = models.ForeignKey(User)
@@ -56,7 +59,7 @@ class Invitado(models.Model):
     estado = models.CharField(max_length=20)
 
     def __unicode__(self):
-        return unicode(self.nombre)
+        return self.nombre
 
 
 class Profesor(models.Model):
@@ -70,7 +73,7 @@ class Profesor(models.Model):
     nacimiento = models.DateTimeField()
 
     def __unicode__(self):
-        return unicode(self.nombre)
+        return self.nombre
 
 
 class Alumno(models.Model):
@@ -81,10 +84,10 @@ class Alumno(models.Model):
     apellido2 = models.CharField(max_length=20, null=True, blank=True)
     estado = models.CharField(max_length=20)
     urlimagen = models.CharField(max_length=200)
-    nacimiento= models.DateTimeField()
+    nacimiento = models.DateTimeField()
 
     def __unicode__(self):
-        return unicode(self.nombre)
+        return self.nombre
 
 
 class CursosEjercicios(models.Model):
@@ -93,7 +96,7 @@ class CursosEjercicios(models.Model):
     nombre = models.CharField(max_length=200)
 
     def __unicode__(self):
-        return unicode(self.nombre)
+        return self.nombre
 
 
 class MateriasEjercicios(models.Model):
@@ -103,7 +106,7 @@ class MateriasEjercicios(models.Model):
     nombre = models.CharField(max_length=200)
 
     def __unicode__(self):
-        return unicode(self.nombre)
+        return self.nombre
 
 
 class Tema(models.Model):
@@ -114,7 +117,7 @@ class Tema(models.Model):
     tipo = models.CharField(max_length=200)
 
     def __unicode__(self):
-        return unicode(self.nombre)
+        return self.nombre
 
 
 class Dificultad(models.Model):
@@ -122,16 +125,16 @@ class Dificultad(models.Model):
     nombre = models.CharField(max_length=200)
 
     def __unicode__(self):
-        return unicode(self.nombre)
+        return self.nombre
 
 
 class Ejercicios(models.Model):
     idejercicio = models.AutoField(primary_key=True)
-    idprofesor = models.ForeignKey(User)
-    materia = models.ForeignKey(MateriasEjercicios)
+    idprofesor = models.ForeignKey(User)#Cambiar a Profesor
     curso = models.ForeignKey(CursosEjercicios)
-    dificultad = models.ForeignKey(Dificultad)
+    materia = models.ForeignKey(MateriasEjercicios)
     tema = models.ForeignKey(Tema)
+    dificultad = models.ForeignKey(Dificultad)
     idcentro = models.CharField(max_length=500)
     titulo = models.CharField(max_length=500)
     imagen = models.CharField(max_length=500)
@@ -144,7 +147,7 @@ class Ejercicios(models.Model):
     tipo = models.CharField(max_length=2)
 
     def __unicode__(self):
-        return unicode(self.titulo)
+        return self.titulo
 
 
 class Notificacion(models.Model):
@@ -155,7 +158,7 @@ class Notificacion(models.Model):
     mensaje = models.CharField(max_length=200)
 
     def __unicode__(self):
-        return unicode(self.idusuario)
+        return self.idusuario
 
 
 class EjerciciosClase(models.Model):
@@ -173,7 +176,7 @@ class EjerciciosClase(models.Model):
     intentos = models.CharField(max_length=100)
 
     def __unicode__(self):
-        return unicode(self.idusuario)
+        return self.idusuario
 
 
 class Controles(models.Model):
@@ -191,7 +194,7 @@ class Controles(models.Model):
     intentos = models.CharField(max_length=100)
 
     def __unicode__(self):
-        return unicode(self.idusuario)
+        return self.idusuario
 
 
 class Examenes(models.Model):
@@ -209,7 +212,7 @@ class Examenes(models.Model):
     intentos = models.CharField(max_length=100)
 
     def __unicode__(self):
-        return unicode(self.idusuario)
+        return self.idusuario
 
 
 class Globales(models.Model):
@@ -227,8 +230,8 @@ class Globales(models.Model):
     intentos = models.CharField(max_length=100)
 
     def __unicode__(self):
-        return unicode(self.idusuario)
-            
+        return self.idusuario
+
 
 class Corregir(models.Model):
     idcorregir = models.AutoField(primary_key=True)
@@ -246,8 +249,8 @@ class Corregir(models.Model):
     nota = models.CharField(max_length=100)
 
     def __unicode__(self):
-        return unicode(self.idusuario)
-    
+        return self.idusuario
+
 
 class EjerciciosPendientes(models.Model):
     idpendientes = models.AutoField(primary_key=True)
@@ -258,15 +261,15 @@ class EjerciciosPendientes(models.Model):
     fecha = models.DateTimeField()
 
     def __unicode__(self):
-        return unicode(self.idpendientes)
-    
+        return self.idpendientes
+
 
 class Incidencias(models.Model):
     idusuario = models.ForeignKey(User)
     comentario = models.CharField(max_length=2000)
 
     def __unicode__(self):
-        return unicode(self.idusuario)
+        return self.idusuario
 
 
 class Observaciones(models.Model):
@@ -274,7 +277,7 @@ class Observaciones(models.Model):
     comentario = models.CharField(max_length=2000)
 
     def __unicode__(self):
-        return unicode(self.idusuario)
+        return self.idusuario
 
 
 class TiposEjercicios(models.Model):
@@ -282,21 +285,27 @@ class TiposEjercicios(models.Model):
     nombre = models.CharField(max_length=200)
 
     def __unicode__(self):
-        return unicode(self.nombre)
+        return u"%s" % self.nombre
+
 
 class EstadoEjercicios(models.Model):
     idestado = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=200)
 
     def __unicode__(self):
-        return unicode(self.nombre)
+        return self.nombre
 
+"""
+class GlobalesManager(models.Manager):
+    def get_query_set(self):
+        return super(GlobalesManager, self).get_query_set().filter(idtipoejercicios='Globales')
+"""
 
 class EjerciciosAll(models.Model):
     idejerciciosall = models.AutoField(primary_key=True)
     idejercicio = models.ForeignKey(Ejercicios)
     idprofesor = models.ForeignKey(Profesor)
-    idalumno = models.ForeignKey(User)
+    idalumno = models.ForeignKey(User)#Cambiar por alumno
     idclase = models.ForeignKey(Cursos)
     idtipoejercicios = models.ForeignKey(TiposEjercicios)
     materia = models.ForeignKey(MateriasEjercicios)
@@ -304,18 +313,19 @@ class EjerciciosAll(models.Model):
     fecha_envio = models.DateTimeField()
     fecha_recibido = models.DateTimeField(null=True, blank=True)
     imagen_alumno = models.CharField(max_length=500, null=True, blank=True)
-    imagen_profesor = models.CharField(max_length=500,null=True, blank=True)
+    imagen_profesor = models.CharField(max_length=500, null=True, blank=True)
     nota = models.CharField(max_length=10, null=True, blank=True)
     bien_mal = models.CharField(max_length=10, null=True, blank=True)
     resultado = models.CharField(max_length=500, null=True, blank=True)
-    tiempo_realizacion = models.IntegerField(blank=True)
-    tiempo_maximo = models.IntegerField(blank=True)
-    intentos_posibles = models.IntegerField(blank=True)
-    estado = models.CharField(max_length=500,blank=True)
-    numerointentos = models.IntegerField(blank=True)
-    numeroimagenes = models.IntegerField(blank=True)
-    numeropreguntas = models.IntegerField(blank=True)
-    nfallos = models.IntegerField(blank=True)
+    tiempo_realizacion = models.IntegerField(null=True, blank=True, default=0)
+    tiempo_maximo = models.IntegerField(null=True, blank=True, default=0)
+    intentos_posibles = models.IntegerField(null=True, blank=True, default=0)
+    estado = models.CharField(max_length=500, null=True, blank=True)
+    numerointentos = models.IntegerField(null=True, blank=True, default=0)
+    numeroimagenes = models.IntegerField(null=True, blank=True, default=0)
+    numeropreguntas = models.IntegerField(null=True, blank=True, default=0)
+    nfallos = models.IntegerField(null=True, blank=True, default=0)
+    #eglo = GlobalesManager()
 
     def __unicode__(self):
-        return unicode(self.idejerciciosall)
+        return u"%s" % self.idejerciciosall

@@ -1,17 +1,23 @@
+# -*- coding: utf-8 -*-
 from django.contrib import admin
-from konecta2app.models import TiposEjercicios, Permisos, Dificultad, Tema, MateriasEjercicios, CursosEjercicios, Cursos, Profesor, Alumno, Invitado, Ejercicios, Examenes, EjerciciosAll
-from django.contrib.auth.models import User
+import konecta2app.models
 
-admin.site.register(Cursos)
-admin.site.register(MateriasEjercicios)
-admin.site.register(CursosEjercicios)
-admin.site.register(Permisos)
-admin.site.register(Profesor)
-admin.site.register(Alumno)
-admin.site.register(Invitado)
-admin.site.register(Dificultad)
-admin.site.register(Tema)
-admin.site.register(TiposEjercicios)
-admin.site.register(Ejercicios)
-admin.site.register(Examenes)
-admin.site.register(EjerciciosAll)
+admin.site.register(konecta2app.models.Cursos)
+admin.site.register(konecta2app.models.MateriasEjercicios)
+admin.site.register(konecta2app.models.CursosEjercicios)
+admin.site.register(konecta2app.models.Permisos)
+admin.site.register(konecta2app.models.Profesor)
+admin.site.register(konecta2app.models.Alumno)
+admin.site.register(konecta2app.models.Invitado)
+admin.site.register(konecta2app.models.Dificultad)
+admin.site.register(konecta2app.models.Tema)
+admin.site.register(konecta2app.models.TiposEjercicios)
+admin.site.register(konecta2app.models.Ejercicios)
+admin.site.register(konecta2app.models.Examenes)
+admin.site.register(konecta2app.models.Notificacion)
+admin.site.register(konecta2app.models.Corregir)
+admin.site.register(konecta2app.models.EjerciciosPendientes)
+admin.site.register(konecta2app.models.Incidencias)
+admin.site.register(konecta2app.models.Observaciones)
+admin.site.register(konecta2app.models.EstadoEjercicios)
+admin.site.register(konecta2app.models.EjerciciosAll)
