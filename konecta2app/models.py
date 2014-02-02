@@ -130,7 +130,7 @@ class Dificultad(models.Model):
 
 class Ejercicios(models.Model):
     idejercicio = models.AutoField(primary_key=True)
-    idprofesor = models.ForeignKey(User)#Cambiar a Profesor
+    idprofesor = models.ForeignKey(Profesor)
     curso = models.ForeignKey(CursosEjercicios)
     materia = models.ForeignKey(MateriasEjercicios)
     tema = models.ForeignKey(Tema)
@@ -295,17 +295,31 @@ class EstadoEjercicios(models.Model):
     def __unicode__(self):
         return self.nombre
 
-"""
+
+class ExamenesManager(models.Manager):
+    def get_queryset(self):
+        return super(GlobalesManager, self).get_queryset().filter(idtipoejercicios=1)
+
+
+class ControlesManager(models.Manager):
+    def get_queryset(self):
+        return super(GlobalesManager, self).get_queryset().filter(idtipoejercicios=2)
+
+
+class EjerciciosClaseManager(models.Manager):
+    def get_queryset(self):
+        return super(GlobalesManager, self).get_queryset().filter(idtipoejercicios=3)
+
 class GlobalesManager(models.Manager):
-    def get_query_set(self):
-        return super(GlobalesManager, self).get_query_set().filter(idtipoejercicios='Globales')
-"""
+    def get_queryset(self):
+        return super(GlobalesManager, self).get_queryset().filter(idtipoejercicios=4)
+
 
 class EjerciciosAll(models.Model):
     idejerciciosall = models.AutoField(primary_key=True)
     idejercicio = models.ForeignKey(Ejercicios)
     idprofesor = models.ForeignKey(Profesor)
-    idalumno = models.ForeignKey(User)#Cambiar por alumno
+    idalumno = models.ForeignKey(Alumno)
     idclase = models.ForeignKey(Cursos)
     idtipoejercicios = models.ForeignKey(TiposEjercicios)
     materia = models.ForeignKey(MateriasEjercicios)
@@ -325,7 +339,12 @@ class EjerciciosAll(models.Model):
     numeroimagenes = models.IntegerField(null=True, blank=True, default=0)
     numeropreguntas = models.IntegerField(null=True, blank=True, default=0)
     nfallos = models.IntegerField(null=True, blank=True, default=0)
-    #eglo = GlobalesManager()
+
+    objects = models.Manager()
+    examenes = ExamenesManager()
+    controles = ControlesManager()
+    ejerciciosclase = EjerciciosClaseManager()
+    globales = GlobalesManager()
 
     def __unicode__(self):
         return u"%s" % self.idejerciciosall
