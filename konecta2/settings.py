@@ -132,7 +132,7 @@ INSTALLED_APPS = (
     'konecta2correccion',
     'django.contrib.admin',
     #'django_extensions',
-    'south',
+    #'south',
     
 )
 
