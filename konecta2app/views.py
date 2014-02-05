@@ -1,11 +1,11 @@
-#-*- encoding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
 from django.contrib import auth
 from django.template import RequestContext
-from django.utils import simplejson
+
 from django.utils.translation import ugettext as _
 from django.core.mail import send_mail
 from django.conf import settings
@@ -69,22 +69,32 @@ def login(request):
     """
     random1 = id_generator()
     userlog = []
+
+
+    peticion=request.POST['data']
+    print peticion
     try:
-        userlog = simplejson.loads(request.POST['data'])
+        userlog = json.loads(request.POST['data'])
+        print userlog
         user = auth.authenticate(username=userlog.get('username'), password=userlog.get('password'))
         finish = 1
         username = userlog.get('username')
+        print username
         password = userlog.get('password')
+
+        print password
         lugar = userlog.get('lugar','null')
         type_user = userlog.get('type')
+
+        print type_user
         username = username.lower()
         if username is None and password is None:
             response_data = {'result': 'fail', 'message': 'Falta el username y el password'}			
-            return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
         if username is None:
             response_data = {'result': 'fail', 'message': 'Falta el username'}				
-            return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 
         if password is None:
@@ -111,7 +121,7 @@ def login(request):
                     token1 = user_token.token
                 validity = user_token.date+datetime.timedelta(0,finish)
                 response_data = {'result': 'ok', 'token': user_token.token, 'tipo_usuario': 'Profesor', 'validity': str(validity)}          
-                return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
             if tipo1.count() > 0:
                 tipo1 = Alumno.objects.get(idusuario=usuario)
@@ -139,13 +149,13 @@ def login(request):
                         user_token.save()
                     token1 = user_token.token
             response_data = {'tipo_usuario':tipo_usuario,'result': 'ok', 'token': token1}			
-            return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
         else:
             response_data = {'result': 'fail', 'message': 'Incorrect data'}			
-            return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
     except Exception as e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}		
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def logout(request):
@@ -162,7 +172,7 @@ def logout(request):
     """
     data = []
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', '')
         lugar = data.get('lugar', '')
         user = Tokenregister.objects.filter(token=token)
@@ -181,7 +191,7 @@ def logout(request):
             if tipo2.count() > 0:
                 if lugar == "aplicacionpc":
                     response_data = {'result':'ok'}
-                    return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                    return HttpResponse(json.dumps(response_data), mimetype="application/json")
                 else:
                     tipo2 = Profesor.objects.get(idusuario=usuario_encontrado)
                     tipo2.estado = "Desconectado"
@@ -198,12 +208,12 @@ def logout(request):
             response_data = {'result': 'ok'}
         else:
             response_data = {'result': 'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except Exception as e:
 
         response_data = {'errorcode': 'E000', 'result': 'error', 'message': e.message}		
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def registro(request):
@@ -239,7 +249,7 @@ def registro(request):
     """
     try:
 
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         username = data.get('username', 'null')
         password = data.get('password', 'null')
         tipo = data.get('tipo')
@@ -258,32 +268,32 @@ def registro(request):
         modificar_ejercicio = data.get('modificar_ejercicios', 'false')
         eliminar_ejercicio = data.get('eliminar_ejercicios', 'false')
         imagen = data.get('imagen', 'null')
-        nacimiento = data.get('nacimiento', '')
+        nacimiento = data.get('nacimiento', 'null')
         extension = data.get('extension', 'null')
         
         if username is None and password is None:
             response_data = {'result': 'fail', 'message':'Falta usuario y contraseña'}
-            return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
         if username == "null" and password == "null":
             response_data = {'result': 'fail', 'message':'Falta usuario y contraseña'}
-            return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
         if username is None:
             response_data = {'result': 'fail', 'message':'Falta usuario'}
-            return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
         if username == "null":
             response_data = {'result': 'fail', 'message':'Falta usuario'}
-            return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
         if password is None:
             response_data = {'result': 'fail', 'message':'Falta contraseña'}
-            return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
         if password == "null":
             response_data = {'result': 'fail', 'message':'Falta contraseña'}
-            return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
         user_exist = User.objects.filter(username=username)
         if user_exist.count() > 0:
             response_data = {'result': 'fail', 'message':'Este usuario ya existe'}
-            return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
         else:
             token_existe = Tokenregister.objects.filter(token=token)
             if token_existe.count()>0:
@@ -307,9 +317,18 @@ def registro(request):
                         file.close()
                     else:
                         ruta_imagen = config.ruta_imagen_usuarios_default    
-                
+
+
+                    formatter_string = "%d/%m/%Y"
+                    if nacimiento == 'null':
+                        dia="11/11/1111"
+                    else:
+                        dia = nacimiento
+
+                    fecha_nacimiento=datetime.datetime.strptime(dia, formatter_string)
                     if tipo == "profesor":
-                        usuario_profesor = Profesor(idusuario=user, urlimagen=ruta_imagen, nacimiento=nacimiento, estado="Desconectado", nombre=nombre, apellido1=primer_apellido, apellido2=segundo_apellido)
+
+                        usuario_profesor = Profesor(idusuario=user, urlimagen=ruta_imagen, nacimiento=fecha_nacimiento, estado="Desconectado", nombre=nombre, apellido1=primer_apellido, apellido2=segundo_apellido)
                         usuario_profesor.save()
                         permisos_profesor = Permisos(idusuario=user, crear_usuario=crear_user, 
                         modificar_usuario=mod_user,eliminar_usuario=elimi_user, ver_notas=ver_nota, 
@@ -325,10 +344,10 @@ def registro(request):
                                     id_curso = Cursos.objects.get(idcurso=unidad_clase)
                                     usuario_profesor.curso.add(id_curso)
                         response_data = {'result': 'ok', 'message':'Usuario tipo profesor registrado'}
-                        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
                     if tipo == "alumno":
-                        usuario_alumno = Alumno(idusuario=user, urlimagen=ruta_imagen, nacimiento=nacimiento, estado="Desconectado", nombre=nombre, apellido1=primer_apellido, apellido2=segundo_apellido)
+                        usuario_alumno = Alumno(idusuario=user, urlimagen=ruta_imagen, nacimiento=fecha_nacimiento, estado="Desconectado", nombre=nombre, apellido1=primer_apellido, apellido2=segundo_apellido)
                         usuario_alumno.save()
                         #Si no se selecciona clase, que se mande "clases":"null"
                         if clases_array != "null":
@@ -339,10 +358,10 @@ def registro(request):
                                     id_curso = Cursos.objects.get(idcurso=unidad_clase)
                                     usuario_alumno.curso.add(id_curso)
                         response_data = {'result': 'ok', 'message':'Usuario tipo alumno registrado'}
-                        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
                     else:
                         response_data = {'result': 'fail'}
-                        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
                 
                 buscar_permisos = Permisos.objects.get(idusuario=token_existe.userid.id)
@@ -383,7 +402,7 @@ def registro(request):
                                     id_curso = Cursos.objects.get(idcurso=unidad_clase)
                                     usuario_profesor.curso.add(id_curso)
                         response_data = {'result': 'ok', 'message':'Usuario tipo profesor registrado'}
-                        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
                     if tipo == "alumno":
                         usuario_alumno = Alumno(idusuario=user,  urlimagen=ruta_imagen, nacimiento=nacimiento, estado="Desconectado", nombre=nombre, apellido1=primer_apellido, apellido2=segundo_apellido)
@@ -397,19 +416,19 @@ def registro(request):
                                     id_curso = Cursos.objects.get(idcurso=unidad_clase)
                                     usuario_alumno.curso.add(id_curso)
                         response_data = {'result': 'ok', 'message':'Usuario tipo alumno registrado'}
-                        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
                     else:
                         response_data = {'result': 'fail'}
-                        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
                 else:
                     response_data = {'result': 'fail', 'message':'No tienes los permisos suficientes'}
-                    return HttpResponse(simplejson.dumps(response_data), mimetype="application/json") 
+                    return HttpResponse(json.dumps(response_data), mimetype="application/json") 
             else:
                 response_data = {'result': 'fail', 'message':'Token no encontrado'}
-                return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
-    except BaseException, e:
+                return HttpResponse(json.dumps(response_data), mimetype="application/json")
+    except Exception, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def invitado(request):
@@ -429,7 +448,7 @@ def invitado(request):
     random1 = id_generator()
     try:
         
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         nombre = data.get('nombre', 'null')
         clase = data.get('clase', 'null')
         finish = 180
@@ -440,7 +459,7 @@ def invitado(request):
         if nombre != "null":
             if user_exist.count() > 0:
                 response_data = {'result': 'fail', 'message':'Este usuario ya existe'}
-                return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                return HttpResponse(json.dumps(response_data), mimetype="application/json")
             else:
                 user = User.objects.create_user(username=user_name)
                 user.is_active = True
@@ -457,13 +476,13 @@ def invitado(request):
                 user_token = get_object_or_None(Tokenregister, userid=user)
                 validity = user_token.date+datetime.timedelta(0,finish)
                 response_data = {'result': 'ok', 'tipo_usuario': 'Alumno', 'token': token1, 'validity': str(validity)}
-                return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                return HttpResponse(json.dumps(response_data), mimetype="application/json")
         else:
             response_data = {'result': 'fail', 'message':'Nombre no recibido'}
-            return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def clases_profesor_usuarios(request):
@@ -477,7 +496,7 @@ def clases_profesor_usuarios(request):
     Esta vista le mostrará al profesor sus clases y si tiene permisos le muestra todas las clases.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
 
@@ -494,11 +513,11 @@ def clases_profesor_usuarios(request):
                     response_data['cursos'].append({'idcurso': clases.idcurso, 'nombre': clases.nombre_curso })
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}        
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def ver_usuarios(request):
@@ -517,7 +536,7 @@ def ver_usuarios(request):
     Si no tiene estos permisos, solo se le muestran sus alumnos.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         curso = data.get('curso', 'null')
         existe_token = Tokenregister.objects.filter(token=token)
@@ -551,11 +570,11 @@ def ver_usuarios(request):
                 response_data = {'result': 'fail', 'message':'El usuario no es un profesor'}
         else:
             response_data = {'result': 'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def borrar_usuario(request):
@@ -571,7 +590,7 @@ def borrar_usuario(request):
     sus permisos...
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', '')
         idusuario = data.get('idusuario', '')
 
@@ -620,11 +639,11 @@ def borrar_usuario(request):
                 response_data = {'result': 'fail', 'message': 'No tienes permisos para realizar la operacion'}
         else:
             response_data = {'result': 'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 @csrf_exempt
 def modificar_usuario(request):
     """
@@ -650,7 +669,7 @@ def modificar_usuario(request):
     Esta vista modifica los usuarios.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', '')
         idusuario = data.get('idusuario', '')
         nombre = data.get('nombre', '')
@@ -743,11 +762,11 @@ def modificar_usuario(request):
                 response_data = {'result': 'fail', 'message': 'No tienes permisos para realizar la operacion'}
         else:
             response_data = {'result': 'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 
 @csrf_exempt
@@ -765,7 +784,7 @@ def crear_notificacion(request):
 
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', '')
         iddestino = data.get('iddestino', '')
         tipo = data.get('tipo', '')
@@ -784,11 +803,11 @@ def crear_notificacion(request):
                 response_data = {'result':'fail', 'message':'Usuario no encontrado'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def consultar_notificacion(request):
@@ -802,7 +821,7 @@ def consultar_notificacion(request):
 
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', '')
         token_existe = Tokenregister.objects.filter(token=token)
         if token_existe.count() > 0:
@@ -815,11 +834,11 @@ def consultar_notificacion(request):
                     notificacion_individual.delete()
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def borrar_notificacion(request):
@@ -834,7 +853,7 @@ def borrar_notificacion(request):
 
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', '')
         idnotificacion = data.get('idnotificacion', '')
         token_existe = Tokenregister.objects.filter(token=token)
@@ -849,10 +868,10 @@ def borrar_notificacion(request):
                 response_data = {'result':'fail', 'message':'Notificacion no encontrada'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def comprobar_pass(request):
@@ -868,7 +887,7 @@ def comprobar_pass(request):
     """
     try:
         
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', '')
         password = data.get('password', '')
 
@@ -886,11 +905,11 @@ def comprobar_pass(request):
                 response_data = {'result':'fail', 'message':'Usuario no encontrado'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
 @csrf_exempt
 def reiniciar_password(request):
@@ -906,7 +925,7 @@ def reiniciar_password(request):
     """
     try:
         
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', '')
         password = data.get('password', '')
 
@@ -923,11 +942,11 @@ def reiniciar_password(request):
                 response_data = {'result':'fail', 'message':'Usuario no encontrado'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def comprobar_token(request):
@@ -942,7 +961,7 @@ def comprobar_token(request):
     """
     try:
         
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', '')
 
         token_existe = Tokenregister.objects.filter(token=token)
@@ -950,11 +969,11 @@ def comprobar_token(request):
             response_data = {'result': 'ok'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
 @csrf_exempt
 def reset_password(request):
@@ -970,7 +989,7 @@ def reset_password(request):
         Cambia la password
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         idusuario = data.get('idusuario', '')
         password = data.get('password', '')
         token = data.get('token', '')
@@ -983,8 +1002,8 @@ def reset_password(request):
             response_data = {'result': 'ok'}
         else:
             response_data = {'result': 'fail'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
