@@ -298,8 +298,9 @@ def registro(request):
             token_existe = Tokenregister.objects.filter(token=token)
             if token_existe.count()>0:
                 token_existe = Tokenregister.objects.get(token=token)
-                
-                if str(token_existe.userid.is_staff) == "True":
+
+                buscar_permisos = Permisos.objects.get(idusuario=token_existe.userid.id)
+                if str(token_existe.userid.is_staff) == "True" or buscar_permisos.crear_usuario == "true":
                     user = User.objects.create_user(username=username, password=password)
                     user.is_active = True
                     user.save()
@@ -320,7 +321,7 @@ def registro(request):
 
 
                     formatter_string = "%d/%m/%Y"
-                    if nacimiento == 'null':
+                    if nacimiento == 'null' or nacimiento=='':
                         dia="11/11/1111"
                     else:
                         dia = nacimiento
@@ -362,67 +363,6 @@ def registro(request):
                     else:
                         response_data = {'result': 'fail'}
                         return HttpResponse(json.dumps(response_data), mimetype="application/json")
-
-                
-                buscar_permisos = Permisos.objects.get(idusuario=token_existe.userid.id)
-                if buscar_permisos.crear_usuario == "true":
-                    
-                    user = User.objects.create_user(username=username, password=password)
-                    user.is_active = True
-                    user.save()
-                    tipo = tipo.lower()            
-                    if imagen != "null":
-                        datetime_now = str(datetime.datetime.now())
-                        ruta_imagen = config.ruta_imagen_usuarios + datetime_now + "." + extension
-                        ruta_imagen = ruta_imagen.replace(" ", "+")
-                        ruta_imagen2 = config.ruta_imagen_konecta2 + ruta_imagen
-                        ruta_imagen2 = ruta_imagen2.replace(" ", "+")
-                        file = open(ruta_imagen2, "w")
-                        image_b64 = imagen.replace(" ","+")
-                        image_bin = base64.b64decode(image_b64)
-                        file.write(image_bin)
-                        file.close()                                
-                    else:
-                        ruta_imagen = config.ruta_imagen_usuarios_default
-                        
-                    if tipo == "profesor":
-                        usuario_profesor = Profesor(idusuario=user, urlimagen=ruta_imagen, nacimiento=nacimiento, estado="Desconectado", nombre=nombre, apellido1=primer_apellido, apellido2=segundo_apellido)
-                        usuario_profesor.save()
-                        permisos_profesor = Permisos(idusuario=user, crear_usuario=crear_user, 
-                        modificar_usuario=mod_user,eliminar_usuario=elimi_user, ver_notas=ver_nota, 
-                        modificar_notas=mod_notas, ver_todos_usuarios=ver_todos_usuarios, crear_ejercicio=crear_ejercicio, 
-                        modificar_ejercicio=modificar_ejercicio, eliminar_ejercicio=eliminar_ejercicio)
-                        permisos_profesor.save()
-                        #Si no se selecciona clase, que se mande "clases":"null"
-                        if clases_array != "null":
-                            for clases in clases_array:					
-                                unidad_clase = clases.get('clase')
-                                id_curso = Cursos.objects.filter(idcurso=unidad_clase)
-                                if id_curso.count() > 0:
-                                    id_curso = Cursos.objects.get(idcurso=unidad_clase)
-                                    usuario_profesor.curso.add(id_curso)
-                        response_data = {'result': 'ok', 'message':'Usuario tipo profesor registrado'}
-                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
-
-                    if tipo == "alumno":
-                        usuario_alumno = Alumno(idusuario=user,  urlimagen=ruta_imagen, nacimiento=nacimiento, estado="Desconectado", nombre=nombre, apellido1=primer_apellido, apellido2=segundo_apellido)
-                        usuario_alumno.save()
-                        #Si no se selecciona clase, que se mande "clases":"null"
-                        if clases_array != "null":
-                            for clases in clases_array:					
-                                unidad_clase = clases.get('clase')
-                                id_curso = Cursos.objects.filter(idcurso=unidad_clase)
-                                if id_curso.count() > 0:
-                                    id_curso = Cursos.objects.get(idcurso=unidad_clase)
-                                    usuario_alumno.curso.add(id_curso)
-                        response_data = {'result': 'ok', 'message':'Usuario tipo alumno registrado'}
-                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
-                    else:
-                        response_data = {'result': 'fail'}
-                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
-                else:
-                    response_data = {'result': 'fail', 'message':'No tienes los permisos suficientes'}
-                    return HttpResponse(json.dumps(response_data), mimetype="application/json") 
             else:
                 response_data = {'result': 'fail', 'message':'Token no encontrado'}
                 return HttpResponse(json.dumps(response_data), mimetype="application/json")
