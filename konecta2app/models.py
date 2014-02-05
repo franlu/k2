@@ -333,6 +333,7 @@ class EjerciciosAll(models.Model):
     resultado = models.CharField(max_length=500, null=True, blank=True)
     tiempo_realizacion = models.IntegerField(null=True, blank=True, default=0)
     tiempo_maximo = models.IntegerField(null=True, blank=True, default=0)
+    tiempo_maximo = models.IntegerField(null=True, blank=True, default=0)
     intentos_posibles = models.IntegerField(null=True, blank=True, default=0)
     estado = models.CharField(max_length=500, null=True, blank=True)
     numerointentos = models.IntegerField(null=True, blank=True, default=0)
