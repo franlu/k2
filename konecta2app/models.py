@@ -127,6 +127,13 @@ class Dificultad(models.Model):
     def __unicode__(self):
         return self.nombre
 
+class TiposEjercicios(models.Model):
+    idtipo = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=200)
+
+    def __unicode__(self):
+        return u"%s" % self.nombre
+
 
 class Ejercicios(models.Model):
     idejercicio = models.AutoField(primary_key=True)
@@ -135,6 +142,7 @@ class Ejercicios(models.Model):
     materia = models.ForeignKey(MateriasEjercicios)
     tema = models.ForeignKey(Tema)
     dificultad = models.ForeignKey(Dificultad)
+    tipo = models.ForeignKey(TiposEjercicios)
     idcentro = models.CharField(max_length=500)
     titulo = models.CharField(max_length=500)
     imagen = models.CharField(max_length=500)
@@ -144,10 +152,10 @@ class Ejercicios(models.Model):
     interfaz = models.CharField(max_length=200)
     consejo = models.CharField(max_length=200)
     estado = models.CharField(max_length=200, null=True, blank=True)
-    tipo = models.CharField(max_length=2)
+
 
     def __unicode__(self):
-        return self.titulo
+        return u"%s" % self.titulo
 
 
 class Notificacion(models.Model):
@@ -280,12 +288,7 @@ class Observaciones(models.Model):
         return self.idusuario
 
 
-class TiposEjercicios(models.Model):
-    idtipo = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=200)
 
-    def __unicode__(self):
-        return u"%s" % self.nombre
 
 
 class EstadoEjercicios(models.Model):
