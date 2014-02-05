@@ -298,21 +298,31 @@ class EstadoEjercicios(models.Model):
 
 class ExamenesManager(models.Manager):
     def get_queryset(self):
-        return super(GlobalesManager, self).get_queryset().filter(idtipoejercicios=1)
+        return super(ExamenesManager, self).get_queryset().filter(idtipoejercicios=1)
 
 
 class ControlesManager(models.Manager):
     def get_queryset(self):
-        return super(GlobalesManager, self).get_queryset().filter(idtipoejercicios=2)
+        return super(ControlesManager, self).get_queryset().filter(idtipoejercicios=2)
 
 
 class EjerciciosClaseManager(models.Manager):
     def get_queryset(self):
-        return super(GlobalesManager, self).get_queryset().filter(idtipoejercicios=3)
+        return super(EjerciciosClaseManager, self).get_queryset().filter(idtipoejercicios=3)
 
 class GlobalesManager(models.Manager):
     def get_queryset(self):
         return super(GlobalesManager, self).get_queryset().filter(idtipoejercicios=4)
+
+class TotalManager(models.Manager):
+    def get_query_set(self,):
+        return super(TotalManager, self).get_queryset().filter(idtipoejercicios=4)
+
+    def some_filter(self, alumno):
+        qs = self.get_query_set()
+        return qs.filter(idalumno=alumno)
+
+
 
 
 class EjerciciosAll(models.Model):
@@ -333,7 +343,6 @@ class EjerciciosAll(models.Model):
     resultado = models.CharField(max_length=500, null=True, blank=True)
     tiempo_realizacion = models.IntegerField(null=True, blank=True, default=0)
     tiempo_maximo = models.IntegerField(null=True, blank=True, default=0)
-    tiempo_maximo = models.IntegerField(null=True, blank=True, default=0)
     intentos_posibles = models.IntegerField(null=True, blank=True, default=0)
     estado = models.CharField(max_length=500, null=True, blank=True)
     numerointentos = models.IntegerField(null=True, blank=True, default=0)
@@ -342,10 +351,13 @@ class EjerciciosAll(models.Model):
     nfallos = models.IntegerField(null=True, blank=True, default=0)
 
     objects = models.Manager()
-    examenes = ExamenesManager()
-    controles = ControlesManager()
-    ejerciciosclase = EjerciciosClaseManager()
-    globales = GlobalesManager()
+    examenes = ExamenesManager() #1
+    controles = ControlesManager()#2
+    ejerciciosclase = EjerciciosClaseManager()#3
+    globales = GlobalesManager()#4
+
+    todos = TotalManager()
+
 
     def __unicode__(self):
         return u"%s" % self.idejerciciosall

@@ -1,35 +1,36 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.core.context_processors import csrf
-from django.contrib import auth
-from django.template import RequestContext
-from django.utils import simplejson
-from django.utils.translation import ugettext as _
-from django.core.mail import send_mail
-from django.conf import settings
-from konecta2app.models import Permisos, MateriasEjercicios, Incidencias, Notificacion, CursosEjercicios, EjerciciosPendientes, EjerciciosClase, Examenes
-from konecta2app.models import TiposEjercicios, Tema, Tokenregister, Cursos, Observaciones, Profesor, Alumno, Invitado, Ejercicios, Dificultad, Corregir, Controles, Globales
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.decorators import login_required
+#from django.shortcuts import render_to_response
+#from django.core.context_processors import csrf
+#from django.contrib import auth
+#from django.template import RequestContext
+#from django.utils.translation import ugettext as _
+#from django.core.mail import send_mail
+#from django.conf import settings
+#from django.shortcuts import render, get_object_or_404
+#from django.contrib.auth.models import User
+#from django.contrib.auth.forms import UserCreationForm
+#from django.contrib.auth.forms import AuthenticationForm
+#from django.contrib.auth import login, authenticate, logout
+#from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from django.core import serializers
-from konecta2 import settings
-import string
+#from django.core import serializers
+from django.db.models import Q
+
+#from konecta2 import settings
+#from konecta2 import config
+from konecta2app.models import Tokenregister, Profesor, EjerciciosAll
+
+#import string
 import pytz
-import random
+#import random
 import datetime
 import json
-import base64
-from base64 import b64decode
-from annoying.functions import get_object_or_None
-from datetime import datetime
+#import base64
+#from base64 import b64decode
+#from annoying.functions import get_object_or_None
 
-from konecta2 import config
+
 
 """
 ---------------------------------Gestion de ejercicios Android by brian
@@ -65,7 +66,7 @@ def get_elementos(request):
     """
     
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         elemento=data.get('elemento','materias')
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
@@ -85,7 +86,7 @@ def get_elementos(request):
                     response_data['cursos'].append({'id':curso.idcurso,'nombre':curso.nombre_curso})
             
             if elemento == "alumnos":
-                response_data = {'result':'ok', 'alumnos':[]} 
+                response_data = {'result': 'ok', 'alumnos':[]}
                 for alumno in Alumno.objects.all():
                     response_data['alumnos'].append({'id': alumno.idusuario.id, 'nombre': alumno.nombre, 'apellido1':alumno.apellido1, 'apellido2':alumno.apellido2}) 
             
@@ -96,12 +97,142 @@ def get_elementos(request):
              
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
+
+def search(request):
+    """
+        {
+        data:
+            {
+            "token":"token"
+            "idalumno"
+            "idmateria":"idmateria"
+            "idtema"
+            "idclase"
+            "idtipo"
+            "fechainicio"
+            "fechafin"
+
+            }
+        }
+
+    """
+"""
+    try:
+
+        data = json.loads(request.POST['data'])
+        token = data.get('token', 'null')
+        idalumno = data.get('idalumno', 'null')
+        idmateria = data.get('idmateria', 'null')
+        idtema = data.get('idtema', 'null')
+        idclase = data.get('idclase', 'null')
+        idtipo = data.get('idtipo', 'null')
+        fechainicio = data.get('fechainicio', 'null')
+        fechafin = data.get('fechafin', 'null')
+
+        try:
+            coger_usuario = Tokenregister.objects.get(token=token)
+            profesor = Profesor.objects.get(idusuario=cojer_usuario.userid)
+        except Tokenregister.DoesNotExist:
+            response_data = {'result': 'fail', 'message': 'Token no encontrado'}
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        except Profesor.DoesNotExist:
+            response_data = {'result': 'fail', 'message': 'Profesor no encontrado'}
+            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+
+        formatter_string = "%d/%m/%Y"
+        response_data = {'result': 'ok', 'ejercicios': [], 'mensaje': []}
+
+
+            if idalumno != 'null':
+                if idclase != 'null':
+                    if idmateria != 'null':
+                        if idtema != 'null':
+                            if idtipo != 'null':
+                                if idtipo == 1:
+                                    ejalumno = EjerciciosAll.examenes.filter(idusuario=idalumno)
+                                    ejmate = ejalumno.filter(idmateria=idmateria).filter(idtema=idtema)
+                                    #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
+                                    if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
+                                        start_date = datetime.datetime.strptime(fechainicio, formatter_string)
+                                        end_date = datetime.datetime.strptime(fechafin, formatter_string)
+                                        ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
+                                        for e in ejfecha:
+                                            response_data['ejercicios'].append({'titulo': e.titulo,
+                                                                    'descripcion': e.idjercicio.descripcion,
+                                                                    'idejercicio': e.idejercicio.idejercicio,
+                                                                    'dificultad': e.idejercicio.dificultad.iddificultad,
+                                                                    'interfaz': e.idejercicio.interfaz,
+                                                                    'imagen': e.idejercicio.imagen,
+                                                                    'urlimagen': e.imagen,
+                                                                    'nota': e.nota,
+                                                                    'fecha': e.fecha})
+                                    else:
+                                        for e in ejmate:
+                                            response_data['ejercicios'].append({'titulo': e.titulo,
+                                                                    'descripcion': e.idjercicio.descripcion,
+                                                                    'idejercicio': e.idejercicio.idejercicio,
+                                                                    'dificultad': e.idejercicio.dificultad.iddificultad,
+                                                                    'interfaz': e.idejercicio.interfaz,
+                                                                    'imagen': e.idejercicio.imagen,
+                                                                    'urlimagen': e.imagen,
+                                                                    'nota': e.nota,
+                                                                    'fecha': e.fecha})
+                                if idtipo == 2:
+                                if idtipo == 3:
+                                if idtipo == 4:
+
+                            else:
+                            ejalumno = EjerciciosAll.objects.filter(idusuario=idalumno)
+                            ejmate = ejalumno.filter(idmateria=idmateria).filter(idtema=idtema)
+                            #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
+                            if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
+                                start_date = datetime.datetime.strptime(fechainicio, formatter_string)
+                                end_date = datetime.datetime.strptime(fechafin, formatter_string)
+                                ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
+                                for e in ejfecha:
+                                    response_data['ejercicios'].append({'titulo': e.titulo,
+                                                                    'descripcion': e.idjercicio.descripcion,
+                                                                    'idejercicio': e.idejercicio.idejercicio,
+                                                                    'dificultad': e.idejercicio.dificultad.iddificultad,
+                                                                    'interfaz': e.idejercicio.interfaz,
+                                                                    'imagen': e.idejercicio.imagen,
+                                                                    'urlimagen': e.imagen,
+                                                                    'nota': e.nota,
+                                                                    'fecha': e.fecha})
+                            else:
+                                for e in ejmate:
+                                    response_data['ejercicios'].append({'titulo': e.titulo,
+                                                                    'descripcion': e.idjercicio.descripcion,
+                                                                    'idejercicio': e.idejercicio.idejercicio,
+                                                                    'dificultad': e.idejercicio.dificultad.iddificultad,
+                                                                    'interfaz': e.idejercicio.interfaz,
+                                                                    'imagen': e.idejercicio.imagen,
+                                                                    'urlimagen': e.imagen,
+                                                                    'nota': e.nota,
+                                                                    'fecha': e.fecha})
+                        else:
+
+
+
+
+
+        else: #todos los tipos
+            response_data['mensaje'].append('Tipo de ejercicio null')
+
+
+
+
+
+    except BaseException, e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+"""
 
 @csrf_exempt
 def busqueda_filtros(request):
@@ -123,7 +254,7 @@ def busqueda_filtros(request):
         
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idalumno = data.get('idalumno', 'null')
         idmateria = data.get('idmateria', 'null')
@@ -144,6 +275,7 @@ def busqueda_filtros(request):
                     if idtema!='null':
                         #si la materia no es null
                         if idmateria!='null':
+                            ejercicios = Examenes.objects.filter(idusuario=idalumno)
                             for ejercicio in Examenes.objects.filter(idusuario=idalumno):
                                 if ejercicio.idejercicio.materia.idmateria==idmateria:
                                     if ejercicio.idejercicio.tema.idtema==idtema:
@@ -998,9 +1130,8 @@ def busqueda_filtros(request):
                         
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
-   
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
