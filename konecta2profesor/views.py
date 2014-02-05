@@ -1,11 +1,11 @@
-# -*- encoding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
 from django.contrib import auth
 from django.template import RequestContext
-from django.utils import simplejson
+
 from django.utils.translation import ugettext as _
 from django.core.mail import send_mail
 from django.conf import settings
@@ -46,7 +46,7 @@ def alumnos(request):
     """
     data = []
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idcurso = data.get('idcurso', 'null')
         usuario_existe = Tokenregister.objects.filter(token=token)
@@ -67,11 +67,11 @@ def alumnos(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
        	
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def clases_profesor(request):
@@ -85,7 +85,7 @@ def clases_profesor(request):
     Esta vista le mostrará al profesor sus clases cuando se logea.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
 
@@ -97,11 +97,11 @@ def clases_profesor(request):
                 response_data['cursos'].append({'idcurso': clases.idcurso, 'nombre': clases.nombre_curso })
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}       	
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def registrar_ejercicio(request):
@@ -129,8 +129,9 @@ def registrar_ejercicio(request):
         Esta vista es para registrar un ejercicio. A esta se le envia la imagen en base64 y ya se
         decodifica y se guarda en la carpeta correspondiente. En la base de datos se guarda la url.
     """
+
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         
         token = data.get('token', 'null')
         idcentro = data.get('idcentro', 'null')
@@ -148,18 +149,21 @@ def registrar_ejercicio(request):
         consejo = data.get('consejo', 'null')
         tipo = data.get('tipo', '')        
         comprobar_usuario = Tokenregister.objects.filter(token=token)
-
+        import pdb
+        pdb.set_trace()
         if comprobar_usuario.count() > 0:
             token_usuario = Tokenregister.objects.get(token=token)
             comprobar_profesor = Profesor.objects.filter(idusuario=token_usuario.userid.id)
             if comprobar_profesor.count() > 0:
-                id_materia = MateriasEjercicios.objects.get(idmateria=materia)
-                id_curso = CursosEjercicios.objects.get(idcursos=curso)
+                profesor = Profesor.objects.get(idusuario=token_usuario.userid.id)
+                materia_recuperada = MateriasEjercicios.objects.get(idmateria=materia)
+                curso_recuperado = CursosEjercicios.objects.get(idcursos=curso)
+
                 if imagen != "null":
                     datetime_now = str(datetime.datetime.now())
                     ruta_imagen = config.ruta_imagen_1 + datetime_now + "." + extension
                     ruta_imagen = ruta_imagen.replace(" ", "+")
-                    ruta_imagen2 = ruta_imagen_konecta2 + ruta_imagen
+                    ruta_imagen2 = config.ruta_imagen_konecta2 + ruta_imagen
                     ruta_imagen2 = ruta_imagen2.replace(" ","+")
                     file = open(ruta_imagen2, "w")
                     image_b64 = imagen.replace(" ","+")
@@ -171,14 +175,15 @@ def registrar_ejercicio(request):
                     ruta_imagen = config.ruta_imagen_default
                     imagen_o_default = "Ejercicio guardado con imagen default"
 
-                dificultad_ejercicio = Dificultad.objects.get(iddificultad=dificultad)
+                dificultad_ejercicio = Dificultad.objects.get(iddificultad= dificultad)
                 tema_ejercicio = Tema.objects.get(idtema=idtema)
+
 
                 ejercicio_guardado = Ejercicios(tipo=tipo,
                 titulo=titulo, idcentro=idcentro, tema=tema_ejercicio, 
-                interfaz=interfaz, idprofesor=token_usuario.userid, 
+                interfaz=interfaz, idprofesor=profesor,
                 descripcion=descripcion, dificultad=dificultad_ejercicio, 
-                imagen=ruta_imagen, materia=id_materia, curso=id_curso, 
+                imagen=ruta_imagen, materia=materia_recuperada, curso=curso_recuperado,
                 calculadora=calculadora, resultado=resultado, consejo=consejo)
 
                 ejercicio_guardado.save()
@@ -188,11 +193,11 @@ def registrar_ejercicio(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
-    except BaseException, e:
+    except Exception as e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def modificar_ejercicio(request):
@@ -219,7 +224,7 @@ def modificar_ejercicio(request):
         decodifica y se guarda en la carpeta correspondiente. En la base de datos se guarda la url.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         idejercicio = data.get('idejercicio')
         token = data.get('token', 'null')
         descripcion = data.get('descripcion', 'null')
@@ -278,11 +283,11 @@ def modificar_ejercicio(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def enviar_ejercicio_individual(request):
@@ -297,15 +302,22 @@ def enviar_ejercicio_individual(request):
         }
         Esta vista le envia un ejercicio a un alumno.
     """
+    import pdb
+    pdb.set_trace()
+
     try:
-        data = simplejson.loads(request.POST['data'])
+        print "hola"
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idejercicio = data.get('idejercicio', 'null')
         idalumno = data.get('idalumno', 'null')
+        todos=Tokenregister.objects.all()
+        print todos
         comprobar_usuario = Tokenregister.objects.filter(token=token)
-
+        print comprobar_usuario
         if comprobar_usuario.count() > 0:
             token_usuario = Tokenregister.objects.get(token=token)
+            print token
             comprobar_profesor = Profesor.objects.filter(idusuario=token_usuario.userid.id)
             if comprobar_profesor.count() > 0:
                 obtener_profesor = Profesor.objects.get(idusuario=token_usuario.userid.id)
@@ -321,7 +333,7 @@ def enviar_ejercicio_individual(request):
                         corregir_ejercicio.save()
                         ejercicio_pendiente = EjerciciosPendientes(idprofesor=obtener_profesor, idcorregir=corregir_ejercicio,idejercicio=obtener_ejercicio, idalumno=obtener_usuario, fecha=fecha)
                         ejercicio_pendiente.save()
-                        
+                        print "llego"
                         response_data = {'result': 'ok', 'message': 'Ejercicio enviado'}
                     else:
                         response_data = {'result': 'fail', 'message': 'Ejercicio no encontrado'}                
@@ -332,11 +344,12 @@ def enviar_ejercicio_individual(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
+        print "mensjae :", e.message
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def enviar_ejercicio_todos(request):
@@ -354,7 +367,7 @@ def enviar_ejercicio_todos(request):
         Esta vista con el id del ejercicio, se lo manda a todos los alumnos que se envien.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idejercicio = data.get('idejercicio', 'null')
         idalumnos = data.get('idalumnos', 'null')
@@ -388,11 +401,11 @@ def enviar_ejercicio_todos(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def informacion_usuario(request):
@@ -408,7 +421,7 @@ def informacion_usuario(request):
         Esta vista devuelve los datos de un alumno.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idusuario = data.get('idusuario', 'null')
         tipo = data.get('tipo', 'null')
@@ -497,11 +510,11 @@ def informacion_usuario(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def temas_ejercicios(request):
@@ -516,7 +529,7 @@ def temas_ejercicios(request):
         Esta vista devuelve las materias de los ejercicios.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idmateria = data.get('idmateria', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
@@ -546,11 +559,11 @@ def temas_ejercicios(request):
 
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def materias_ejercicios(request):
@@ -565,7 +578,7 @@ def materias_ejercicios(request):
         Esta vista devuelve las materias de los ejercicios.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idcurso = data.get('idcurso', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
@@ -585,11 +598,11 @@ def materias_ejercicios(request):
 
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def cursos_ejercicios(request):
@@ -603,7 +616,7 @@ def cursos_ejercicios(request):
         Esta vista devuelve los cursos de los ejercicios.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
         if comprobar_usuario.count() > 0:
@@ -622,11 +635,11 @@ def cursos_ejercicios(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def crear_curso(request):
@@ -641,7 +654,7 @@ def crear_curso(request):
         Esta vista devuelve los cursos de los ejercicios.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         nombre = data.get('nombre', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
@@ -652,11 +665,11 @@ def crear_curso(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def crear_materia(request):
@@ -672,7 +685,7 @@ def crear_materia(request):
         Esta vista devuelve los cursos de los ejercicios.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idcurso = data.get('idcurso', 'null')
         nombre = data.get('nombre', 'null')
@@ -685,11 +698,11 @@ def crear_materia(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def crear_tema(request):
@@ -706,7 +719,7 @@ def crear_tema(request):
         Esta vista devuelve los cursos de los ejercicios.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         tipo = data.get('tipo', 'null')
         idmateria = data.get('idmateria', 'null')
@@ -726,10 +739,10 @@ def crear_tema(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def ejercicios_totales(request):
@@ -748,7 +761,7 @@ def ejercicios_totales(request):
         Esta vista devuelve los ejercicios correspondientes a una materia y un ejercicio.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idcurso = data.get('idcurso', 'null')
         idmateria = data.get('idmateria', 'null')
@@ -780,11 +793,11 @@ def ejercicios_totales(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def ejercicios_totales_android(request):
@@ -803,7 +816,7 @@ def ejercicios_totales_android(request):
         Esta vista devuelve los ejercicios correspondientes a una materia y un ejercicio.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idcurso = data.get('idcurso', 'null')
         idmateria = data.get('idmateria', 'null')
@@ -835,11 +848,11 @@ def ejercicios_totales_android(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
 @csrf_exempt
 def dificultad_ejercicios(request):
@@ -853,7 +866,7 @@ def dificultad_ejercicios(request):
         Esta vista devuelve las dificultades de los ejercicios.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
         if comprobar_usuario.count() > 0:
@@ -864,11 +877,11 @@ def dificultad_ejercicios(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def favorito_crear(request):
@@ -884,7 +897,7 @@ def favorito_crear(request):
         Este metodo pone como favorito un curso, una materia o un tema.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         tipo = data.get('tipo', 'null')
         idfavorito = data.get('idfavorito', 'null')
@@ -908,10 +921,10 @@ def favorito_crear(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def favorito_borrar(request):
@@ -927,7 +940,7 @@ def favorito_borrar(request):
         Este metodo borra como favorito un curso, una materia o un tema.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         tipo = data.get('tipo', 'null')
         idfavorito = data.get('idfavorito', 'null')
@@ -951,10 +964,10 @@ def favorito_borrar(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 
 @csrf_exempt
@@ -970,7 +983,7 @@ def detalles_ejercicio_java(request):
         Esta vista le manda al usuario los detalles del ejercicio del cual ha enviado el id.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idejercicio = data.get('idejercicio', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
@@ -1001,11 +1014,11 @@ def detalles_ejercicio_java(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def eliminar_ejercicio(request):
@@ -1021,7 +1034,7 @@ def eliminar_ejercicio(request):
     """
     try:
 
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idejercicio = data.get('idejercicio', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
@@ -1046,11 +1059,11 @@ def eliminar_ejercicio(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 
 @csrf_exempt
@@ -1066,7 +1079,7 @@ def crear_clase(request):
         Esta vista crea las clases a las que van unidas los usuarios.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         nombre = data.get('nombre', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
@@ -1081,11 +1094,11 @@ def crear_clase(request):
         else:
             response_data = {'result': 'fail', 'message': 'Sesion cancelada, ha iniciado sesion desde otro terminal'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 
 @csrf_exempt
@@ -1106,7 +1119,7 @@ def corregir_ejercicio(request):
         Esta vista guarda en la tabla corregir los ejercicios del alumno con los datos correspondientes.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idejercicio = data.get('idejercicio', 'null')
         resultado = data.get('resultado', 'null')
@@ -1168,17 +1181,17 @@ def corregir_ejercicio(request):
                     cojer_corregir.save()
                     
                     response_data = {'result':'ok', 'message':'Modificado'}
-                    return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                    return HttpResponse(json.dumps(response_data), mimetype="application/json")
             else:
                 response_data = {'result': 'fail', 'message':'No se encuentra el id corregir'}
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def ver_corregir_ejercicio(request):
@@ -1193,7 +1206,7 @@ def ver_corregir_ejercicio(request):
         Esta vista muestra los ejercicios que el profesor tiene pendientes por corregir.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idalumno = data.get('idalumno', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
@@ -1226,11 +1239,11 @@ def ver_corregir_ejercicio(request):
             response_data = {'result':'fail', 'message':'Token no encontrado'}
 
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def ver_imagen_corregir(request):
@@ -1245,7 +1258,7 @@ def ver_imagen_corregir(request):
         Esta vista envia la imagen de un ejercicio de la tabla corregir
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idcorregir = data.get('idcorregir', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
@@ -1264,11 +1277,11 @@ def ver_imagen_corregir(request):
             response_data = {'result':'fail', 'message':'Token no encontrado'}
 
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def eliminar_corregir(request):
@@ -1283,7 +1296,7 @@ def eliminar_corregir(request):
         Esta vista elimina el ejercicio a corregir del cual se mande el id.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idcorregir = data.get('idcorregir', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
@@ -1297,11 +1310,11 @@ def eliminar_corregir(request):
                 response_data = {'result':'fail', 'message':'No existe el ejercicio a corregir'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 
 
@@ -1319,7 +1332,7 @@ def modificar_curso_ejercicio(request):
         }
         Esta vista modifica un curso de ejercicios"""
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idcurso = data.get('idcurso', 'null')
         nombre = data.get('nombre', 'null')
@@ -1336,11 +1349,11 @@ def modificar_curso_ejercicio(request):
                 response_data = {'result':'fail', 'message':'Curso no encontrado'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def modificar_materia_ejercicio(request):
@@ -1355,7 +1368,7 @@ def modificar_materia_ejercicio(request):
         }
         Esta vista modifica una materia de ejercicios"""
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idmateria = data.get('idmateria', 'null')
         nombre = data.get('nombre', 'null')
@@ -1372,11 +1385,11 @@ def modificar_materia_ejercicio(request):
                 response_data = {'result':'fail', 'message':'Materia no encontrada'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def modificar_tema_ejercicio(request):
@@ -1391,7 +1404,7 @@ def modificar_tema_ejercicio(request):
         }
         Esta vista modifica un tema de ejercicios"""
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idtema = data.get('idmateria', 'null')
         nombre = data.get('nombre', 'null')
@@ -1408,11 +1421,11 @@ def modificar_tema_ejercicio(request):
                 response_data = {'result':'fail', 'message':'Tema no encontrado'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def eliminar_curso_ejercicio(request):
@@ -1427,7 +1440,7 @@ def eliminar_curso_ejercicio(request):
         Esta vista elimina un curso de ejercicios y con el las materias, temas y ejercicios relacionados.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idcurso = data.get('idcurso', 'null')
 
@@ -1448,11 +1461,11 @@ def eliminar_curso_ejercicio(request):
                 response_data = {'result':'fail', 'message':'Curso no encontrado'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def eliminar_materia_ejercicio(request):
@@ -1467,7 +1480,7 @@ def eliminar_materia_ejercicio(request):
         Esta vista elimina una materia de ejercicios y con el los temas y ejercicios relacionados.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idmateria = data.get('idmateria', 'null')
 
@@ -1487,11 +1500,11 @@ def eliminar_materia_ejercicio(request):
                 response_data = {'result':'fail', 'message':'Materia no encontrada'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
 @csrf_exempt
 def eliminar_tema_ejercicio(request):
@@ -1506,7 +1519,7 @@ def eliminar_tema_ejercicio(request):
         Esta vista elimina un tema de ejercicios y con el los ejercicios relacionados.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idtema = data.get('idtema', 'null')
 
@@ -1523,11 +1536,11 @@ def eliminar_tema_ejercicio(request):
                 response_data = {'result':'fail', 'message':'Materia no encontrada'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def detalles_usuario(request):
@@ -1543,7 +1556,7 @@ def detalles_usuario(request):
         Esta vista devuelve los datos de un alumno.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idusuario = data.get('idusuario', 'null')
         tipo = data.get('tipo', 'null')
@@ -1586,7 +1599,7 @@ def detalles_usuario(request):
                         }
                         for cursos in profesor_existe.curso.all():
                             response_data['cursos'].append({'idcurso': cursos.idcurso, 'nombre_curso': cursos.nombre_curso})
-                        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
                     else:
                         response_data = {'result':'fail', 'message': 'El perfil del profesor no existe'}
                 else:
@@ -1623,25 +1636,25 @@ def detalles_usuario(request):
                             for profesores in Profesor.objects.filter(curso=cursos):
                                 response_data['profesores'].append({'nombre': profesores.nombre + " " + profesores.apellido1})
                                 
-                        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
                     else:
                         response_data = {'result':'fail', 'message': 'El perfil del alumno no existe'}
-                        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
                 else:
                     response_data =  {'result':'fail', 'message': 'El usuario no existe'}
-                    return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                    return HttpResponse(json.dumps(response_data), mimetype="application/json")
             else:
                     response_data =  {'result':'fail', 'message': 'Tipo no encontrado'}
-                    return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+                    return HttpResponse(json.dumps(response_data), mimetype="application/json")
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
             
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def guardar_incidencia(request):
@@ -1657,7 +1670,7 @@ def guardar_incidencia(request):
         Esta vista guarda / modifica una incidencia
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idusuario = data.get('idusuario', 'null')
         comentario = data.get('comentario', 'null')
@@ -1677,11 +1690,11 @@ def guardar_incidencia(request):
                 response_data = {'result':'ok'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def guardar_observacion(request):
@@ -1697,7 +1710,7 @@ def guardar_observacion(request):
         Esta vista guarda una observacion de un usuario.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idusuario = data.get('idusuario', 'null')
         comentario = data.get('comentario', 'null')
@@ -1717,11 +1730,11 @@ def guardar_observacion(request):
                 response_data = {'result':'ok'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def ver_observacion(request):
@@ -1736,7 +1749,7 @@ def ver_observacion(request):
         Esta vistamuestra una observacion de un usuario.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idusuario = data.get('idusuario', 'null')
         
@@ -1750,11 +1763,11 @@ def ver_observacion(request):
                 response_data = {'result':'fail'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
 @csrf_exempt
 def ver_incidencia(request):
@@ -1769,7 +1782,7 @@ def ver_incidencia(request):
         Esta vista muestra una incidencia de un alumno.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idusuario = data.get('idusuario', 'null')
         
@@ -1783,11 +1796,11 @@ def ver_incidencia(request):
                 response_data = {'result':'fail'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
 @csrf_exempt
 def materias_totales_java(request):
@@ -1801,7 +1814,7 @@ def materias_totales_java(request):
         Esta vista muestra todas las materias.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
         if comprobar_usuario.count() > 0:
@@ -1810,10 +1823,10 @@ def materias_totales_java(request):
                 response_data['materias'].append({'nombre': materia.nombre, 'idmateria': materia.idmateria})
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")    
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")    
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def detalles_ejercicio_profesor(request):
@@ -1828,7 +1841,7 @@ def detalles_ejercicio_profesor(request):
         Esta vista le manda al usuario los detalles del ejercicio del cual ha enviado el id.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idejercicio = data.get('idejercicio', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
@@ -1845,11 +1858,11 @@ def detalles_ejercicio_profesor(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def reenviar_ejercicio(request):
@@ -1865,7 +1878,7 @@ def reenviar_ejercicio(request):
         }
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idejercicio = data.get('idejercicio', 'null')
         idalumno = data.get('idalumno', 'null')
@@ -1897,11 +1910,11 @@ def reenviar_ejercicio(request):
         else:
             response_data = {'result':'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 """
 -------------------------------Gestion de ejercicios Android-----------------------------------------------------------
 """
@@ -1916,7 +1929,7 @@ def ejercicios_normales(request):
         }
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
         if comprobar_usuario.count() > 0:
@@ -1946,11 +1959,11 @@ def ejercicios_normales(request):
                                                         'consejo': ejercicio.consejo, 'tipo': ejercicio.tipo})
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
 @csrf_exempt
 def ejercicios_clase(request):
@@ -1964,7 +1977,7 @@ def ejercicios_clase(request):
         
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
         if comprobar_usuario.count() > 0:
@@ -2000,11 +2013,11 @@ def ejercicios_clase(request):
                                                         'interfaz': ejercicio.idejercicio.interfaz, 'nombre_completo': alumno.nombre + " "+ alumno.apellido1+ " " + alumno.apellido2})
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def controles(request):
@@ -2018,7 +2031,7 @@ def controles(request):
         
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
         if comprobar_usuario.count() > 0:
@@ -2054,11 +2067,11 @@ def controles(request):
                                                         'interfaz': ejercicio.idejercicio.interfaz, 'nombre_completo': alumno.nombre + " "+ alumno.apellido1+ " " + alumno.apellido2})
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def examenes(request):
@@ -2072,7 +2085,7 @@ def examenes(request):
         
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
         if comprobar_usuario.count() > 0:
@@ -2108,11 +2121,11 @@ def examenes(request):
                                                         'interfaz': ejercicio.idejercicio.interfaz, 'nombre_completo': alumno.nombre + " "+ alumno.apellido1+ " " + alumno.apellido2})
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
 @csrf_exempt
 def globales(request):
@@ -2126,7 +2139,7 @@ def globales(request):
         
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
         if comprobar_usuario.count() > 0:
@@ -2162,11 +2175,11 @@ def globales(request):
                                                         'interfaz': ejercicio.idejercicio.interfaz, 'nombre_completo': alumno.nombre + " "+ alumno.apellido1+ " " + alumno.apellido2})
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def corregir(request):
@@ -2180,7 +2193,7 @@ def corregir(request):
         
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
         if comprobar_usuario.count() > 0:
@@ -2211,10 +2224,10 @@ def corregir(request):
                                 'nota_auto': corregir.nota})
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 

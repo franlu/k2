@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
 from django.contrib import auth
 from django.template import RequestContext
-from django.utils import simplejson
+
 from django.utils.translation import ugettext as _
 from django.core.mail import send_mail
 from django.conf import settings
@@ -35,11 +35,11 @@ def todas_clases(request):
     	response_data = {'clases': [], 'result': 'ok'}
         for cursos in Cursos.objects.all():
             response_data['clases'].append({'id': cursos.idcurso, 'nombre': cursos.nombre_curso})
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def ejercicios_pendientes(request):
@@ -53,7 +53,7 @@ def ejercicios_pendientes(request):
         Esta vista muestra al usuario que envia el token, los ejercicios pendientes por hacer que tiene.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
 
@@ -72,11 +72,11 @@ def ejercicios_pendientes(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def detalles_ejercicio(request):
@@ -91,7 +91,7 @@ def detalles_ejercicio(request):
         Esta vista le manda al usuario los detalles del ejercicio del cual ha enviado el id.
     """
     try:
-        data = simplejson.loads(request.POST['data'])
+        data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idejercicio = data.get('idejercicio', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
@@ -112,9 +112,9 @@ def detalles_ejercicio(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(simplejson.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 

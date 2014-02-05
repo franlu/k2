@@ -31,7 +31,7 @@ class Permisos(models.Model):
     eliminar_ejercicio = models.CharField(max_length=5)
 
     def __unicode__(self):
-        return self.idusuario
+        return u"%s" % self.idusuario
 
 
 class Tokenregister(models.Model):
