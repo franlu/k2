@@ -9,7 +9,8 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.core.mail import send_mail
 from django.conf import settings
-from konecta2app.models import Permisos, MateriasEjercicios, Incidencias, Notificacion, CursosEjercicios, EjerciciosPendientes, EjerciciosClase, Examenes
+
+from konecta2app.models import EjerciciosAll,EstadoEjercicios, Permisos, MateriasEjercicios, Incidencias, Notificacion, CursosEjercicios, EjerciciosPendientes, EjerciciosClase, Examenes
 from konecta2app.models import TiposEjercicios, Tema, Tokenregister, Cursos, Observaciones, Profesor, Alumno, Invitado, Ejercicios, Dificultad, Corregir, Controles, Globales
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
@@ -297,24 +298,24 @@ def enviar_ejercicio_individual(request):
             {
             "token":"token"
             "idejercicio":"idejercicio"
-            "idalumno":"idalumno" //la de user    
+            "idalumno":"idalumno"
+             "idclase" : "idclase"//la de user
             }
         }
         Esta vista le envia un ejercicio a un alumno.
     """
-    import pdb
-    pdb.set_trace()
+
 
     try:
-        print "hola"
         data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idejercicio = data.get('idejercicio', 'null')
         idalumno = data.get('idalumno', 'null')
+        idclase= data.get('idclase','null')
         todos=Tokenregister.objects.all()
-        print todos
+
         comprobar_usuario = Tokenregister.objects.filter(token=token)
-        print comprobar_usuario
+
         if comprobar_usuario.count() > 0:
             token_usuario = Tokenregister.objects.get(token=token)
             print token
@@ -323,16 +324,35 @@ def enviar_ejercicio_individual(request):
                 obtener_profesor = Profesor.objects.get(idusuario=token_usuario.userid.id)
                 obtener_usuario = User.objects.filter(id=idalumno)
                 if obtener_usuario.count() > 0:
-                    obtener_usuario = User.objects.get(id=idalumno)
+                    alumno = Alumno.objects.get(idusuario=idalumno)
                     obtener_ejercicio = Ejercicios.objects.filter(idejercicio=idejercicio)
                     if obtener_ejercicio.count() > 0:
-                        fecha = datetime.datetime.now(pytz.utc)+datetime.timedelta(0,7200)
-                        fecha = str(fecha)
+                        fecha = datetime.datetime.now()
+                        print "apunto de enviar"
                         obtener_ejercicio = Ejercicios.objects.get(idejercicio=idejercicio)
-                        corregir_ejercicio = Corregir(idusuario=obtener_usuario, estado="sin hacer",urlimagen="null", materia=obtener_ejercicio.materia, idejercicio=obtener_ejercicio)
-                        corregir_ejercicio.save()
-                        ejercicio_pendiente = EjerciciosPendientes(idprofesor=obtener_profesor, idcorregir=corregir_ejercicio,idejercicio=obtener_ejercicio, idalumno=obtener_usuario, fecha=fecha)
-                        ejercicio_pendiente.save()
+                        tipoejercicio=obtener_ejercicio.tipo
+                        curso=Cursos.objects.get(idcurso=1)
+                        materia=obtener_ejercicio.materia
+                        estado=EstadoEjercicios.objects.get(idestado=1)
+                        print curso
+
+
+                        ejercicio_enviado = EjerciciosAll(idejercicio=obtener_ejercicio,
+                                                          idprofesor=obtener_profesor,
+                                                          idalumno=alumno,
+                                                          idclase=curso,
+                                                          materia=materia,
+                                                          fecha_envio=fecha,
+                                                          idestadoejercicio=estado,
+                                                          idtipoejercicios=tipoejercicio
+
+                                                          )
+                        ejercicio_enviado.save()
+
+                        #corregir_ejercicio = Corregir(idusuario=obtener_usuario, estado="sin hacer",urlimagen="null", materia=obtener_ejercicio.materia, idejercicio=obtener_ejercicio)
+                        #corregir_ejercicio.save()
+                        #ejercicio_pendiente = EjerciciosPendientes(idprofesor=obtener_profesor, idcorregir=corregir_ejercicio,idejercicio=obtener_ejercicio, idalumno=obtener_usuario, fecha=fecha)
+                        #ejercicio_pendiente.save()
                         print "llego"
                         response_data = {'result': 'ok', 'message': 'Ejercicio enviado'}
                     else:
@@ -344,12 +364,12 @@ def enviar_ejercicio_individual(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-    except BaseException, e:
-        print "mensjae :", e.message
+    except Exception as e:
+
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def enviar_ejercicio_todos(request):
@@ -539,29 +559,36 @@ def temas_ejercicios(request):
             response_data = {'result':'ok', 'temas_publicos':[], 'temas_publicos_favoritos':[], 'temas_privados':[], 'temas_privados_favoritos':[]}
             for temas in Tema.objects.filter(materia=id_materia):
                 if temas.tipo == "publico":
-                    if str(temas.favorito.all()) == "[]":
-                        response_data['temas_publicos'].append({'idtema': temas.idtema, 'nombre': temas.nombre, 'tipo': temas.tipo})
+
+                    es_favorito=False
                     for favorito in temas.favorito.all():
                         if favorito.id == cojer_usuario.userid.id:
-                            response_data['temas_publicos_favoritos'].append({'idtema': temas.idtema, 'nombre': temas.nombre, 'tipo': temas.tipo})
-                        else:
-                            response_data['temas_publicos'].append({'idtema': temas.idtema, 'nombre': temas.nombre, 'tipo': temas.tipo})
+                            es_favorito=True
+
+                    if es_favorito:
+                        response_data['temas_publicos_favoritos'].append({'idtema': temas.idtema, 'nombre': temas.nombre, 'tipo': temas.tipo})
+                    else:
+                        response_data['temas_publicos'].append({'idtema': temas.idtema, 'nombre': temas.nombre, 'tipo': temas.tipo})
+
+
                 else:
                     if int(temas.tipo) == int(cojer_usuario.userid.id):
-                        if str(temas.favorito.all()) == "[]":
-                            response_data['temas_privados'].append({'idtema': temas.idtema, 'nombre': temas.nombre, 'tipo': temas.tipo})
-
+                        es_favorito=False
                         for favorito in temas.favorito.all():
                             if favorito.id == cojer_usuario.userid.id:
-                                response_data['temas_privados_favoritos'].append({'idtema': temas.idtema, 'nombre': temas.nombre, 'tipo': temas.tipo})
-                            else:
-                                response_data['temas_privados'].append({'idtema': temas.idtema, 'nombre': temas.nombre, 'tipo': temas.tipo})
+                                es_favorito=True
+
+
+                        if es_favorito:
+                            response_data['temas_privados_favoritos'].append({'idtema': temas.idtema, 'nombre': temas.nombre, 'tipo': temas.tipo})
+                        else:
+                            response_data['temas_privados'].append({'idtema': temas.idtema, 'nombre': temas.nombre, 'tipo': temas.tipo})
 
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
         return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
-    except BaseException, e:
+    except Exception as e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
         return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
@@ -587,13 +614,15 @@ def materias_ejercicios(request):
             id_curso = CursosEjercicios.objects.get(idcursos=idcurso)
             response_data = {'result':'ok', 'materias_ejercicios':[], 'materias_ejercicios_favoritos':[]}
             for materias in MateriasEjercicios.objects.filter(curso=id_curso):
-                if str(materias.favorito.all()) == "[]":
-                    response_data['materias_ejercicios'].append({'idmateria': materias.idmateria, 'nombre': materias.nombre})
+                es_favorito=False
                 for favorito in materias.favorito.all():
-                    if favorito.id == cojer_usuario.userid.id:
-                        response_data['materias_ejercicios_favoritos'].append({'idmateria': materias.idmateria, 'nombre': materias.nombre})
-                    else:
-                        response_data['materias_ejercicios'].append({'idmateria': materias.idmateria, 'nombre': materias.nombre})
+                    if favorito.id==cojer_usuario.userid.id:
+                        es_favorito=True
+
+                if es_favorito:
+                    response_data['materias_ejercicios_favoritos'].append({'idmateria': materias.idmateria, 'nombre': materias.nombre})
+                else:
+                    response_data['materias_ejercicios'].append({'idmateria': materias.idmateria, 'nombre': materias.nombre})
 
 
         else:
@@ -623,13 +652,15 @@ def cursos_ejercicios(request):
             cojer_usuario = Tokenregister.objects.get(token=token)
             response_data = {'result':'ok', 'cursos_ejercicios':[], 'cursos_ejercicios_favoritos':[]}
             for curso in CursosEjercicios.objects.all():
-                if str(curso.favorito.all()) == "[]":
-                    response_data['cursos_ejercicios'].append({'idcurso': curso.idcursos, 'nombre': curso.nombre})
+                es_favorito=False
                 for favorito in curso.favorito.all():
                     if favorito.id == cojer_usuario.userid.id:
-                        response_data['cursos_ejercicios_favoritos'].append({'idcurso': curso.idcursos, 'nombre': curso.nombre})
-                    else:
-                        response_data['cursos_ejercicios'].append({'idcurso': curso.idcursos, 'nombre': curso.nombre})
+                        es_favorito=True
+
+                if es_favorito:
+                    response_data['cursos_ejercicios_favoritos'].append({'idcurso': curso.idcursos, 'nombre': curso.nombre})
+                else:
+                    response_data['cursos_ejercicios'].append({'idcurso': curso.idcursos, 'nombre': curso.nombre})
 
                     
         else:
