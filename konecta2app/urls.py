@@ -19,6 +19,6 @@ urlpatterns = patterns('',
     url(r'^reset_password/$','konecta2app.views.reset_password'),
 
 
-    url(r'^insertar/$','konecta2app.insertarprofesores.insertar_profesores'),
+    #url(r'^insertar/$','konecta2app.insertarprofesores.insertar_profesores'),
 
 )

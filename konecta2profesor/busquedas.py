@@ -19,7 +19,7 @@ from django.db.models import Q
 
 #from konecta2 import settings
 #from konecta2 import config
-from konecta2app.models import Tokenregister, Profesor, EjerciciosAll
+from konecta2app.models import Tokenregister, Profesor, EjerciciosAll, MateriasEjercicios, Cursos, Alumno, TiposEjercicios
 
 #import string
 import pytz
@@ -134,7 +134,9 @@ def search(request):
         }
 
     """
-
+    import pdb
+    pdb.set_trace()
+    print "entra"
     try:
 
         data = json.loads(request.POST['data'])
@@ -149,7 +151,7 @@ def search(request):
 
         try:
             coger_usuario = Tokenregister.objects.get(token=token)
-            profesor = Profesor.objects.get(idusuario=cojer_usuario.userid)
+            profesor = Profesor.objects.get(idusuario=coger_usuario.userid)
         except Tokenregister.DoesNotExist:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
             return HttpResponse(json.dumps(response_data), mimetype="application/json")
@@ -209,10 +211,11 @@ def search(request):
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
         return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
-
+"""
 @csrf_exempt
 def busqueda_filtros(request):
     """
+"""
         {
         data:
             {
@@ -227,8 +230,8 @@ def busqueda_filtros(request):
             
             }
         }
-        
-    """
+        """\
+        """
     try:
         data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
@@ -1111,3 +1114,4 @@ def busqueda_filtros(request):
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
         return HttpResponse(json.dumps(response_data), mimetype="application/json")
+"""

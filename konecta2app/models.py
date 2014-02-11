@@ -168,7 +168,7 @@ class Notificacion(models.Model):
     def __unicode__(self):
         return u"%s" % self.idusuario
 
-"""
+
 class EjerciciosClase(models.Model):
     idejercicioclase = models.AutoField(primary_key=True)
     idejercicio = models.ForeignKey(Ejercicios)
@@ -239,7 +239,7 @@ class Globales(models.Model):
 
     def __unicode__(self):
         return u"%s" % self.idusuario
-"""
+
 
 class Corregir(models.Model):
     idcorregir = models.AutoField(primary_key=True)
