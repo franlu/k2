@@ -313,19 +313,10 @@ class EjerciciosClaseManager(models.Manager):
     def get_queryset(self):
         return super(EjerciciosClaseManager, self).get_queryset().filter(idtipoejercicios=3)
 
+
 class GlobalesManager(models.Manager):
     def get_queryset(self):
         return super(GlobalesManager, self).get_queryset().filter(idtipoejercicios=4)
-
-class TotalManager(models.Manager):
-    def get_query_set(self,):
-        return super(TotalManager, self).get_queryset().filter(idtipoejercicios=4)
-
-    def some_filter(self, alumno):
-        qs = self.get_query_set()
-        return qs.filter(idalumno=alumno)
-
-
 
 
 class EjerciciosAll(models.Model):
@@ -358,9 +349,6 @@ class EjerciciosAll(models.Model):
     controles = ControlesManager()#2
     ejerciciosclase = EjerciciosClaseManager()#3
     globales = GlobalesManager()#4
-
-    todos = TotalManager()
-
 
     def __unicode__(self):
         return u"%s" % self.idejerciciosall

@@ -104,6 +104,18 @@ def get_elementos(request):
         return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 
+def rellenar_response(e, response_data):
+    response_data['ejercicios'].append({'titulo': e.titulo,
+                                        'descripcion': e.idjercicio.descripcion,
+                                        'idejercicio': e.idejercicio.idejercicio,
+                                        'dificultad': e.idejercicio.dificultad.iddificultad,
+                                        'interfaz': e.idejercicio.interfaz,
+                                        'imagen': e.idejercicio.imagen,
+                                        'urlimagen': e.imagen,
+                                        'nota': e.nota,
+                                        'fecha': e.fecha})
+
+
 def search(request):
     """
         {
@@ -122,7 +134,7 @@ def search(request):
         }
 
     """
-"""
+
     try:
 
         data = json.loads(request.POST['data'])
@@ -148,46 +160,33 @@ def search(request):
         formatter_string = "%d/%m/%Y"
         response_data = {'result': 'ok', 'ejercicios': [], 'mensaje': []}
 
+        if idalumno != 'null':
+            if idclase != 'null':
+                if idmateria != 'null':
+                    if idtema != 'null':
+                        if idtipo != 'null':
+                            if idtipo == 1:
+                                ejalumno = EjerciciosAll.examenes.filter(idusuario=idalumno)
+                                ejmate = ejalumno.filter(idmateria=idmateria).filter(idtema=idtema)
+                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
+                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
+                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
+                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
+                                    ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
+                                    for e in ejfecha:
+                                        rellenar_response(e, response_data)
+                                else:
+                                    for e in ejmate:
+                                        rellenar_response(e, response_data)
 
-            if idalumno != 'null':
-                if idclase != 'null':
-                    if idmateria != 'null':
-                        if idtema != 'null':
-                            if idtipo != 'null':
-                                if idtipo == 1:
-                                    ejalumno = EjerciciosAll.examenes.filter(idusuario=idalumno)
-                                    ejmate = ejalumno.filter(idmateria=idmateria).filter(idtema=idtema)
-                                    #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                    if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                        start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                        end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                        ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                        for e in ejfecha:
-                                            response_data['ejercicios'].append({'titulo': e.titulo,
-                                                                    'descripcion': e.idjercicio.descripcion,
-                                                                    'idejercicio': e.idejercicio.idejercicio,
-                                                                    'dificultad': e.idejercicio.dificultad.iddificultad,
-                                                                    'interfaz': e.idejercicio.interfaz,
-                                                                    'imagen': e.idejercicio.imagen,
-                                                                    'urlimagen': e.imagen,
-                                                                    'nota': e.nota,
-                                                                    'fecha': e.fecha})
-                                    else:
-                                        for e in ejmate:
-                                            response_data['ejercicios'].append({'titulo': e.titulo,
-                                                                    'descripcion': e.idjercicio.descripcion,
-                                                                    'idejercicio': e.idejercicio.idejercicio,
-                                                                    'dificultad': e.idejercicio.dificultad.iddificultad,
-                                                                    'interfaz': e.idejercicio.interfaz,
-                                                                    'imagen': e.idejercicio.imagen,
-                                                                    'urlimagen': e.imagen,
-                                                                    'nota': e.nota,
-                                                                    'fecha': e.fecha})
-                                if idtipo == 2:
-                                if idtipo == 3:
-                                if idtipo == 4:
+                            if idtipo == 2:
+                                print "tipo2"
+                            if idtipo == 3:
+                                print "tipo2"
+                            if idtipo == 4:
+                                print "tipo2"
 
-                            else:
+                        else:
                             ejalumno = EjerciciosAll.objects.filter(idusuario=idalumno)
                             ejmate = ejalumno.filter(idmateria=idmateria).filter(idtema=idtema)
                             #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
@@ -196,43 +195,20 @@ def search(request):
                                 end_date = datetime.datetime.strptime(fechafin, formatter_string)
                                 ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
                                 for e in ejfecha:
-                                    response_data['ejercicios'].append({'titulo': e.titulo,
-                                                                    'descripcion': e.idjercicio.descripcion,
-                                                                    'idejercicio': e.idejercicio.idejercicio,
-                                                                    'dificultad': e.idejercicio.dificultad.iddificultad,
-                                                                    'interfaz': e.idejercicio.interfaz,
-                                                                    'imagen': e.idejercicio.imagen,
-                                                                    'urlimagen': e.imagen,
-                                                                    'nota': e.nota,
-                                                                    'fecha': e.fecha})
+                                    rellenar_response(e, response_data)
                             else:
                                 for e in ejmate:
-                                    response_data['ejercicios'].append({'titulo': e.titulo,
-                                                                    'descripcion': e.idjercicio.descripcion,
-                                                                    'idejercicio': e.idejercicio.idejercicio,
-                                                                    'dificultad': e.idejercicio.dificultad.iddificultad,
-                                                                    'interfaz': e.idejercicio.interfaz,
-                                                                    'imagen': e.idejercicio.imagen,
-                                                                    'urlimagen': e.imagen,
-                                                                    'nota': e.nota,
-                                                                    'fecha': e.fecha})
-                        else:
-
-
-
-
+                                    rellenar_response(e, response_data)
+                    else:
+                        print "else tema null"
 
         else: #todos los tipos
             response_data['mensaje'].append('Tipo de ejercicio null')
 
-
-
-
-
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
         return HttpResponse(json.dumps(response_data), mimetype="application/json")
-"""
+
 
 @csrf_exempt
 def busqueda_filtros(request):
