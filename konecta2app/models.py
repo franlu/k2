@@ -41,7 +41,7 @@ class Tokenregister(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return self.tokenid
+        return u"%s" % self.tokenid
 
 
 class Cursos(models.Model):
@@ -73,7 +73,7 @@ class Profesor(models.Model):
     nacimiento = models.DateTimeField()
 
     def __unicode__(self):
-        return self.nombre
+        return u"%s" % self.nombre
 
 
 class Alumno(models.Model):
@@ -87,7 +87,7 @@ class Alumno(models.Model):
     nacimiento = models.DateTimeField()
 
     def __unicode__(self):
-        return self.nombre
+        return u"%s" % self.nombre
 
 
 class CursosEjercicios(models.Model):

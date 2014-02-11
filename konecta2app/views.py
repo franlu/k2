@@ -68,25 +68,18 @@ def login(request):
     En caso de mandar un usuario o password que no exista da un error.
     """
     random1 = id_generator()
-    userlog = []
 
 
-    peticion=request.POST['data']
-    print peticion
+
+
     try:
         userlog = json.loads(request.POST['data'])
-        print userlog
         user = auth.authenticate(username=userlog.get('username'), password=userlog.get('password'))
         finish = 1
         username = userlog.get('username')
-        print username
         password = userlog.get('password')
-
-        print password
         lugar = userlog.get('lugar','null')
         type_user = userlog.get('type')
-
-        print type_user
         username = username.lower()
         if username is None and password is None:
             response_data = {'result': 'fail', 'message': 'Falta el username y el password'}			
@@ -153,7 +146,7 @@ def login(request):
         else:
             response_data = {'result': 'fail', 'message': 'Incorrect data'}			
             return HttpResponse(json.dumps(response_data), mimetype="application/json")
-    except Exception as e:
+    except Exception, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}		
         return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
@@ -273,27 +266,27 @@ def registro(request):
         
         if username is None and password is None:
             response_data = {'result': 'fail', 'message':'Falta usuario y contraseña'}
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
         if username == "null" and password == "null":
             response_data = {'result': 'fail', 'message':'Falta usuario y contraseña'}
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
         if username is None:
             response_data = {'result': 'fail', 'message':'Falta usuario'}
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
         if username == "null":
             response_data = {'result': 'fail', 'message':'Falta usuario'}
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
         if password is None:
             response_data = {'result': 'fail', 'message':'Falta contraseña'}
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
         if password == "null":
             response_data = {'result': 'fail', 'message':'Falta contraseña'}
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
 
         user_exist = User.objects.filter(username=username)
         if user_exist.count() > 0:
             response_data = {'result': 'fail', 'message':'Este usuario ya existe'}
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
         else:
             token_existe = Tokenregister.objects.filter(token=token)
             if token_existe.count()>0:
@@ -345,7 +338,7 @@ def registro(request):
                                     id_curso = Cursos.objects.get(idcurso=unidad_clase)
                                     usuario_profesor.curso.add(id_curso)
                         response_data = {'result': 'ok', 'message':'Usuario tipo profesor registrado'}
-                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+                        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
                     if tipo == "alumno":
                         usuario_alumno = Alumno(idusuario=user, urlimagen=ruta_imagen, nacimiento=fecha_nacimiento, estado="Desconectado", nombre=nombre, apellido1=primer_apellido, apellido2=segundo_apellido)
@@ -359,16 +352,16 @@ def registro(request):
                                     id_curso = Cursos.objects.get(idcurso=unidad_clase)
                                     usuario_alumno.curso.add(id_curso)
                         response_data = {'result': 'ok', 'message':'Usuario tipo alumno registrado'}
-                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+                        return HttpResponse(json.dumps(response_data), content_type="application/json")
                     else:
                         response_data = {'result': 'fail'}
-                        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+                        return HttpResponse(json.dumps(response_data), content_type="application/json")
             else:
                 response_data = {'result': 'fail', 'message':'Token no encontrado'}
-                return HttpResponse(json.dumps(response_data), mimetype="application/json")
+                return HttpResponse(json.dumps(response_data), content_type="application/json")
     except Exception, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def invitado(request):
@@ -724,6 +717,7 @@ def crear_notificacion(request):
 
     """
     try:
+
         data = json.loads(request.POST['data'])
         token = data.get('token', '')
         iddestino = data.get('iddestino', '')
@@ -736,7 +730,7 @@ def crear_notificacion(request):
             if usuario_existe.count() > 0:
                 usuario_existe = User.objects.get(id=iddestino)
                 fecha_expiracion = datetime.datetime.now(pytz.utc)+datetime.timedelta(0,finish)
-                guardar_notificacion = Notificacion(idusuario=usuario_existe, date=fecha_expiracion, tipo=tipo, mensaje=mensaje)
+                guardar_notificacion = Notificacion(idusuario=usuario_existe, fecha=fecha_expiracion, tipo=tipo, mensaje=mensaje)
                 guardar_notificacion.save()
                 response_data = {'result':'ok', 'message':'Notificacion creada'}
             else:
@@ -745,7 +739,7 @@ def crear_notificacion(request):
             response_data = {'result':'fail', 'message':'Token no encontrado'}
         return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
-    except BaseException, e:
+    except Exception as e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
         return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
@@ -770,15 +764,15 @@ def consultar_notificacion(request):
             response_data = {'result':'ok', 'notificaciones':[]}
             for notificacion_individual in notificaciones_total:
                 response_data['notificaciones'].append({'idnotificacion': notificacion_individual.idnotificacion, 'tipo':notificacion_individual.tipo, 'mensaje':notificacion_individual.mensaje})
-                if notificacion_individual.date < datetime.datetime.now(pytz.utc):
+                if notificacion_individual.fecha < datetime.datetime.now(pytz.utc):
                     notificacion_individual.delete()
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-    except BaseException, e:
+    except Exception as e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def borrar_notificacion(request):

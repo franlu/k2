@@ -17,4 +17,8 @@ urlpatterns = patterns('',
     url(r'^reiniciar_password/$','konecta2app.views.reiniciar_password'),
     url(r'^comprobar_token/$','konecta2app.views.comprobar_token'),
     url(r'^reset_password/$','konecta2app.views.reset_password'),
+
+
+    url(r'^insertar/$','konecta2app.insertarprofesores.insertar_profesores'),
+
 )

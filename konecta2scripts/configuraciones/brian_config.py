@@ -14,5 +14,5 @@ ruta_imagen_ejercicios = "/static/ejercicios/"
 db='konecta2'
 usuario='root'
 #ruta del directorio principal de konecta2 
-ruta_imagen_konecta2 = "/home/brian/git/konecta2Django"
+ruta_imagen_konecta2 = "/home/brian/git/konecta2django"
 contrasena='riejumrx50'

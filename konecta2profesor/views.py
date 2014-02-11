@@ -318,7 +318,6 @@ def enviar_ejercicio_individual(request):
 
         if comprobar_usuario.count() > 0:
             token_usuario = Tokenregister.objects.get(token=token)
-            print token
             comprobar_profesor = Profesor.objects.filter(idusuario=token_usuario.userid.id)
             if comprobar_profesor.count() > 0:
                 obtener_profesor = Profesor.objects.get(idusuario=token_usuario.userid.id)
@@ -328,13 +327,11 @@ def enviar_ejercicio_individual(request):
                     obtener_ejercicio = Ejercicios.objects.filter(idejercicio=idejercicio)
                     if obtener_ejercicio.count() > 0:
                         fecha = datetime.datetime.now()
-                        print "apunto de enviar"
                         obtener_ejercicio = Ejercicios.objects.get(idejercicio=idejercicio)
                         tipoejercicio=obtener_ejercicio.tipo
-                        curso=Cursos.objects.get(idcurso=1)
+                        curso=Cursos.objects.get(idcurso=idclase)
                         materia=obtener_ejercicio.materia
                         estado=EstadoEjercicios.objects.get(idestado=1)
-                        print curso
 
 
                         ejercicio_enviado = EjerciciosAll(idejercicio=obtener_ejercicio,
@@ -345,7 +342,6 @@ def enviar_ejercicio_individual(request):
                                                           fecha_envio=fecha,
                                                           idestadoejercicio=estado,
                                                           idtipoejercicios=tipoejercicio
-
                                                           )
                         ejercicio_enviado.save()
 
