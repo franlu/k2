@@ -115,7 +115,7 @@ def rellenar_response(e, response_data):
                                         'nota': e.nota,
                                         'fecha': e.fecha})
 
-
+@csrf_exempt
 def search(request):
     """
         {
@@ -134,9 +134,7 @@ def search(request):
         }
 
     """
-    import pdb
-    pdb.set_trace()
-    print "entra"
+
     try:
 
         data = json.loads(request.POST['data'])
@@ -202,10 +200,14 @@ def search(request):
                                 for e in ejmate:
                                     rellenar_response(e, response_data)
                     else:
-                        print "else tema null"
+                       print "else tema null"
+
+            response_data['mensaje'].append('Respuesta correcta')
 
         else: #todos los tipos
             response_data['mensaje'].append('Tipo de ejercicio null')
+
+        return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
