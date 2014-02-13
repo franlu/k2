@@ -160,6 +160,10 @@ def search(request):
         formatter_string = "%d/%m/%Y"
         response_data = {'result': 'ok', 'ejercicios': [], 'mensaje': []}
 
+        #hacer mapa bits
+        #recorrerlo
+        #filtrar
+
         if idalumno != 'null':
             if idclase != 'null':
                 if idmateria != 'null':
