@@ -39,6 +39,7 @@ coverage.xml
 #.project
 .pydevproject
 .idea/*.*
+.idea/
 .idea
 
 # Rope
