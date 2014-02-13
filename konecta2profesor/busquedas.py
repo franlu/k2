@@ -117,7 +117,16 @@ def rellenar_response(e, response_data):
                                         'imagen': e.idejercicio.imagen,
                                         'urlimagen': e.imagen_profesor, #verificar brian
                                         'nota': e.nota,
-                                        'fecha': e.fecha_envio}) #verificar brian
+                                        'fecha': (e.fecha_envio).strftime("%d-%m-%Y %H:%M:%S")}) #verificar brian
+    """print e.idejercicio.titulo
+    print e.idejercicio.descripcion
+    print e.idejercicio.idejercicio
+    print e.idejercicio.dificultad.iddificultad
+    print e.idejercicio.interfaz
+    print e.idejercicio.imagen
+    print e.imagen_profesor
+    print e.nota
+    print e.fecha_envio"""
 
 @csrf_exempt
 def search(request):
@@ -140,7 +149,6 @@ def search(request):
     """
 
     try:
-
         data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         idalumno = data.get('idalumno', 'null')
@@ -164,33 +172,34 @@ def search(request):
         formatter_string = "%d/%m/%Y"
         response_data = {'result': 'ok', 'ejercicios': [], 'mensaje': []}
 
-        var = [idtipo, idalumno, idclase, idmateria, idtema, fechainicio, fechafin ]
-
-        if var[0] != 'null':
-            if var[0] == '1':
+        if idtipo != 'null':
+            if idtipo == '1':
                 res = EjerciciosAll.examenes.all()
-            if var[0] == '2':
-                res = EjerciciosAll.controles.all()
-            if var[0] == '3':
-                res = EjerciciosAll.ejerciciosclase.all()
-            if var[0] == '4':
-                res = EjerciciosAll.globales.all()
+            else:
+                if idtipo == '2':
+                    res = EjerciciosAll.controles.all()
+                else:
+                    if idtipo == '3':
+                        res = EjerciciosAll.ejerciciosclase.all()
+                    else:
+                        if idtipo == '4':
+                            res = EjerciciosAll.globales.all()
         else:
             res = EjerciciosAll.objects.all()
 
-        if var[1] != 'null':
-            res = res.filter(idalumno=var[1])
-        if var[2] != 'null':
-            res = res.filter(idclase=var[2])
-        if var[3] != 'null':
-            res = res.filter(idmateria=var[3])
-        if var[4] != 'null':
-            res = res.filter(idtema=var[4])
-        if (var[5] != 'null' and var[5] != '') or (var[6] != 'null' and var[6] != ''):
-            start_date = datetime.datetime.strptime(var[5], formatter_string)
-            print start_date
-            end_date = datetime.datetime.strptime(var[6], formatter_string)
-            print end_date
+        if idalumno != 'null':
+            res = res.filter(idalumno=idalumno)
+        if idclase != 'null':
+            res = res.filter(idclase=idclase)
+        if idmateria != 'null':
+            res = res.filter(idmateria=idmateria)
+        if idtema != 'null':
+            res = res.filter(idtema=idtema)
+        if (fechainicio != 'null' and fechainicio != '') or (fechafin != 'null' and fechafin != ''):
+            start_date = datetime.datetime.strptime(fechainicio, formatter_string)
+            print "start_date: ", start_date
+            end_date = datetime.datetime.strptime(fechafin, formatter_string)
+            print "end_date: ", end_date
             res = res.filter(fecha_recibido__range=(start_date, end_date))
 
         for e in res:
