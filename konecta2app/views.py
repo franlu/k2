@@ -83,11 +83,11 @@ def login(request):
         username = username.lower()
         if username is None and password is None:
             response_data = {'result': 'fail', 'message': 'Falta el username y el password'}			
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
 
         if username is None:
             response_data = {'result': 'fail', 'message': 'Falta el username'}				
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
         if password is None:
@@ -114,7 +114,7 @@ def login(request):
                     token1 = user_token.token
                 validity = user_token.date+datetime.timedelta(0,finish)
                 response_data = {'result': 'ok', 'token': user_token.token, 'tipo_usuario': 'Profesor', 'validity': str(validity)}          
-                return HttpResponse(json.dumps(response_data), mimetype="application/json")
+                return HttpResponse(json.dumps(response_data), content_type="application/json")
 
             if tipo1.count() > 0:
                 tipo1 = Alumno.objects.get(idusuario=usuario)
@@ -142,13 +142,13 @@ def login(request):
                         user_token.save()
                     token1 = user_token.token
             response_data = {'tipo_usuario':tipo_usuario,'result': 'ok', 'token': token1}			
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
         else:
             response_data = {'result': 'fail', 'message': 'Incorrect data'}			
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
     except Exception, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}		
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def logout(request):
@@ -184,7 +184,7 @@ def logout(request):
             if tipo2.count() > 0:
                 if lugar == "aplicacionpc":
                     response_data = {'result':'ok'}
-                    return HttpResponse(json.dumps(response_data), mimetype="application/json")
+                    return HttpResponse(json.dumps(response_data), content_type="application/json")
                 else:
                     tipo2 = Profesor.objects.get(idusuario=usuario_encontrado)
                     tipo2.estado = "Desconectado"
@@ -201,12 +201,12 @@ def logout(request):
             response_data = {'result': 'ok'}
         else:
             response_data = {'result': 'fail', 'message':'Token no encontrado'}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except Exception as e:
 
         response_data = {'errorcode': 'E000', 'result': 'error', 'message': e.message}		
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def registro(request):
@@ -392,7 +392,7 @@ def invitado(request):
         if nombre != "null":
             if user_exist.count() > 0:
                 response_data = {'result': 'fail', 'message':'Este usuario ya existe'}
-                return HttpResponse(json.dumps(response_data), mimetype="application/json")
+                return HttpResponse(json.dumps(response_data), content_type="application/json")
             else:
                 user = User.objects.create_user(username=user_name)
                 user.is_active = True
@@ -409,13 +409,13 @@ def invitado(request):
                 user_token = get_object_or_None(Tokenregister, userid=user)
                 validity = user_token.date+datetime.timedelta(0,finish)
                 response_data = {'result': 'ok', 'tipo_usuario': 'Alumno', 'token': token1, 'validity': str(validity)}
-                return HttpResponse(json.dumps(response_data), mimetype="application/json")
+                return HttpResponse(json.dumps(response_data), content_type="application/json")
         else:
             response_data = {'result': 'fail', 'message':'Nombre no recibido'}
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def clases_profesor_usuarios(request):
@@ -446,11 +446,11 @@ def clases_profesor_usuarios(request):
                     response_data['cursos'].append({'idcurso': clases.idcurso, 'nombre': clases.nombre_curso })
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}        
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def ver_usuarios(request):
@@ -503,11 +503,11 @@ def ver_usuarios(request):
                 response_data = {'result': 'fail', 'message':'El usuario no es un profesor'}
         else:
             response_data = {'result': 'fail', 'message':'Token no encontrado'}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def borrar_usuario(request):
@@ -572,11 +572,11 @@ def borrar_usuario(request):
                 response_data = {'result': 'fail', 'message': 'No tienes permisos para realizar la operacion'}
         else:
             response_data = {'result': 'fail', 'message':'Token no encontrado'}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 @csrf_exempt
 def modificar_usuario(request):
     """
@@ -695,11 +695,11 @@ def modificar_usuario(request):
                 response_data = {'result': 'fail', 'message': 'No tienes permisos para realizar la operacion'}
         else:
             response_data = {'result': 'fail', 'message':'Token no encontrado'}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
 @csrf_exempt
@@ -737,11 +737,11 @@ def crear_notificacion(request):
                 response_data = {'result':'fail', 'message':'Usuario no encontrado'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except Exception as e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def consultar_notificacion(request):
@@ -802,10 +802,10 @@ def borrar_notificacion(request):
                 response_data = {'result':'fail', 'message':'Notificacion no encontrada'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def comprobar_pass(request):
@@ -839,11 +839,11 @@ def comprobar_pass(request):
                 response_data = {'result':'fail', 'message':'Usuario no encontrado'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
     
 @csrf_exempt
 def reiniciar_password(request):
@@ -876,11 +876,11 @@ def reiniciar_password(request):
                 response_data = {'result':'fail', 'message':'Usuario no encontrado'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def comprobar_token(request):
@@ -903,11 +903,11 @@ def comprobar_token(request):
             response_data = {'result': 'ok'}
         else:
             response_data = {'result':'fail', 'message':'Token no encontrado'}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
     
 @csrf_exempt
 def reset_password(request):
@@ -936,8 +936,8 @@ def reset_password(request):
             response_data = {'result': 'ok'}
         else:
             response_data = {'result': 'fail'}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
