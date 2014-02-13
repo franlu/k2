@@ -45,6 +45,6 @@ urlpatterns = patterns('',
     
     
     url(r'^get_elementos/$','konecta2profesor.busquedas.get_elementos'),
-    #url(r'^busqueda_filtros/$','konecta2profesor.busquedas.busqueda_filtros'),
+    url(r'^busqueda_filtros/$','konecta2profesor.busquedas.busqueda_filtros'),
     url(r'^busqueda/$','konecta2profesor.busquedas.search'),
 )

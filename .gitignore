@@ -42,6 +42,10 @@ coverage.xml
 .idea/
 .idea
 
+#sqlitedb and settings file for franlu
+dbsqlite
+konecta2/settings.py
+
 # Rope
 .ropeproject
 

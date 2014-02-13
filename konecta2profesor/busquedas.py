@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+
+"""
+        Equipo de desarrollo de konecta2: Brian, Franlu
+        Todos los derechos reservados - Copyright 2014
+"""
+
+
+
 from django.http import HttpResponse, HttpResponseRedirect
 #from django.shortcuts import render_to_response
 #from django.core.context_processors import csrf
@@ -31,10 +39,6 @@ import json
 #from annoying.functions import get_object_or_None
 
 
-
-"""
----------------------------------Gestion de ejercicios Android by brian
-"""
 
 @csrf_exempt
 def get_fecha(fecha):
@@ -105,15 +109,15 @@ def get_elementos(request):
 
 
 def rellenar_response(e, response_data):
-    response_data['ejercicios'].append({'titulo': e.titulo,
-                                        'descripcion': e.idjercicio.descripcion,
+    response_data['ejercicios'].append({'titulo': e.idejercicio.titulo,
+                                        'descripcion': e.idejercicio.descripcion,
                                         'idejercicio': e.idejercicio.idejercicio,
                                         'dificultad': e.idejercicio.dificultad.iddificultad,
                                         'interfaz': e.idejercicio.interfaz,
                                         'imagen': e.idejercicio.imagen,
-                                        'urlimagen': e.imagen,
+                                        'urlimagen': e.imagen_profesor, #verificar brian
                                         'nota': e.nota,
-                                        'fecha': e.fecha})
+                                        'fecha': e.fecha_envio}) #verificar brian
 
 @csrf_exempt
 def search(request):
@@ -160,305 +164,51 @@ def search(request):
         formatter_string = "%d/%m/%Y"
         response_data = {'result': 'ok', 'ejercicios': [], 'mensaje': []}
 
-        #hacer mapa bits
-        #recorrerlo
-        #filtrar
+        var = [idtipo, idalumno, idclase, idmateria, idtema, fechainicio, fechafin ]
 
-        if idalumno != 'null':
-            if idclase != 'null':
-                if idmateria != 'null':
-                    if idtema != 'null':
-                        if idtipo != 'null':
-                            if idtipo == 1:
-                                ejalumno = EjerciciosAll.examenes.filter(idusuario=idalumno).filter(idclase=idclase)
-                                ejmate = ejalumno.filter(idmateria=idmateria).filter(idtema=idtema)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejmate:
-                                        rellenar_response(e, response_data)
+        if var[0] != 'null':
+            if var[0] == '1':
+                res = EjerciciosAll.examenes.all()
+            if var[0] == '2':
+                res = EjerciciosAll.controles.all()
+            if var[0] == '3':
+                res = EjerciciosAll.ejerciciosclase.all()
+            if var[0] == '4':
+                res = EjerciciosAll.globales.all()
+        else:
+            res = EjerciciosAll.objects.all()
 
-                            if idtipo == 2:
-                                ejalumno = EjerciciosAll.controles.filter(idusuario=idalumno)
-                                ejmate = ejalumno.filter(idmateria=idmateria).filter(idtema=idtema)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejmate:
-                                        rellenar_response(e, response_data)
-                            if idtipo == 3:
-                                ejalumno = EjerciciosAll.ejeciciosclase.filter(idusuario=idalumno)
-                                ejmate = ejalumno.filter(idmateria=idmateria).filter(idtema=idtema)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejmate:
-                                        rellenar_response(e, response_data)
-                            if idtipo == 4:
-                                ejalumno = EjerciciosAll.globales.filter(idusuario=idalumno)
-                                ejmate = ejalumno.filter(idmateria=idmateria).filter(idtema=idtema)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejmate:
-                                        rellenar_response(e, response_data)
+        if var[1] != 'null':
+            res = res.filter(idalumno=var[1])
+        if var[2] != 'null':
+            res = res.filter(idclase=var[2])
+        if var[3] != 'null':
+            res = res.filter(idmateria=var[3])
+        if var[4] != 'null':
+            res = res.filter(idtema=var[4])
+        if (var[5] != 'null' and var[5] != '') or (var[6] != 'null' and var[6] != ''):
+            start_date = datetime.datetime.strptime(var[5], formatter_string)
+            print start_date
+            end_date = datetime.datetime.strptime(var[6], formatter_string)
+            print end_date
+            res = res.filter(fecha_recibido__range=(start_date, end_date))
 
-                        else:
-                            ejalumno = EjerciciosAll.objects.filter(idusuario=idalumno)
-                            ejmate = ejalumno.filter(idmateria=idmateria).filter(idtema=idtema)
-                            #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                            if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                for e in ejfecha:
-                                    rellenar_response(e, response_data)
-                            else:
-                                for e in ejmate:
-                                    rellenar_response(e, response_data)
+        for e in res:
+            rellenar_response(e,response_data)
 
-                    else: #tema null
-                        if idtipo != 'null':
-                            if idtipo == 1:
-                                ejalumno = EjerciciosAll.examenes.filter(idusuario=idalumno)
-                                ejmate = ejalumno.filter(idmateria=idmateria)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejmate:
-                                        rellenar_response(e, response_data)
+        response_data['mensaje'].append('Respuesta correcta')
 
-                            if idtipo == 2:
-                                ejalumno = EjerciciosAll.controles.filter(idusuario=idalumno)
-                                ejmate = ejalumno.filter(idmateria=idmateria)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejmate:
-                                        rellenar_response(e, response_data)
-                            if idtipo == 3:
-                                ejalumno = EjerciciosAll.ejeciciosclase.filter(idusuario=idalumno)
-                                ejmate = ejalumno.filter(idmateria=idmateria)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejmate:
-                                        rellenar_response(e, response_data)
-                            if idtipo == 4:
-                                ejalumno = EjerciciosAll.globales.filter(idusuario=idalumno)
-                                ejmate = ejalumno.filter(idmateria=idmateria)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejmate:
-                                        rellenar_response(e, response_data)
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-                        else:
-                            ejalumno = EjerciciosAll.objects.filter(idusuario=idalumno)
-                            ejmate = ejalumno.filter(idmateria=idmateria)
-                            #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                            if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                for e in ejfecha:
-                                    rellenar_response(e, response_data)
-                            else:
-                                for e in ejmate:
-                                    rellenar_response(e, response_data)
-                else: #materia null
-                    if idtema != 'null':
-                        if idtipo != 'null':
-                            if idtipo == 1:
-                                ejalumno = EjerciciosAll.examenes.filter(idusuario=idalumno)
-                                ejmate = ejalumno.filter(idtema=idtema)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejmate:
-                                        rellenar_response(e, response_data)
-
-                            if idtipo == 2:
-                                ejalumno = EjerciciosAll.controles.filter(idusuario=idalumno)
-                                ejmate = ejalumno.filter(idtema=idtema)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejmate:
-                                        rellenar_response(e, response_data)
-                            if idtipo == 3:
-                                ejalumno = EjerciciosAll.ejeciciosclase.filter(idusuario=idalumno)
-                                ejmate = ejalumno.filter(idtema=idtema)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejmate:
-                                        rellenar_response(e, response_data)
-                            if idtipo == 4:
-                                ejalumno = EjerciciosAll.globales.filter(idusuario=idalumno)
-                                ejmate = ejalumno.filter(idtema=idtema)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejmate:
-                                        rellenar_response(e, response_data)
-
-                        else:
-                            ejalumno = EjerciciosAll.objects.filter(idusuario=idalumno)
-                            ejmate = ejalumno.filter(idtema=idtema)
-                            #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                            if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                ejfecha = ejmate.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                for e in ejfecha:
-                                    rellenar_response(e, response_data)
-                            else:
-                                for e in ejmate:
-                                    rellenar_response(e, response_data)
-
-                    else: #tema null
-                        if idtipo != 'null':
-                            if idtipo == 1:
-                                ejalumno = EjerciciosAll.examenes.filter(idusuario=idalumno)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejalumno.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejalumno:
-                                        rellenar_response(e, response_data)
-
-                            if idtipo == 2:
-                                ejalumno = EjerciciosAll.controles.filter(idusuario=idalumno)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejalumno.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejalumno:
-                                        rellenar_response(e, response_data)
-                            if idtipo == 3:
-                                ejalumno = EjerciciosAll.ejeciciosclase.filter(idusuario=idalumno)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejalumno.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejalumno:
-                                        rellenar_response(e, response_data)
-                            if idtipo == 4:
-                                ejalumno = EjerciciosAll.globales.filter(idusuario=idalumno)
-                                #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                                if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                    start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                    end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                    ejfecha = ejalumno.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                    for e in ejfecha:
-                                        rellenar_response(e, response_data)
-                                else:
-                                    for e in ejalumno:
-                                        rellenar_response(e, response_data)
-
-                        else:
-                            ejalumno = EjerciciosAll.objects.filter(idusuario=idalumno)
-                            #Si una de las dos fechas que recibe es null, se envian todos los ejercicios
-                            if (fechainicio != 'null' and fechainicio != '') or (fechafin == 'null' and fechafin == ''):
-                                start_date = datetime.datetime.strptime(fechainicio, formatter_string)
-                                end_date = datetime.datetime.strptime(fechafin, formatter_string)
-                                ejfecha = ejalumno.objects.filter(fecha_recibido__range=(start_date, end_date))
-                                for e in ejfecha:
-                                    rellenar_response(e, response_data)
-                            else:
-                                for e in ejalumno:
-                                    rellenar_response(e, response_data)
+    except BaseException as e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': str(e)}
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
-            response_data['mensaje'].append('Respuesta correcta')
-
-        else: #todos los tipos
-            response_data['mensaje'].append('Alumno igual a null')
-
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
-
-    except BaseException, e:
-        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
-
-"""
 @csrf_exempt
 def busqueda_filtros(request):
     """
-"""
+
         {
         data:
             {
@@ -473,7 +223,7 @@ def busqueda_filtros(request):
             
             }
         }
-        """\
+
         """
     try:
         data = json.loads(request.POST['data'])
@@ -1357,4 +1107,3 @@ def busqueda_filtros(request):
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
         return HttpResponse(json.dumps(response_data), mimetype="application/json")
-"""

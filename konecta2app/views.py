@@ -146,8 +146,8 @@ def login(request):
         else:
             response_data = {'result': 'fail', 'message': 'Incorrect data'}			
             return HttpResponse(json.dumps(response_data), content_type="application/json")
-    except Exception, e:
-        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}		
+    except Exception as e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': str(e)}
         return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
