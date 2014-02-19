@@ -1,63 +1,54 @@
 [
   {
-    "model": "konecta2app.dificultad",
-    "pk": 1,
+    "model": "k2Ejercicio.dificultad",
     "fields": {
-      "nombre": "Muy facil"
+      "nombre": "Muy fácil"
     }
   },
   {
-    "model": "konecta2app.dificultad",
-    "pk": 2,
+    "model": "k2Ejercicio.dificultad",
     "fields": {
-      "nombre": "Facil"
+      "nombre": "Fácil"
     }
   },
   {
-    "model": "konecta2app.dificultad",
-    "pk": 3,
+    "model": "k2Ejercicio.dificultad",
     "fields": {
       "nombre": "Medio"
     }
   },
   {
-    "model": "konecta2app.dificultad",
-    "pk": 4,
+    "model": "k2Ejercicio.dificultad",
     "fields": {
-      "nombre": "Dificil"
+      "nombre": "Difícil"
     }
   },
   {
-    "model": "konecta2app.dificultad",
-    "pk": 5,
+    "model": "k2Ejercicio.dificultad",
     "fields": {
-      "nombre": "Muy dificil"
+      "nombre": "Muy difícil"
     }
   },
   {
-    "model": "konecta2app.tiposejercicios",
-    "pk": 1,
+    "model": "k2Ejercicio.tiposejercicios",
     "fields": {
       "nombre": "Exámenes"
     }
-  },	
+  },
   {
-    "model": "konecta2app.tiposejercicios",
-    "pk": 2,
+    "model": "k2Ejercicio.tiposejercicios",
     "fields": {
       "nombre": "Controles"
     }
   },
   {
-    "model": "konecta2app.tiposejercicios",
-    "pk": 3,
+    "model": "k2Ejercicio.tiposejercicios",
     "fields": {
       "nombre": "Ejercicios de clase"
     }
   },
   {
-    "model": "konecta2app.tiposejercicios",
-    "pk": 4,
+    "model": "k2Ejercicio.tiposejercicios",
     "fields": {
       "nombre": "Globales"
     }
