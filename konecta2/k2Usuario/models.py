@@ -3,22 +3,6 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
-class Permisos(models.Model):
-    idusuario = models.ForeignKey(User)
-    crear_usuario = models.CharField(max_length=5)
-    ver_todos_usuarios = models.CharField(max_length=5)
-    modificar_usuario = models.CharField(max_length=5)
-    eliminar_usuario = models.CharField(max_length=5)
-    ver_notas = models.CharField(max_length=5)
-    modificar_notas = models.CharField(max_length=5)
-    crear_ejercicio = models.CharField(max_length=5)
-    modificar_ejercicio = models.CharField(max_length=5)
-    eliminar_ejercicio = models.CharField(max_length=5)
-
-    def __unicode__(self):
-        return u"%s" % self.idusuario
-
-
 class Tokenregister(models.Model):
     tokenid = models.AutoField(primary_key=True)
     userid = models.ForeignKey(User)
@@ -29,25 +13,25 @@ class Tokenregister(models.Model):
         return u"%s" % self.tokenid
 
 
-class Cursos(models.Model):
+class Clase(models.Model):
     idcurso = models.AutoField(primary_key=True)
-    nombre_curso = models.CharField(max_length=50)
+    nombre_clase = models.CharField(max_length=50)
 
     class Meta:
-        verbose_name_plural = "Cursos"
+        verbose_name_plural = "Clases"
 
     def __unicode__(self):
-        return u"%s" % self.nombre_curso
+        return u"%s" % self.nombre_clase
 
 
 class Profesor(models.Model):
-    idusuario = models.ForeignKey(User)
-    curso = models.ManyToManyField(Cursos)
+    idusuario = models.ForeignKey(User, unique=True)
+    clases = models.ManyToManyField(Clase)
     nombre = models.CharField(max_length=20)
     apellido1 = models.CharField(max_length=20)
     apellido2 = models.CharField(max_length=20, null=True, blank=True)
     estado = models.CharField(max_length=20)
-    urlimagen = models.CharField(max_length=200)
+    urlimagen = models.ImageField(null=False, upload_to='K2Usuario/profesor/avatar/', max_length=24576)
     nacimiento = models.DateTimeField()
 
     class Meta:
@@ -58,13 +42,13 @@ class Profesor(models.Model):
 
 
 class Alumno(models.Model):
-    idusuario = models.ForeignKey(User)
-    curso = models.ManyToManyField(Cursos)
+    idusuario = models.ForeignKey(User, unique=True)
+    clases = models.ManyToManyField(Clase)#Foreingkey clase
     nombre = models.CharField(max_length=20)
     apellido1 = models.CharField(max_length=20)
     apellido2 = models.CharField(max_length=20, null=True, blank=True)
     estado = models.CharField(max_length=20)
-    urlimagen = models.CharField(max_length=200)
+    avatar = models.ImageField(null=True, upload_to='K2Usuario/alumno/avatar/', max_length=24576)
     nacimiento = models.DateTimeField()
 
     class Meta:

@@ -1,4 +1,4 @@
-from django.contrib import admin
+"""from django.contrib import admin
 from models import EjerciciosAll, Ejercicios, MateriasEjercicios, CursosEjercicios, Dificultad, Tema, TiposEjercicios,\
     Notificacion, Corregir, EjerciciosPendientes, Incidencias, Observaciones, EstadoEjercicios
 
@@ -14,4 +14,4 @@ admin.site.register(EjerciciosPendientes)
 admin.site.register(Incidencias)
 admin.site.register(Observaciones)
 admin.site.register(EstadoEjercicios)
-admin.site.register(EjerciciosAll)
+admin.site.register(EjerciciosAll)"""

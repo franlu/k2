@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'debug_toolbar',
     'konecta2',
     'k2Ejercicio',
     'k2Usuario',
@@ -47,6 +48,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -94,3 +96,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(PROJECT_PATH, 'K2media')
+MEDIA_URL = '/media/'
+
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
