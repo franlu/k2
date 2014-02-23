@@ -96,7 +96,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_ROOT = os.path.join(PROJECT_PATH, 'K2media')
+MEDIA_ROOT = os.path.join(PROJECT_PATH, 'static')
 MEDIA_URL = '/media/'
 
-DEBUG_TOOLBAR_PATCH_SETTINGS = False
+#DEBUG_TOOLBAR_PATCH_SETTINGS = False
+
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/pizarra/'

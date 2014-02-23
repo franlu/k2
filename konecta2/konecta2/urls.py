@@ -8,9 +8,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'konecta2.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
+
+    url(r'^login/$', 'konecta2.views.acceso', name='acceso'),
+    url(r'^logout/$', 'konecta2.views.logout', name='logout'),
+    url(r'^pizarra/$', 'konecta2.views.pizarra', name='pizarra'),
     url(r'^', include('k2Ejercicio.urls')),
     url(r'^', include('k2Usuario.urls')),
 
