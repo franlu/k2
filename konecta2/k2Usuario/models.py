@@ -27,40 +27,26 @@ class Clase(models.Model):
 class Profesor(models.Model):
     idusuario = models.ForeignKey(User, unique=True)
     clases = models.ManyToManyField(Clase)
-    avatar = models.ImageField(null=False, upload_to='K2Usuario/profesor/avatar/', max_length=24576)
+    avatar = models.ImageField(null=False, upload_to='k2Usuario/profesor/avatar/', max_length=24576)
     estado = models.CharField(max_length=20)
     nacimiento = models.DateTimeField()
 
     class Meta:
         verbose_name_plural = "Profesores"
 
-    def set_session_key(self, key):
-        if self.last_session_key and not self.last_session_key == key:
-            Session.objects.get(session_key=self.last_session_key).delete()
-        self.last_session_key = key
-        self.save()
-
     def __unicode__(self):
-        return u"%s" % self.first_name
+        return u"%s" % self.idusuario
 
 
 class Alumno(models.Model):
     idusuario = models.ForeignKey(User, unique=True)
     clase = models.ForeignKey(Clase)
-    avatar = models.ImageField(null=True, upload_to='K2Usuario/alumno/avatar/', max_length=24576)
+    avatar = models.ImageField(null=True, upload_to='k2Usuario/alumno/avatar/', max_length=24576)
     estado = models.CharField(max_length=20)
     nacimiento = models.DateTimeField()
 
     class Meta:
         verbose_name_plural = "Alumnos"
 
-
-    def set_session_key(self, key):
-        if self.last_session_key and not self.last_session_key == key:
-            Session.objects.get(session_key=self.last_session_key).delete()
-        self.last_session_key = key
-        self.save()
-
-
     def __unicode__(self):
-        return u"%s" % self.first_name
+        return u"%s" % self.idusuario
