@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'debug_toolbar',
+    'floppyforms',
     'konecta2',
     'k2Ejercicio',
     'k2Usuario',

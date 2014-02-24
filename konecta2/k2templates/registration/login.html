@@ -8,17 +8,16 @@
 {% block content %}
 
 <div id='frontal' class="container">
-    {% if form.errors %}
-    <span class="error">Lo siento, el nombre de usuario y clave no son válidos.</span>
-    {% endif %}
+
 
     <form id="acceso_1" class="form-signin" role="form" name="login" action="/" method='post'>{% csrf_token %}
         <h2 class="form-signin-heading">Konecta2 Online</h2>
-        {% if form.username.errors %} <span class="error">{{ form.username.errors|join:", " }}</span>{% endif %}
         <input id="username" name="username" type="text" class="form-control" placeholder="Usuario" required autofocus>
-        {% if form.password.errors %} <span class="error">{{ form.password.errors|join:", " }}</span>{% endif %}
         <input id="password" name="password" type="password" class="form-control" placeholder="Clave" required>
         <button id="submit" name="submit" class="btn btn-lg btn-primary btn-block" type="submit" value="Entrar" >Entrar</button>
+        {% if form.errors %}
+            <p class="form-error">Acceso denegado. Compruebe usuario y clave.</p>
+        {% endif %}
     </form>
 </div>
 

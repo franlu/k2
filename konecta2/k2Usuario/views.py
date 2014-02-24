@@ -5,12 +5,13 @@ import django.contrib.auth.views as authviews
 import django.http as http
 
 from django.contrib.auth.models import User
-from django.shortcuts import render_to_response
+from django.shortcuts import render, render_to_response
 from django.template.context import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
 from annoying.functions import get_object_or_None
-from k2Usuario.models import Alumno, Profesor, Tokenregister
+from k2Usuario.models import Alumno, Clase, Profesor, Tokenregister
+from k2Usuario.forms import ClaseForm
 
 import datetime
 import json
@@ -130,15 +131,10 @@ def logout(request):
         data = json.loads(request.POST['data'])
         token = data.get('token', '')
         lugar = data.get('lugar', '')
-        print token
         tr = Tokenregister.objects.filter(token=token)
-        print tr.count()
         if tr.count() > 0:
             user_token = Tokenregister.objects.get(token=token)
-            print user_token
             usuario_encontrado = User.objects.get(id=user_token.userid.id)
-            print usuario_encontrado.username
-
             tipo1 = Alumno.objects.filter(idusuario=usuario_encontrado)
             tipo2 = Profesor.objects.filter(idusuario=usuario_encontrado)
             #tipo3 = Invitado.objects.filter(idusuario=usuario_encontrado)
@@ -217,3 +213,20 @@ def logoutweb(request):
     """
     auth.logout(request)
     return render_to_response('registration/logout.html', context_instance=RequestContext(request))
+
+def setClase(request):
+
+    if request.method == 'POST': # If the form has been submitted...
+        # ContactForm was defined in the the previous section
+        form = ClaseForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+
+            nuevaClase = Clase.objects.create(nombre="Ringo Starr")
+
+            return http.HttpResponseRedirect('/pizarra/') # Redirect after POST
+    else:
+        form = ClaseForm() # An unbound form
+
+    return render(request, 'k2Usuario/clase.html', {
+        'form': form,
+    })
