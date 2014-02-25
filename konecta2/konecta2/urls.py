@@ -13,8 +13,8 @@ urlpatterns = patterns('',
     url(r'^login/$', 'k2Usuario.views.accesoweb', name='loginweb'),
     url(r'^logout/$', 'k2Usuario.views.logoutweb', name='logoutweb'),
     url(r'^pizarra/$', 'konecta2.views.pizarra', name='pizarra'),
-    url(r'^', include('k2Ejercicio.urls')),
-    url(r'^', include('k2Usuario.urls')),
+    url(r'^pizarra/', include('k2Ejercicio.urls')),
+    url(r'^pizarra/', include('k2Usuario.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
 

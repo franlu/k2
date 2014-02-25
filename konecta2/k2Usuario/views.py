@@ -216,16 +216,23 @@ def logoutweb(request):
 
 def setClase(request):
 
-    if request.method == 'POST': # If the form has been submitted...
-        # ContactForm was defined in the the previous section
-        form = ClaseForm(request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
+    if request.method == 'POST':
+        form = ClaseForm(request.POST)
+        if form.is_valid():
+            #recoger el valor
+            #comprobar que ya existe
+            nombre = request.POST['data'].get('nombre')
+            print nombre
 
-            nuevaClase = Clase.objects.create(nombre="Ringo Starr")
+            s = Clase.objects.filter(nombre=nombre)
+            if s > 0:
+                print "Ya Existe la clase"
+            else:
+                uevaClase = Clase.objects.create(nombre=nombre)
 
-            return http.HttpResponseRedirect('/pizarra/') # Redirect after POST
+            return http.HttpResponseRedirect('/pizarra/')
     else:
-        form = ClaseForm() # An unbound form
+        form = ClaseForm()
 
     return render(request, 'k2Usuario/clase.html', {
         'form': form,

@@ -15,7 +15,7 @@ class Tokenregister(models.Model):
 
 
 class Clase(models.Model):
-    nombre = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=50)#unique=True
 
     class Meta:
         verbose_name_plural = "Clases"
