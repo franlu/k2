@@ -215,25 +215,35 @@ def logoutweb(request):
     return render_to_response('registration/logout.html', context_instance=RequestContext(request))
 
 def setClase(request):
-
+    err = ''
     if request.method == 'POST':
-        form = ClaseForm(request.POST)
-        if form.is_valid():
-            #recoger el valor
-            #comprobar que ya existe
-            nombre = request.POST['data'].get('nombre')
-            print nombre
+        req = request.POST
+        form = ClaseForm(req)
 
+        if form.is_valid():
+            nombre = req.get('nombre','')
             s = Clase.objects.filter(nombre=nombre)
             if s > 0:
-                print "Ya Existe la clase"
+                 form = ClaseForm()
+                 err = "La clase '%s' ya esta creada." % nombre
             else:
-                uevaClase = Clase.objects.create(nombre=nombre)
+                nuevaClase = Clase.objects.create(nombre=nombre)
+                return http.HttpResponseRedirect('/pizarra/')
 
-            return http.HttpResponseRedirect('/pizarra/')
+
     else:
         form = ClaseForm()
 
-    return render(request, 'k2Usuario/clase.html', {
+
+    return render(request, 'k2Usuario/nuevaclase.html', {
         'form': form,
+        'error': err,
+    })
+
+
+def getClases(request):
+    cl = Clase.objects.all()
+
+    return render(request, 'k2Usuario/clases.html', {
+        'clases': cl,
     })

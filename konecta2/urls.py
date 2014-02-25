@@ -9,7 +9,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 
-    url(r'^$', 'k2Usuario.views.accesoweb', name='loginwen'),
+    url(r'^$', 'k2Usuario.views.accesoweb', name='loginweb'),
     url(r'^login/$', 'k2Usuario.views.accesoweb', name='loginweb'),
     url(r'^logout/$', 'k2Usuario.views.logoutweb', name='logoutweb'),
     url(r'^pizarra/$', 'konecta2.views.pizarra', name='pizarra'),

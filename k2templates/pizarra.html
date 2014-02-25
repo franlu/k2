@@ -11,7 +11,8 @@
     <h1>Pizarra</h1>
     <div class="row">
         <h1>Gestión Usuarios</h1>
-        <a href="add/clase/">Añadir Clase</a>
+        <a href="{% url 'k2Usuario.views.setClase'%}">Añadir Clase</a>
+        <a href="{% url 'k2Usuario.views.getClases'%}">Ver Clases</a>
         <a href="">Añadir Alumnos</a>
         <a href="">Ver Alumnos</a>
     </div>
