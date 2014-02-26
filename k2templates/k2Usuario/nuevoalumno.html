@@ -8,7 +8,7 @@
 {% block content %}
 
 <div id='frontal' class="container">
-    <form class="form-signin" action="{% url 'k2Usuario.views.setAlumno' %}" method="post">{% csrf_token %}
+    <form class="form-signin" action="{% url 'k2Usuario.views.setAlumno' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
         {{ form.as_p }}
         <button id="submit" name="submit" class="btn btn-lg btn-primary" type="submit" value="Añadir" >Añadir</button>
         <a href="/pizarra/"  id="volver" name="volver" class="btn btn-lg btn-primary" value="Volver" >Volver</a>

@@ -9,8 +9,9 @@ class ImageThumbnailFileInput(forms.ClearableFileInput):
 class AlumnoForm(forms.ModelForm):
     class Meta:
         model = Alumno
-        fields={
-            #'avatar'
+        """fields={
+            'avatar',
+
         }
         widgets = {
             'username': forms.TextInput,
@@ -18,7 +19,7 @@ class AlumnoForm(forms.ModelForm):
             'estado': forms.TextInput,
             'avatar': ImageThumbnailFileInput,
             'nacimiento': forms.DateTimeInput
-        }
+        }"""
 
 
 

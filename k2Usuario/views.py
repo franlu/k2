@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 import django.contrib.auth as auth
 import django.contrib.auth.views as authviews
 import django.http as http
@@ -13,6 +15,7 @@ from annoying.functions import get_object_or_None
 from k2Usuario.models import Alumno, Clase, Profesor, Tokenregister
 from k2Usuario.forms import AlumnoForm,ClaseForm
 
+import base64
 import datetime
 import json
 import pytz
@@ -247,24 +250,26 @@ def getClases(request):
         'clases': cl,
     })
 
+def handle_uploaded_file(f):
+    with open('some/file/name.txt', 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+
+from konecta2 import settings
 
 def setAlumno(request):
     err = ''
     if request.method == 'POST':
-        req = request.POST
-        form = AlumnoForm(req)
-
+        form = AlumnoForm(request.POST, request.FILES)
         if form.is_valid():
-            """nombre = req.get('nombre','')
-            s = Clase.objects.filter(nombre=nombre)
-            if s > 0:
-                 form = ClaseForm()
-                 err = "La clase '%s' ya esta creada." % nombre
-            else:
-                nuevaClase = Clase.objects.create(nombre=nombre)
-                return http.HttpResponseRedirect('/pizarra/')
-            """
-            print "Form OK"
+
+            img = request.FILES['avatar']
+            userid = request.POST['idusuario']
+            path = 'k2Usuario/alumno/avatar/%s_%s.jpg' % (userid, img.name)
+            img_save = default_storage.save(path, ContentFile(img.read()))
+
+            nuevoAlumno = Alumno.objects.create(estado="Desconectado")
+
             return http.HttpResponseRedirect('/pizarra/')
 
     else:
