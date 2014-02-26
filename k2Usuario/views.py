@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from annoying.functions import get_object_or_None
 from k2Usuario.models import Alumno, Clase, Profesor, Tokenregister
-from k2Usuario.forms import ClaseForm
+from k2Usuario.forms import AlumnoForm,ClaseForm
 
 import datetime
 import json
@@ -240,10 +240,47 @@ def setClase(request):
         'error': err,
     })
 
-
 def getClases(request):
     cl = Clase.objects.all()
 
     return render(request, 'k2Usuario/clases.html', {
         'clases': cl,
+    })
+
+
+def setAlumno(request):
+    err = ''
+    if request.method == 'POST':
+        req = request.POST
+        form = AlumnoForm(req)
+
+        if form.is_valid():
+            """nombre = req.get('nombre','')
+            s = Clase.objects.filter(nombre=nombre)
+            if s > 0:
+                 form = ClaseForm()
+                 err = "La clase '%s' ya esta creada." % nombre
+            else:
+                nuevaClase = Clase.objects.create(nombre=nombre)
+                return http.HttpResponseRedirect('/pizarra/')
+            """
+            print "Form OK"
+            return http.HttpResponseRedirect('/pizarra/')
+
+    else:
+        form = AlumnoForm()
+
+
+    return render(request, 'k2Usuario/nuevoalumno.html', {
+        'form': form,
+        'error': err,
+    })
+
+
+def getAlumnos(request):
+
+    al = Alumno.objects.all()
+
+    return render(request, 'k2Usuario/alumnos.html', {
+        'alumnos': al,
     })

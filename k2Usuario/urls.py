@@ -5,5 +5,7 @@ urlpatterns = patterns('',
     (r'^logintab/$', 'k2Usuario.views.login'),
     (r'^logoutab/$', 'k2Usuario.views.logout'),
     (r'^nueva/clase/$', 'k2Usuario.views.setClase'),
-    (r'^ver/clases/$', 'k2Usuario.views.getClases')
+    (r'^ver/clases/$', 'k2Usuario.views.getClases'),
+    (r'^nuevo/alumno/$', 'k2Usuario.views.setAlumno'),
+    (r'^ver/alumnos/$', 'k2Usuario.views.getAlumnos')
  )

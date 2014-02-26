@@ -10,17 +10,38 @@
 <div id='frontal' class="container">
     <h1>Pizarra</h1>
     <div class="row">
-        <h1>Gestión Usuarios</h1>
-        <a href="{% url 'k2Usuario.views.setClase'%}">Añadir Clase</a>
-        <a href="{% url 'k2Usuario.views.getClases'%}">Ver Clases</a>
-        <a href="">Añadir Alumnos</a>
-        <a href="">Ver Alumnos</a>
+        <h1 class="">Gestión Usuarios</h1>
+        <ul>
+            <li><a href="{% url 'k2Usuario.views.getClases'%}">Clases</a></li>
+                <ul>
+                    <li><a href="{% url 'k2Usuario.views.setClase'%}">Añadir</a></li>
+                </ul>
+            <li><a href="{% url 'k2Usuario.views.getAlumnos'%}">Alumnos</a></li>
+                <ul>
+                    <li><a href="{% url 'k2Usuario.views.setAlumno'%}">Añadir</a></li>
+                </ul>
+        </ul>
     </div>
     <div class="row">
         <h1>Gestión Ejercicios</h1>
+            <ul>
+            <li><a href="">Materia</a></li>
+                <ul>
+                    <li><a href="">Añadir</a></li>
+                </ul>
+            <li><a href="">Tema</a></li>
+                <ul>
+                    <li><a href="">Añadir</a></li>
+                </ul>
+            <li><a href="">Ejercicio</a></li>
+                <ul>
+                    <li><a href="">Añadir</a></li>
+                </ul>
+        </ul>
     </div>
     <div class="row">
-        <a href="/logout/">Salir</a>
+        <br />
+        <a class="btn btn-primary" href="/logout/">Salir</a>
     </div>
 
 
