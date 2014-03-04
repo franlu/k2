@@ -13,8 +13,10 @@ class Tokenregister(models.Model):
     def __unicode__(self):
         return u"%s" % self.tokenid
 
-#conjunto de alumnos
 class Clase(models.Model):
+    """
+        Agrupar alumnos
+    """
     nombre = models.CharField(max_length=30,unique=True)
 
     class Meta:

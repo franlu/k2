@@ -8,5 +8,5 @@ urlpatterns = patterns('',
     (r'^clases/$', 'k2Usuario.views.getClases'),
     (r'^clases/alumnos/nuevo/$', 'k2Usuario.views.setAlumno'),
     (r'^clases/alumnos/$', 'k2Usuario.views.getAlumnos'),
-    (r'^clases/alumnos/(?P<clase_id>\d+)/$', 'k2Usuario.views.getClaseAlumnos')
+    (r'^clases/alumnos/(?P<clase_id>\d+)/$', 'k2Usuario.views.getAlumnosClase')
  )
