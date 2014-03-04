@@ -10,7 +10,7 @@
 <div id='frontal' class="container">
     <h1>Pizarra</h1>
     <div class="row">
-        <h1 class="">Gestión Usuarios</h1>
+        <h1 class="">Alumnos</h1>
         <ul>
             <li><a href="{% url 'k2Usuario.views.getClases'%}">Clases</a></li>
                 <ul>
@@ -23,19 +23,23 @@
         </ul>
     </div>
     <div class="row">
-        <h1>Gestión Ejercicios</h1>
+        <h1>Ejercicios</h1>
             <ul>
-            <li><a href="">Materia</a></li>
+            <li><a href="{% url 'k2Ejercicio.views.getCursos'%}">Cursos</a></li>
                 <ul>
-                    <li><a href="">Añadir</a></li>
+                    <li><a href="{% url 'k2Ejercicio.views.setCurso' %}">Añadir</a></li>
                 </ul>
-            <li><a href="">Tema</a></li>
+            <li><a href="{% url 'k2Ejercicio.views.getMaterias' %}">Materias</a></li>
                 <ul>
-                    <li><a href="">Añadir</a></li>
+                    <li><a href="{% url 'k2Ejercicio.views.setMateria' %}">Añadir</a></li>
                 </ul>
-            <li><a href="">Ejercicio</a></li>
+            <li><a href="{% url 'k2Ejercicio.views.getTemas' %}">Temas</a></li>
                 <ul>
-                    <li><a href="">Añadir</a></li>
+                    <li><a href="{% url 'k2Ejercicio.views.setTema' %}">Añadir</a></li>
+                </ul>
+            <li><a href="{% url 'k2Ejercicio.views.getEjercicios' %}">Ejercicios</a></li>
+                <ul>
+                    <li><a href="{% url 'k2Ejercicio.views.setEjercicio' %}">Añadir</a></li>
                 </ul>
         </ul>
     </div>

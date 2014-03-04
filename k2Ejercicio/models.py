@@ -1,50 +1,46 @@
 # -*- coding: utf-8 -*-
-"""
+
 from django.contrib.auth.models import User
 from django.db import models
 
-from k2Usuario.models import Alumno, Profesor, Cursos
+from k2Usuario.models import Alumno, Profesor
 
 
-class CursosEjercicios(models.Model):
-    idcursos = models.AutoField(primary_key=True)
+class Curso(models.Model):
+    """
+        Agrupar ejercicios
+    """
     favorito = models.ManyToManyField(User)
-    nombre = models.CharField(max_length=200)
+    nombre = models.CharField(max_length=100, unique=True)
 
     class Meta:
-        verbose_name_plural = "CursosEjercicios"
+        verbose_name_plural = "Cursos"
 
     def __unicode__(self):
         return u"%s" % self.nombre
 
-
-class MateriasEjercicios(models.Model):
-    idmateria = models.AutoField(primary_key=True)
-    curso = models.ForeignKey(CursosEjercicios)
+class Materia(models.Model):
+    curso = models.ForeignKey(Curso)
     favorito = models.ManyToManyField(User)
-    nombre = models.CharField(max_length=200)
+    nombre = models.CharField(max_length=30, unique=True)
 
     class Meta:
-        verbose_name_plural = "Materias de ejercicios"
+        verbose_name_plural = "Materias"
 
     def __unicode__(self):
         return u"%s" % self.nombre
-
 
 class Tema(models.Model):
-    idtema = models.AutoField(primary_key=True)
-    materia = models.ForeignKey(MateriasEjercicios)
+    materia = models.ForeignKey(Materia)
     favorito = models.ManyToManyField(User)
-    nombre = models.CharField(max_length=200)
-    tipo = models.CharField(max_length=200)
+    nombre = models.CharField(max_length=100, unique=True)
+    tipo = models.CharField(max_length=20) #Publico Privado ...
 
     def __unicode__(self):
         return u"%s" % self.nombre
 
-
 class Dificultad(models.Model):
-    iddificultad = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=200)
+    nombre = models.CharField(max_length=30, unique=True)
 
     class Meta:
         verbose_name_plural = "Dificultades"
@@ -53,9 +49,8 @@ class Dificultad(models.Model):
         return u"%s" % self.nombre
 
 
-class TiposEjercicios(models.Model):
-    idtipo = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=200)
+class TipoEjercicio(models.Model):
+    nombre = models.CharField(max_length=50, unique=True)
 
     class Meta:
         verbose_name_plural = "Tipo de ejercicios"
@@ -64,23 +59,22 @@ class TiposEjercicios(models.Model):
         return u"%s" % self.nombre
 
 
-class Ejercicios(models.Model):
-    idejercicio = models.AutoField(primary_key=True)
-    idprofesor = models.ForeignKey(Profesor)
-    curso = models.ForeignKey(CursosEjercicios)
-    materia = models.ForeignKey(MateriasEjercicios)
+class Ejercicio(models.Model):
+    profesor = models.ForeignKey(Profesor)
+    curso = models.ForeignKey(Curso)
+    materia = models.ForeignKey(Materia)
     tema = models.ForeignKey(Tema)
     dificultad = models.ForeignKey(Dificultad)
-    tipo = models.ForeignKey(TiposEjercicios)
-    idcentro = models.CharField(max_length=500)
-    titulo = models.CharField(max_length=500)
-    imagen = models.CharField(max_length=500)
+    tipo = models.ForeignKey(TipoEjercicio)
+    centro = models.CharField(max_length=10)
+    titulo = models.CharField(max_length=50)
+    imagen = models.ImageField(null=False, upload_to='k2Ejercicio/img/', max_length=24576)
     descripcion = models.CharField(max_length=3000)
     resultado = models.CharField(max_length=500, null=True, blank=True)
     calculadora = models.CharField(max_length=1)
-    interfaz = models.CharField(max_length=200)
+    interfaz = models.CharField(max_length=50)
     consejo = models.CharField(max_length=200)
-    estado = models.CharField(max_length=200, null=True, blank=True)
+    estado = models.CharField(max_length=30, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Ejercicios"
@@ -90,11 +84,10 @@ class Ejercicios(models.Model):
 
 
 class Notificacion(models.Model):
-    idnotificacion = models.AutoField(primary_key=True)
-    idusuario = models.ForeignKey(User)
+    usuario = models.ForeignKey(User)
     fecha = models.DateTimeField()
-    tipo = models.CharField(max_length=200)
-    mensaje = models.CharField(max_length=200)
+    tipo = models.CharField(max_length=50)
+    mensaje = models.CharField(max_length=200, unique=True)
 
     class Meta:
         verbose_name_plural = "Notificaciones"
@@ -102,12 +95,12 @@ class Notificacion(models.Model):
     def __unicode__(self):
         return u"%s" % self.idusuario
 
-
+"""
 class Corregir(models.Model):
     idcorregir = models.AutoField(primary_key=True)
     idusuario = models.ForeignKey(User)
-    idejercicio = models.ForeignKey(Ejercicios)
-    materia = models.ForeignKey(MateriasEjercicios)
+    idejercicio = models.ForeignKey(Ejercicio)
+    materia = models.ForeignKey(Materia)
     resultado = models.CharField(max_length=500)
     urlimagen = models.CharField(max_length=500)
     estado = models.CharField(max_length=500)
@@ -128,7 +121,7 @@ class Corregir(models.Model):
 class EjerciciosPendientes(models.Model):
     idpendientes = models.AutoField(primary_key=True)
     idprofesor = models.ForeignKey(Profesor)
-    idejercicio = models.ForeignKey(Ejercicios)
+    idejercicio = models.ForeignKey(Ejercicio)
     idalumno = models.ForeignKey(User)
     idcorregir = models.ForeignKey(Corregir)
     fecha = models.DateTimeField()
@@ -138,11 +131,11 @@ class EjerciciosPendientes(models.Model):
 
     def __unicode__(self):
         return u"%s" % self.idpendientes
-
+"""
 
 class Incidencias(models.Model):
-    idusuario = models.ForeignKey(User)
-    comentario = models.CharField(max_length=2000)
+    usuario = models.ForeignKey(User)
+    comentario = models.CharField(max_length=2000, unique=True)
 
     class Meta:
         verbose_name_plural = "Incidencias"
@@ -152,8 +145,8 @@ class Incidencias(models.Model):
 
 
 class Observaciones(models.Model):
-    idusuario = models.ForeignKey(User)
-    comentario = models.CharField(max_length=2000)
+    usuario = models.ForeignKey(User)
+    comentario = models.CharField(max_length=2000, unique=True)
 
     class Meta:
         verbose_name_plural = "Observaciones"
@@ -163,8 +156,7 @@ class Observaciones(models.Model):
 
 
 class EstadoEjercicios(models.Model):
-    idestado = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=200)
+    nombre = models.CharField(max_length=200, unique=True)
 
     class Meta:
         verbose_name_plural = "Estado de ejercicios"
@@ -195,12 +187,12 @@ class GlobalesManager(models.Manager):
 
 class EjerciciosAll(models.Model):
     idejerciciosall = models.AutoField(primary_key=True)
-    idejercicio = models.ForeignKey(Ejercicios)
+    idejercicio = models.ForeignKey(Ejercicio)
     idprofesor = models.ForeignKey(Profesor)
     idalumno = models.ForeignKey(Alumno)
-    idclase = models.ForeignKey(Cursos)
-    idtipoejercicios = models.ForeignKey(TiposEjercicios)
-    materia = models.ForeignKey(MateriasEjercicios)
+    idclase = models.ForeignKey(Curso)
+    idtipoejercicios = models.ForeignKey(TipoEjercicio)
+    materia = models.ForeignKey(Materia)
     idestadoejercicio = models.ForeignKey(EstadoEjercicios)
     fecha_envio = models.DateTimeField()
     fecha_recibido = models.DateTimeField(null=True, blank=True)
@@ -229,4 +221,3 @@ class EjerciciosAll(models.Model):
 
     def __unicode__(self):
         return u"%s" % self.idejerciciosall
-"""
