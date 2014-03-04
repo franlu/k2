@@ -15,7 +15,7 @@ class Tokenregister(models.Model):
 
 
 class Clase(models.Model):
-    nombre = models.CharField(max_length=50)#unique=True
+    nombre = models.CharField(max_length=30,unique=True)
 
     class Meta:
         verbose_name_plural = "Clases"
@@ -28,7 +28,7 @@ class Profesor(models.Model):
     idusuario = models.ForeignKey(User, unique=True)
     clases = models.ManyToManyField(Clase)
     avatar = models.ImageField(null=False, upload_to='k2Usuario/profesor/avatar/', max_length=24576)
-    estado = models.CharField(max_length=20)
+    estado = models.CharField(max_length=15,default='Desconectado')
     nacimiento = models.DateTimeField()
 
     class Meta:
@@ -40,9 +40,9 @@ class Profesor(models.Model):
 
 class Alumno(models.Model):
     idusuario = models.ForeignKey(User, unique=True)
-    clase = models.ForeignKey(Clase)
+    clase = models.ForeignKey(Clase,unique=True)
     avatar = models.ImageField(null=True, upload_to='k2Usuario/alumno/avatar/', max_length=24576)
-    estado = models.CharField(max_length=20)
+    estado = models.CharField(max_length=15,default='Desconectado')
     nacimiento = models.DateTimeField()
 
     class Meta:
