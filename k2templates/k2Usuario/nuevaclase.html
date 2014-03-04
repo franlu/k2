@@ -12,19 +12,6 @@
         {{ form.as_p }}
         <button id="submit" name="submit" class="btn btn-lg btn-primary btn-block" type="submit" value="Añadir" >Añadir</button>
         <a href="/pizarra/"  id="volver" name="volver" class="btn btn-lg btn-primary btn-block" value="Volver" >Volver</a>
-        {% if form.errors %}
-            <p class="form-error">Error</p>
-        {% endif %}
-        {% if error %}
-            <p class="form-error">{{ error }}</p>
-        {% endif %}
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
     </form>
 </div>
 
