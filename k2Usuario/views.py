@@ -7,13 +7,14 @@ import django.contrib.auth.views as authviews
 import django.http as http
 
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, render_to_response
 from django.template.context import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
 from annoying.functions import get_object_or_None
 from k2Usuario.models import Alumno, Clase, Profesor, Tokenregister
-from k2Usuario.forms import AlumnoForm,ClaseForm
+from k2Usuario.forms import AlumnoForm, Alumno1Form,ClaseForm
 
 import base64
 import datetime
@@ -216,7 +217,7 @@ def logoutweb(request):
     """
     auth.logout(request)
     return render_to_response('registration/logout.html', context_instance=RequestContext(request))
-
+from django.contrib import messages
 def setClase(request):
     err = ''
     if request.method == 'POST':
@@ -225,12 +226,13 @@ def setClase(request):
 
         if form.is_valid():
             nombre = req.get('nombre','')
-            s = Clase.objects.filter(nombre=nombre)
+            s = Clase.objects.filter(nombre=nombre).count()
             if s > 0:
                  form = ClaseForm()
                  err = "La clase '%s' ya esta creada." % nombre
             else:
                 nuevaClase = Clase.objects.create(nombre=nombre)
+                messages.add_message(request, messages.INFO, 'Created successfully')
                 return http.HttpResponseRedirect('/pizarra/')
 
 
@@ -243,8 +245,27 @@ def setClase(request):
         'error': err,
     })
 
+
+from django.core.urlresolvers import reverse
+def setClase1(request):
+    data = None
+    if request.method == 'POST':
+        data = request.POST
+
+    form = ClaseForm(data=data)
+    if form.is_valid():
+        form.save()
+        messages.add_message(request, messages.INFO, 'Created successfully')
+        return http.HttpResponseRedirect(reverse('k2Usuario.views.setClase1'))
+    return render_to_response('k2Usuario/nuevaclase.html',
+                              {'form': form},
+                              context_instance=RequestContext(request))
+
 def getClases(request):
-    cl = Clase.objects.all()
+
+    cl = None
+    if Clase.objects.all().count() > 0:
+        cl = Clase.objects.all()
 
     return render(request, 'k2Usuario/clases.html', {
         'clases': cl,
@@ -256,36 +277,49 @@ def handle_uploaded_file(f):
             destination.write(chunk)
 
 from konecta2 import settings
+from django.contrib.auth.forms import UserCreationForm
 
 def setAlumno(request):
-    err = ''
+
+    data = None
     if request.method == 'POST':
-        form = AlumnoForm(request.POST, request.FILES)
-        if form.is_valid():
+        data = request
+        us = UserCreationForm(data.POST, prefix='usuario')
+        al = Alumno1Form(data.POST, data.FILES, prefix='alumno')
 
-            img = request.FILES['avatar']
-            userid = request.POST['idusuario']
-            path = 'k2Usuario/alumno/avatar/%s_%s.jpg' % (userid, img.name)
-            img_save = default_storage.save(path, ContentFile(img.read()))
-
-            nuevoAlumno = Alumno.objects.create(estado="Desconectado")
-
-            return http.HttpResponseRedirect('/pizarra/')
+        if us.is_valid() and al.is_valid():
+            usuario = us.save()
+            alumno = al.save(commit=False)
+            alumno.idusuario = usuario
+            alumno.save()
+            return http.HttpResponseRedirect(reverse('pizarra'))
 
     else:
-        form = AlumnoForm()
+        us = UserCreationForm(prefix='usuario')
+        al = Alumno1Form(prefix='alumno')
 
 
     return render(request, 'k2Usuario/nuevoalumno.html', {
-        'form': form,
-        'error': err,
+        'uf': us,
+        'af': al,
     })
 
 
 def getAlumnos(request):
 
-    al = Alumno.objects.all()
+    al = None
+    if Alumno.objects.all().count() > 0:
+        al = Alumno.objects.all()
 
     return render(request, 'k2Usuario/alumnos.html', {
         'alumnos': al,
+    })
+
+def getClaseAlumnos(request,clase_id):
+
+    al = Alumno.objects.filter(clase=clase_id) or None
+    clase = Clase.objects.get(id=clase_id) or None
+    return render(request, 'k2Usuario/alumnos.html', {
+        'alumnos': al,
+        'clase': clase,
     })

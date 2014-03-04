@@ -12,7 +12,7 @@
         <ul>
             {%if clases %}
             {% for c in clases %}
-                <li>{{ c.nombre }}</li>
+                <li>Nombre: {{ c.nombre }} ( <a href="{% url 'k2Usuario.views.getClaseAlumnos' c.id %}">Mostrar alumnos</a>)</li>
             {% endfor %}
             {% else %}
                 <li>No hay clases. Registrelas <a href="{% url 'k2Usuario.views.setClase' %}">aqui</a>.</li>

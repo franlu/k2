@@ -10,16 +10,20 @@
 <div id='frontal' class="container">
     <div class="form-signin">
         <ul>
-            {%if alumnos %}
+            {% if alumnos %}
+                {% if clase %}
+                    <p>Clase: {{ clase }}<p>
+                {% endif %}
                 <p>Usuario :: Nombre :: Estado<p>
             {% for a in alumnos %}
-                <li>{{ a.idusuario.username }} :: {{ a.idusuario.first_name }} :: {{ a.estado }} </li>
+                <li>{{ a.idusuario.username }} :: {{ a.nombre }} :: {{ a.estado }} </li>
             {% endfor %}
             {% else %}
                 <li>No hay alumnos. Registrelos <a href="{% url 'k2Usuario.views.setAlumno' %}">aqui</a>.</li>
             {% endif%}
          </ul>
-         <a href="/pizarra/"  id="volverpiz" name="volverpiz" class="btn btn-lg btn-primary btn-block" value="Volver" >Ir a la Pizarra</a>
+        <a href="/pizarra/clases/"  id="volvercla" name="volvercla" class="btn btn-lg btn-primary" value="Volver" >Clases</a>
+         <a href="/pizarra/"  id="volverpiz" name="volverpiz" class="btn btn-lg btn-primary" value="Volver" >Ir a la Pizarra</a>
     </div>
 </div>
 

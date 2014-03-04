@@ -9,7 +9,8 @@
 
 <div id='frontal' class="container">
     <form class="form-signin" action="{% url 'k2Usuario.views.setAlumno' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
-        {{ form.as_p }}
+        {{ uf.as_p }}
+        {{ af.as_p }}
         <button id="submit" name="submit" class="btn btn-lg btn-primary" type="submit" value="Añadir" >Añadir</button>
         <a href="/pizarra/"  id="volver" name="volver" class="btn btn-lg btn-primary" value="Volver" >Volver</a>
         {% if form.errors %}
@@ -19,6 +20,16 @@
             <p class="form-error">{{ error }}</p>
         {% endif %}
     </form>
+    <!--
+    <form class="form-signin" action="{% url 'k2Usuario.views.setAlumno' %}" method="post">{% csrf_token %}
+     {{ form.non_field_errors }}
+        <div class="fieldWrapper">
+            {{ form.clase.errors }}
+            <label for="id_clase">Clase:</label>
+            {{ form.clase }}
+        </div>
+        <button id="submit" name="submit" class="btn btn-lg btn-primary btn-block" type="submit" value="Añadir" >Añadir</button>
+     </form>-->
 </div>
 
 {% endblock %}

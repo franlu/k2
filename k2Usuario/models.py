@@ -27,6 +27,9 @@ class Clase(models.Model):
 class Profesor(models.Model):
     idusuario = models.ForeignKey(User, unique=True)
     clases = models.ManyToManyField(Clase)
+    nombre = models.CharField(max_length=20)
+    apellido1 = models.CharField(max_length=20)
+    apellido2 = models.CharField(max_length=20)
     avatar = models.ImageField(null=False, upload_to='k2Usuario/profesor/avatar/', max_length=24576)
     estado = models.CharField(max_length=15,default='Desconectado')
     nacimiento = models.DateTimeField()
@@ -41,9 +44,12 @@ class Profesor(models.Model):
 class Alumno(models.Model):
     idusuario = models.ForeignKey(User, unique=True)
     clase = models.ForeignKey(Clase)
-    avatar = models.ImageField(null=True, upload_to='k2Usuario/alumno/avatar/', max_length=24576)
-    estado = models.CharField(max_length=15,default='Desconectado')
+    nombre = models.CharField(max_length=20)
+    apellido1 = models.CharField(max_length=20)
+    apellido2 = models.CharField(max_length=20)
     nacimiento = models.DateTimeField()
+    estado = models.CharField(max_length=15,default='Desconectado')
+    avatar = models.ImageField(null=True, upload_to='k2Usuario/alumno/avatar/', max_length=24576)
 
     class Meta:
         verbose_name_plural = "Alumnos"
