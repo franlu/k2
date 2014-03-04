@@ -13,7 +13,7 @@ class Tokenregister(models.Model):
     def __unicode__(self):
         return u"%s" % self.tokenid
 
-
+#conjunto de alumnos
 class Clase(models.Model):
     nombre = models.CharField(max_length=30,unique=True)
 
@@ -40,7 +40,7 @@ class Profesor(models.Model):
 
 class Alumno(models.Model):
     idusuario = models.ForeignKey(User, unique=True)
-    clase = models.ForeignKey(Clase,unique=True)
+    clase = models.ForeignKey(Clase)
     avatar = models.ImageField(null=True, upload_to='k2Usuario/alumno/avatar/', max_length=24576)
     estado = models.CharField(max_length=15,default='Desconectado')
     nacimiento = models.DateTimeField()
