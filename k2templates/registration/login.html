@@ -1,5 +1,8 @@
 {% extends "home.html" %}
-{% load static %}
+{% load i18n %}
+{% block extrastyle %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/signin.css" />
+{% endblock %}
 
 {% block header %}
 
@@ -7,6 +10,37 @@
 
 {% block content %}
 
+    <img src="{{ MEDIA_URL }}konecta2/static/k2logo.png" alt="k2logo" class="logo img-responsive">
+    <form action="/login/" class="form-signin" method="post">{% csrf_token %}
+      {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {{ form.non_field_errors|striptags }}
+          </div>
+      {% endif %}
+      {% if not form.username.errors %}
+        <input id="id_username" name="username" type="text" class="form-control" placeholder="Usuario" autofocus>
+      {% else %}
+        <div class="form-group has-error">
+          {% for error in form.username.errors %}
+            <label class="control-label" for="id_username">{{ error }}</label>
+          {% endfor %}
+          <input id="id_username" name="username" type="text" class="form-control" placeholder="Usuario" autofocus>
+        </div>
+      {% endif %}
+      {% if not form.password.errors %}
+        <input id="id_password" name="password" type="text" class="form-control" placeholder="Clave">
+      {% else %}
+        <div class="form-group has-error">
+          {% for error in form.password.errors %}
+            <label class="control-label" for="id_password">{{ error }}</label>
+          {% endfor %}
+          <input id="id_password" name="password" type="text" class="form-control" placeholder="Clave">
+        </div>
+      {% endif %}
+
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
+    </form>
+<!--
 <div id='frontal' class="container">
 
     <img src="{{ MEDIA_URL }}konecta2/static/k2logo.png" alt="k2logo" class="logo img-responsive">
@@ -20,5 +54,5 @@
         {% endif %}
     </form>
 </div>
-
+-->
 {% endblock %}

@@ -7,6 +7,7 @@ import django.http as http
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, render_to_response
 from django.template.context import RequestContext
 from django.views.decorators.csrf import csrf_exempt
@@ -29,7 +30,7 @@ def usuario_generator(size=10, chars=string.ascii_uppercase + string.ascii_lower
 	return ''.join(random.choice(chars) for x in range(size))
 
 @csrf_exempt
-def login(request):
+def logintab(request):
 
     """
     {
@@ -115,7 +116,7 @@ def login(request):
         return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
-def logout(request):
+def logouttab(request):
     """
     {
         data:{
@@ -207,6 +208,7 @@ def accesoweb(request):
         salida = auth.logout(request)
         return authviews.login(request)
 
+@login_required
 def logoutweb(request):
 
     """
@@ -215,6 +217,7 @@ def logoutweb(request):
     auth.logout(request)
     return render_to_response('registration/logout.html', context_instance=RequestContext(request))
 
+@login_required
 def setClase(request):
 
     if request.method == 'POST':
@@ -231,8 +234,10 @@ def setClase(request):
         'form': form,
     })
 
+@login_required
 def getClases(request):
-
+    import pdb
+    pdb.set_trace()
     cl = None
     if Clase.objects.all().count() > 0:
         cl = Clase.objects.all()
@@ -241,6 +246,7 @@ def getClases(request):
         'clases': cl,
     })
 
+@login_required
 def setAlumno(request):
 
     data = None
@@ -266,6 +272,7 @@ def setAlumno(request):
         'af': al,
     })
 
+@login_required
 def getAlumnos(request):
 
     al = None
@@ -276,6 +283,7 @@ def getAlumnos(request):
         'alumnos': al,
     })
 
+@login_required
 def getAlumnosClase(request,clase_id):
 
     al = Alumno.objects.filter(clase=clase_id) or None

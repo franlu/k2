@@ -154,7 +154,7 @@ class EjercicioEnviado(models.Model):
     fecha_envio = models.DateTimeField()
     fecha_recibido = models.DateTimeField(null=True, blank=True)
     nota = models.CharField(max_length=10, null=True, blank=True)
-    bien_mal = models.BooleanField(null=True, blank=True)
+    bien_mal = models.BooleanField(blank=True)
     tiempo_realizacion = models.IntegerField(null=True, blank=True, default=0)
     tiempo_maximo = models.IntegerField(null=True, blank=True, default=0)
     intentos_posibles = models.IntegerField(null=True, blank=True, default=0)

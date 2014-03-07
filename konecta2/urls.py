@@ -9,10 +9,13 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 
-    url(r'^$', 'k2Usuario.views.accesoweb', name='loginweb'),
-    url(r'^login/$', 'k2Usuario.views.accesoweb', name='loginweb'),
-    url(r'^logout/$', 'k2Usuario.views.logoutweb', name='logoutweb'),
-    url(r'^pizarra/$', 'konecta2.views.pizarra', name='pizarra'),
+    url(r'^$', 'konecta2.views.pizarra', name='pizarra'),
+    #url(r'^$', 'django.contrib.auth.views.login', {'template_name': 'registration/login.html'}),
+    url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'registration/login.html'}),
+    url(r'^logout/$', 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html'}),
+    #url(r'^login/$', 'k2Usuario.views.accesoweb', name='loginweb'),
+    #url(r'^logout/$', 'k2Usuario.views.logoutweb', name='logoutweb'),
+    url(r'^pizarra/', 'konecta2.views.pizarra', name='pizarra'),
     url(r'^pizarra/', include('k2Ejercicio.urls')),
     url(r'^pizarra/', include('k2Usuario.urls')),
 

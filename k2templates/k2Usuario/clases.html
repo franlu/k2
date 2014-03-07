@@ -1,5 +1,4 @@
 {% extends "home.html" %}
-{% load static %}
 
 {% block header %}
 
@@ -7,9 +6,7 @@
 
 {% block content %}
 
-<div id='frontal' class="container">
-    <div class="form-signin">
-        <ul>
+         <ul>
             {%if clases %}
             {% for c in clases %}
                 <li>Nombre: {{ c.nombre }} ( <a href="{% url 'k2Usuario.views.getAlumnosClase' c.id %}">Mostrar alumnos</a>)</li>
@@ -19,7 +16,5 @@
             {% endif%}
          </ul>
          <a href="/pizarra/"  id="volverpiz" name="volverpiz" class="btn btn-lg btn-primary btn-block" value="Volver" >Ir a la Pizarra</a>
-    </div>
-</div>
 
 {% endblock %}
