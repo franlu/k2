@@ -158,7 +158,6 @@ class EjercicioEnviado(models.Model):
     tiempo_realizacion = models.IntegerField(null=True, blank=True, default=0)
     tiempo_maximo = models.IntegerField(null=True, blank=True, default=0)
     intentos_posibles = models.IntegerField(null=True, blank=True, default=0)
-    estado = models.CharField(max_length=500, null=True, blank=True)
     intentos_realizados = models.IntegerField(null=True, blank=True, default=0)
     nfallos = models.IntegerField(null=True, blank=True, default=0)
 
