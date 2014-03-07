@@ -1,5 +1,9 @@
 {% extends "home.html" %}
-{% load static %}
+
+{% block extrastyle %}
+    <link href="{{ STATIC_URL }}css/simple-sidebar.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}font-awesome-4.0.3/css/font-awesome.min.css" rel="stylesheet">
+{% endblock %}
 
 {% block header %}
 
@@ -7,7 +11,62 @@
 
 {% block content %}
 
-<div id='frontal' class="container">
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand"><a href="#">konecta2profesor</a>
+                </li>
+                <li><p class="text-primary">Profesor :: {{username}} :: Conectado</p>
+                </li>
+                <li><a href="#"><i class="fa fa-users fa-2x"></i> Clases</a>
+                </li>
+                <li><a href="#"><i class="fa fa-user fa-2x"></i> Alumnos</a>
+                </li>
+                <li><a href="#"><i class="fa fa-briefcase fa-2x"></i> Cursos</a>
+                </li>
+                <li><a href="#"><i class="fa fa-book fa-2x"></i> Materias</a>
+                </li>
+                <li><a href="#"><i class="fa fa-list-alt fa-2x"></i> Temas</a>
+                </li>
+                <li><a href="#"><i class="fa fa-edit fa-2x"></i> Ejercicios</a>
+                </li>
+                <li><a href="/logout/"><i class="fa fa-sign-out fa-2x"></i> Cerrar sesión</a>
+                </li>
+
+            </ul>
+        </div>
+
+        <!-- Page content -->
+        <div id="page-content-wrapper">
+            <div class="content-header">
+                <h1>
+                    <a id="menu-toggle" href="#" class="btn btn-default"><i class="icon-reorder"></i></a>
+                    Pizarra
+                </h1>
+            </div>
+            <!-- Keep all page content within the page-content inset div! -->
+            <div class="page-content inset">
+                <div class="row">
+                    contenido
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {% block extrajs %}
+    <!-- Custom JavaScript for the Menu Toggle -->
+    <script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("active");
+    });
+    </script>
+    {% endblock %}
+        <!--
+<div id='pizarra' class="container">
     <h1>Pizarra</h1>
     <div class="row">
         <h1 class="">Alumnos</h1>
@@ -49,6 +108,6 @@
     </div>
 
 
-</div>
+</div>-->
 
 {% endblock %}

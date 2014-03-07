@@ -236,8 +236,7 @@ def setClase(request):
 
 @login_required
 def getClases(request):
-    import pdb
-    pdb.set_trace()
+
     cl = None
     if Clase.objects.all().count() > 0:
         cl = Clase.objects.all()
