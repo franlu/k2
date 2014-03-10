@@ -44,7 +44,7 @@ coverage.xml
 
 #sqlitedb and settings file for franlu
 dbsqlite
-konecta2/settings.py
+konecta2/local_settings.py
 
 # Rope
 .ropeproject
