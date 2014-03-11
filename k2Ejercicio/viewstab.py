@@ -48,11 +48,11 @@ def cursos_ejercicios(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except BaseException, e:
-        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def materias_ejercicios(request):
@@ -89,11 +89,11 @@ def materias_ejercicios(request):
 
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
-        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except BaseException, e:
-        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def temas_ejercicios(request):
@@ -145,11 +145,11 @@ def temas_ejercicios(request):
 
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
-        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except Exception as e:
-        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def dificultad_ejercicios(request):
@@ -174,8 +174,8 @@ def dificultad_ejercicios(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except BaseException, e:
-        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")

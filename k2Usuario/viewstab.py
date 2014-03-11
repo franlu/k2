@@ -74,7 +74,7 @@ def login(request):
                        user_token.save()
                 validity = user_token.date+datetime.timedelta(0,finish)
                 #response_data = {'result': 'ok', 'token': user_token.token, 'tipo_usuario': 'Profesor', 'validity': str(validity)}
-                #return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+                #return http.HttpResponse(json.dumps(response_data), content_type="application/json")
                 if tipo1.count() > 0:
                     tipo1 = Alumno.objects.get(idusuario=usuario)
                     tipo1.estado = "Conectado"
@@ -180,11 +180,11 @@ def clases_profesor(request):
                 response_data['clases_profesor'].append({'idclase': clases.id, 'nombre': clases.nombre })
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
-        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except BaseException, e:
-        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
 def alumnos_por_clase(request):
@@ -222,8 +222,8 @@ def alumnos_por_clase(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
-        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 
     except BaseException, e:
-        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
-        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
