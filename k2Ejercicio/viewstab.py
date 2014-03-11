@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
 from k2Usuario.models import Alumno, Profesor,Clase, Tokenregister
-from k2Ejercicio.models import Ejercicio, Curso, Materia, Tema
+from k2Ejercicio.models import Ejercicio, Curso, Materia, Tema, Dificultad
 from k2utils.token import id_generator
 
 import datetime
@@ -151,5 +151,31 @@ def temas_ejercicios(request):
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
         return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
 
+@csrf_exempt
+def dificultad_ejercicios(request):
+    """
+        {
+        data:
+            {
+            "token":"token"
+            }
+        }
+        Esta vista devuelve las dificultades de los ejercicios.
+    """
+    try:
+        data = json.loads(request.POST['data'])
+        token = data.get('token', 'null')
+        comprobar_usuario = Tokenregister.objects.filter(token=token)
+        if comprobar_usuario.count() > 0:
+            response_data = {'result':'ok', 'dificultades':[]}
+            for dificultad in Dificultad.objects.all():
+                response_data['dificultades'].append({'iddificultad': dificultad.id, 'nombre': dificultad.nombre})
 
+        else:
+            response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
+        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+
+    except BaseException, e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
+        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
