@@ -18,6 +18,7 @@ urlpatterns = patterns('',
 
     #Direcciones para las tablets
     url(r'^', include('k2Usuario.urlstab')),
+    url(r'^', include('k2Ejercicio.urlstab')),
 
     url(r'^admin/', include(admin.site.urls)),
 
