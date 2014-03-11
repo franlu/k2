@@ -6,7 +6,7 @@ from annoying.functions import get_object_or_None
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
-from k2Usuario.models import Alumno, Profesor, Tokenregister
+from k2Usuario.models import Alumno, Profesor,Clase, Tokenregister
 from k2utils.token import id_generator
 
 import datetime
@@ -23,7 +23,9 @@ def login(request):
             username:"<username>",
             password:"<password>"
             lugar:"<lugar>",
-            type:"<tipo_usuario>"
+
+
+
         }
     }
     Con el usuario y el password, hace un inicio de sesión de los usuarios poniendole el estado en Conectado.
@@ -152,3 +154,76 @@ def logout(request):
     except Exception as e:
         response_data = {'errorcode': 'E000', 'result': 'error', 'message': str(e)}
         return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@csrf_exempt
+def clases_profesor(request):
+    """
+		{
+		data:
+			{
+			"token":"token"
+			}
+		}
+    Esta vista le mostrará al profesor sus clases cuando se logea y abre la ventala donde ve los alumnos.
+    """
+
+    try:
+        data = json.loads(request.POST['data'])
+        token = data.get('token', 'null')
+        comprobar_usuario = Tokenregister.objects.filter(token=token)
+
+        if comprobar_usuario.count() > 0:
+            token_usuario = Tokenregister.objects.get(token=token)
+            cojer_usuario = Profesor.objects.get(idusuario=token_usuario.userid.id)
+            response_data = {'result': 'ok', 'clases_profesor': []}
+            for clases in cojer_usuario.clases.all():
+                response_data['clases_profesor'].append({'idclase': clases.id, 'nombre': clases.nombre })
+        else:
+            response_data = {'result': 'fail', 'message': 'Token no encontrado'}
+        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+
+    except BaseException, e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
+        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+
+@csrf_exempt
+def alumnos_por_clase(request):
+    """
+		{
+		data:
+			{
+			"token":"token"
+			"idclase":"idclase"
+			}
+		}
+    Esta vista es para que el profesor pueda ver todos los alumnos tanto conectados como desconectados, como
+    invitados.
+    """
+    data = []
+    try:
+        data = json.loads(request.POST['data'])
+        token = data.get('token', 'null')
+        idclase = data.get('idclase', 'null')
+        usuario_existe = Tokenregister.objects.filter(token=token)
+
+        if usuario_existe.count() > 0:
+            response_data = {'result': 'ok', 'alumnos_registrados':[]}
+            clase_buscada = Clase.objects.get(id=idclase)
+            alumnos_clase = Alumno.objects.filter(clase=clase_buscada)
+            #invitados_clase = Invitado.objects.filter(curso=clase_buscada)
+
+            #if invitados_clase.count() > 0:
+                #for invitados_unidad in invitados_clase:
+                    #response_data['alumnos_registrados'].append({'clase':clase_buscada.nombre_curso, 'nombre': invitados_unidad.nombre, 'estado': 'Invitado', 'id': invitados_unidad.idusuario.id})
+            if alumnos_clase.count() > 0:
+                for alumnos_unidad in alumnos_clase:
+                    response_data['alumnos_registrados'].append({'clase':clase_buscada.nombre, 'nombre': alumnos_unidad.nombre, 'estado': alumnos_unidad.estado, 'id': alumnos_unidad.idusuario.id})
+
+        else:
+            response_data = {'result': 'fail', 'message': 'Token no encontrado'}
+
+        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")
+
+    except BaseException, e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.message}
+        return http.HttpResponse(json.dumps(response_data), mimetype="application/json")

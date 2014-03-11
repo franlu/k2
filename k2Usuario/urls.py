@@ -2,8 +2,8 @@
 from django.conf.urls import patterns, url
 
 urlpatterns = patterns('',
-    (r'^logintab/$', 'k2Usuario.tabviews.login'),
-    (r'^logoutab/$', 'k2Usuario.tabviews.logout'),
+
+
     (r'^clases/nueva/$', 'k2Usuario.views.setClase'),
     (r'^clases/$', 'k2Usuario.views.getClases'),
     (r'^clases/alumnos/nuevo/$', 'k2Usuario.views.setAlumno'),
