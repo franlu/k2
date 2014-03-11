@@ -28,32 +28,17 @@
         </div>
       {% endif %}
       {% if not form.password.errors %}
-        <input id="id_password" name="password" type="text" class="form-control" placeholder="Clave">
+        <input id="id_password" name="password" type="password" class="form-control" placeholder="Clave">
       {% else %}
         <div class="form-group has-error">
           {% for error in form.password.errors %}
             <label class="control-label" for="id_password">{{ error }}</label>
           {% endfor %}
-          <input id="id_password" name="password" type="text" class="form-control" placeholder="Clave">
+          <input id="id_password" name="password" type="password" class="form-control" placeholder="Clave">
         </div>
       {% endif %}
 
       <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
     </form>
 </div>
-<!--
-<div id='frontal' class="container">
-
-    <img src="{{ MEDIA_URL }}konecta2/static/k2logo.png" alt="k2logo" class="logo img-responsive">
-    <form id="acceso_1" class="form-signin" role="form" name="login" action="/" method='post'>{% csrf_token %}
-
-        <input id="username" name="username" type="text" class="form-control" placeholder="Usuario" required autofocus>
-        <input id="password" name="password" type="password" class="form-control" placeholder="Clave" required>
-        <button id="submit" name="submit" class="btn btn-lg btn-primary btn-block" type="submit" value="Entrar" >Entrar</button>
-        {% if form.errors %}
-            <p class="form-error">Acceso denegado. Compruebe usuario y clave.</p>
-        {% endif %}
-    </form>
-</div>
--->
 {% endblock %}

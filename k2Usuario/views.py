@@ -9,12 +9,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, render_to_response
 from django.template.context import RequestContext
+from django.views.generic import ListView
 
 from k2Usuario.models import Alumno, Clase, Profesor
 from k2Usuario.forms import AlumnoForm, ClaseForm
-
-import datetime
-import pytz
 
 def accesoweb(request):
 
@@ -82,6 +80,12 @@ def setClase(request):
         'form': form,
     })
 
+
+
+class ClaseList(ListView):
+    model = Clase
+
+
 @login_required
 def getClases(request):
 
@@ -89,8 +93,8 @@ def getClases(request):
     if Clase.objects.all().count() > 0:
         cl = Clase.objects.all()
 
-    return render(request, 'k2Usuario/clases.html', {
-        'clases': cl,
+    return render(request, 'k2Usuario/clase_list.html', {
+        'object_list': cl,
     })
 
 @login_required
