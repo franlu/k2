@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
 from k2Usuario.models import Alumno, Profesor,Clase, Tokenregister
-from k2Ejercicio.models import Ejercicio, Curso, Materia, Tema, Dificultad
+from k2Ejercicio.models import Ejercicio, Curso, Materia, Tema, Dificultad, Notificacion
 from k2utils.token import id_generator
 
 import datetime
@@ -354,6 +354,111 @@ def favorito_borrar(request):
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+    except BaseException, e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@csrf_exempt
+def consultar_notificacion(request):
+    """
+        {
+        data:
+            {
+            "token":"token"
+            }
+        }
+    esta vista devuelve las notificaciones tales como ejercicios pendientes, conexiones etc
+    """
+    try:
+        data = json.loads(request.POST['data'])
+        token = data.get('token', '')
+        token_existe = Tokenregister.objects.filter(token=token)
+        if token_existe.count() > 0:
+            token_existe = Tokenregister.objects.get(token=token)
+            notificaciones_total = Notificacion.objects.filter(usuario=token_existe.userid)
+            response_data = {'result':'ok', 'notificaciones':[]}
+            for notificacion_individual in notificaciones_total:
+                response_data['notificaciones'].append({'idnotificacion': notificacion_individual.id, 'tipo':notificacion_individual.tipo, 'mensaje':notificacion_individual.mensaje})
+                if notificacion_individual.fecha < datetime.datetime.now(pytz.utc):
+                    notificacion_individual.delete()
+        else:
+            response_data = {'result':'fail', 'message':'Token no encontrado'}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    except Exception as e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@csrf_exempt
+def crear_notificacion(request):
+    """
+        {
+        data:
+            {
+            "token":"token"
+            "iddestino":"idddestino"
+            "tipo":"tipo"
+            "mensaje":"mensaje"
+            }
+        }
+
+    """
+    try:
+
+        data = json.loads(request.POST['data'])
+        token = data.get('token', '')
+        iddestino = data.get('iddestino', '')
+        tipo = data.get('tipo', '')
+        mensaje = data.get('mensaje', '')
+        finish = 604800
+        token_existe = Tokenregister.objects.filter(token=token)
+        if token_existe.count() > 0:
+            usuario_existe = User.objects.filter(id=iddestino)
+            if usuario_existe.count() > 0:
+                usuario_existe = User.objects.get(id=iddestino)
+                fecha_expiracion = datetime.datetime.now(pytz.utc)+datetime.timedelta(0,finish)
+                guardar_notificacion = Notificacion(usuario=usuario_existe, fecha=fecha_expiracion, tipo=tipo, mensaje=mensaje)
+                guardar_notificacion.save()
+                response_data = {'result':'ok', 'message':'Notificacion creada'}
+            else:
+                response_data = {'result':'fail', 'message':'Usuario no encontrado'}
+        else:
+            response_data = {'result':'fail', 'message':'Token no encontrado'}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    except Exception as e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@csrf_exempt
+def borrar_notificacion(request):
+    """
+        {
+        data:
+            {
+            "token":"token"
+            "idnotificacion":"idnotificacion"
+            }
+        }
+
+    """
+    try:
+        data = json.loads(request.POST['data'])
+        token = data.get('token', '')
+        idnotificacion = data.get('idnotificacion', '')
+        token_existe = Tokenregister.objects.filter(token=token)
+        if token_existe.count() > 0:
+            token_existe = Tokenregister.objects.get(token=token)
+            notificaciones_total = Notificacion.objects.filter(usuario=token_existe.userid, id=idnotificacion)
+            if notificaciones_total.count() > 0:
+                notificaciones_total = Notificacion.objects.get(usuario=token_existe.userid, id=idnotificacion)
+                notificaciones_total.delete()
+                response_data = {'result':'ok', 'message':'Notificacion eliminada'}
+            else:
+                response_data = {'result':'fail', 'message':'Notificacion no encontrada'}
+        else:
+            response_data = {'result':'fail', 'message':'Token no encontrado'}
         return http.HttpResponse(json.dumps(response_data), content_type="application/json")
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
