@@ -33,3 +33,13 @@
 </div>
 
 {% endblock %}
+
+{% block extrajs %}
+
+    <script src="{{ STATIC_URL }}js/bootstrap-datepicker.js"></script>
+    <script>
+        $( "#id_alumno-nacimiento" ).datepicker();
+    </script>
+
+
+{% endblock %}

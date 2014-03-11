@@ -34,7 +34,7 @@ class Profesor(models.Model):
     apellido2 = models.CharField(max_length=20)
     avatar = models.ImageField(null=False, upload_to='k2Usuario/profesor/avatar/', max_length=24576)
     estado = models.CharField(max_length=15,default='Desconectado')
-    nacimiento = models.DateTimeField()
+    nacimiento = models.DateField()
 
     class Meta:
         verbose_name_plural = "Profesores"
@@ -49,7 +49,7 @@ class Alumno(models.Model):
     nombre = models.CharField(max_length=20)
     apellido1 = models.CharField(max_length=20)
     apellido2 = models.CharField(max_length=20)
-    nacimiento = models.DateTimeField()
+    nacimiento = models.DateField()
     estado = models.CharField(max_length=15,default='Desconectado')
     avatar = models.ImageField(null=True, upload_to='k2Usuario/alumno/avatar/', max_length=24576)
 
