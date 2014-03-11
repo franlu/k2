@@ -28,13 +28,13 @@
         </div>
       {% endif %}
       {% if not form.password.errors %}
-        <input id="id_password" name="password" type="text" class="form-control" placeholder="Clave">
+        <input id="id_password" name="password" type="password" class="form-control" placeholder="Clave">
       {% else %}
         <div class="form-group has-error">
           {% for error in form.password.errors %}
             <label class="control-label" for="id_password">{{ error }}</label>
           {% endfor %}
-          <input id="id_password" name="password" type="text" class="form-control" placeholder="Clave">
+          <input id="id_password" name="password" type="password" class="form-control" placeholder="Clave">
         </div>
       {% endif %}
 
