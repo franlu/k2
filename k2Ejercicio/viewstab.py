@@ -179,3 +179,182 @@ def dificultad_ejercicios(request):
     except BaseException, e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
         return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@csrf_exempt
+def ejercicios_totales(request):
+    """
+        {
+        data:
+            {
+            "token":"token"
+            "idcurso":"idcurso"
+            "idmateria":"idmateria"
+            "iddificultad":"iddificultad"
+            "idtema":"idtema"
+            "tipo":"tipo"
+            }
+        }
+        Esta vista devuelve los ejercicios correspondientes a una materia y un ejercicio.
+    """
+    try:
+        data = json.loads(request.POST['data'])
+        token = data.get('token', 'null')
+        idcurso = data.get('idcurso', 'null')
+        idmateria = data.get('idmateria', 'null')
+        iddificultad = data.get('iddificultad', 'null')
+        idtema = data.get('idtema', 'null')
+        tipo = data.get('tipo', 'null')
+        comprobar_usuario = Tokenregister.objects.filter(token=token)
+        if comprobar_usuario.count() > 0:
+            curso_existe = Curso.objects.filter(id=idcurso)
+            materia_existe = Materia.objects.filter(id=idmateria)
+            if curso_existe.count() > 0 and materia_existe.count() > 0:
+                curso_existe = Curso.objects.get(id=idcurso)
+                materia_existe = Materia.objects.get(id=idmateria)
+                dificultad_existe = Dificultad.objects.filter(id=iddificultad)
+                if dificultad_existe.count() > 0:
+                    dificultad_existe = Dificultad.objects.get(id=iddificultad)
+                    tema_existe = Tema.objects.filter(id=idtema)
+                    if tema_existe.count() > 0:
+                        tema_existe = Tema.objects.get(id=idtema)
+                        response_data = {'result':'ok', 'ejercicios':[]}
+                        for ejercicio in Ejercicio.objects.filter(materia=materia_existe, curso=curso_existe, dificultad=dificultad_existe, tema=tema_existe):
+                            response_data['ejercicios'].append({'titulo': ejercicio.titulo, 'idejercicio': ejercicio.id})
+                    else:
+                        response_data = {'result':'fail', 'message':'No existe el tema seleccionado'}
+                else:
+                    response_data = {'result':'fail', 'message':'No existe la dificultad seleccionada'}
+            else:
+                response_data = {'result':'fail', 'message':'No existe la materia o el curso'}
+        else:
+            response_data = {'result': 'fail', 'message': 'Token no encontrado'}
+
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    except BaseException, e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@csrf_exempt
+def detalles_ejercicio(request):
+    """
+        {
+        data:
+            {
+            "token":"token"
+            "idejercicio":"idejercicio"
+            }
+        }
+        Esta vista le manda al usuario los detalles del ejercicio del cual ha enviado el id para mostrar
+        en la lista.
+    """
+    try:
+        data = json.loads(request.POST['data'])
+        token = data.get('token', 'null')
+        idejercicio = data.get('idejercicio', 'null')
+        comprobar_usuario = Tokenregister.objects.filter(token=token)
+
+        if comprobar_usuario.count() > 0:
+
+            comprobar_ejercicio = Ejercicio.objects.filter(id=idejercicio)
+            if comprobar_ejercicio.count() > 0:
+                obtener_ejercicio = Ejercicio.objects.get(id=idejercicio)
+                response_data = {'result': 'ok', 'titulo': obtener_ejercicio.titulo, 'descripcion': obtener_ejercicio.descripcion, 'idejercicio': obtener_ejercicio.id,'dificultad': obtener_ejercicio.dificultad.nombre }
+            else:
+                response_data = {'result':'fail', 'message': 'Ejercicio no encontrado'}
+
+        else:
+            response_data = {'result': 'fail', 'message': 'Token no encontrado'}
+
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    except BaseException, e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@csrf_exempt
+def favorito_crear(request):
+    """
+        {
+        data:
+            {
+            "tipo":"tipo"
+            "idfavorito":"idfavorito"
+            "token":"token"
+            }
+        }
+        Este metodo pone como favorito un curso, una materia o un tema.
+    """
+    try:
+        data = json.loads(request.POST['data'])
+        token = data.get('token', 'null')
+        tipo = data.get('tipo', 'null')
+        idfavorito = data.get('idfavorito', 'null')
+
+        comprobar_usuario = Tokenregister.objects.filter(token=token)
+        if comprobar_usuario.count() > 0:
+            cojer_usuario = Tokenregister.objects.get(token=token)
+
+            if tipo == "curso":
+                cursos_ejercicios = Curso.objects.get(id=idfavorito)
+                cursos_ejercicios.favorito.add(cojer_usuario.userid.id)
+                response_data = {'result': 'ok', 'message': 'Curso marcado como favorito'}
+            if tipo == "materia":
+                materia_ejercicios = Materia.objects.get(id=idfavorito)
+                materia_ejercicios.favorito.add(cojer_usuario.userid.id)
+                response_data = {'result': 'ok', 'message': 'Materia marcada como favorita'}
+            if tipo == "tema":
+                temas_ejercicios = Tema.objects.get(id=idfavorito)
+                temas_ejercicios.favorito.add(cojer_usuario.userid.id)
+                response_data = {'result': 'ok', 'message': 'Tema marcado como favorito'}
+        else:
+            response_data = {'result': 'fail', 'message': 'Token no encontrado'}
+
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+    except BaseException, e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@csrf_exempt
+def favorito_borrar(request):
+    """
+        {
+        data:
+            {
+            "tipo":"tipo"
+            "idfavorito":"idfavorito"
+            "token":"token"
+            }
+        }
+        Este metodo borra como favorito un curso, una materia o un tema.
+    """
+
+    try:
+        data = json.loads(request.POST['data'])
+        token = data.get('token', 'null')
+        tipo = data.get('tipo', 'null')
+        idfavorito = data.get('idfavorito', 'null')
+
+        comprobar_usuario = Tokenregister.objects.filter(token=token)
+        if comprobar_usuario.count() > 0:
+            cojer_usuario = Tokenregister.objects.get(token=token)
+
+            if tipo == "curso":
+                cursos_ejercicios = Curso.objects.get(id=idfavorito)
+                cursos_ejercicios.favorito.remove(cojer_usuario.userid.id)
+                response_data = {'result': 'ok', 'message': 'Curso quitado como favorito'}
+            if tipo == "materia":
+                materia_ejercicios = Materia.objects.get(id=idfavorito)
+                materia_ejercicios.favorito.remove(cojer_usuario.userid.id)
+                response_data = {'result': 'ok', 'message': 'Materia quitado como favorita'}
+            if tipo == "tema":
+                temas_ejercicios = Tema.objects.get(id=idfavorito)
+                temas_ejercicios.favorito.remove(cojer_usuario.userid.id)
+                response_data = {'result': 'ok', 'message': 'Tema quitado como favorito'}
+        else:
+            response_data = {'result': 'fail', 'message': 'Token no encontrado'}
+
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+    except BaseException, e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
