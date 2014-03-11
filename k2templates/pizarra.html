@@ -5,10 +5,6 @@
     <link href="{{ STATIC_URL }}font-awesome-4.0.3/css/font-awesome.min.css" rel="stylesheet">
 {% endblock %}
 
-{% block header %}
-
-{% endblock %}
-
 {% block content %}
 
     <div id="wrapper">
@@ -16,11 +12,11 @@
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
-                <li class="sidebar-brand"><a href="#">konecta2profesor</a>
+                <li class="sidebar-brand"><a href="/pizarra/">konecta2profesor</a>
                 </li>
                 <li><p class="text-primary">Profesor :: {{username}} :: Conectado</p>
                 </li>
-                <li><a href="#"><i class="fa fa-users fa-2x"></i> Clases</a>
+                <li><a href="/pizarra/clases/"><i class="fa fa-users fa-2x"></i> Clases</a>
                 </li>
                 <li><a href="#"><i class="fa fa-user fa-2x"></i> Alumnos</a>
                 </li>
@@ -38,21 +34,26 @@
             </ul>
         </div>
 
+        {% block pagecontent %}
         <!-- Page content -->
         <div id="page-content-wrapper">
             <div class="content-header">
                 <h1>
                     <a id="menu-toggle" href="#" class="btn btn-default"><i class="icon-reorder"></i></a>
-                    Pizarra
                 </h1>
+                {% block contentheader %}
+                {% endblock %}
             </div>
             <!-- Keep all page content within the page-content inset div! -->
             <div class="page-content inset">
+
                 <div class="row">
-                    contenido
+                    {% block contentinset %}{% endblock %}
                 </div>
+
             </div>
         </div>
+        {% endblock %}
 
     </div>
 
@@ -65,49 +66,5 @@
     });
     </script>
     {% endblock %}
-        <!--
-<div id='pizarra' class="container">
-    <h1>Pizarra</h1>
-    <div class="row">
-        <h1 class="">Alumnos</h1>
-        <ul>
-            <li><a href="{% url 'k2Usuario.views.getClases' %}">Clases</a></li>
-                <ul>
-                    <li><a href="{% url 'k2Usuario.views.setClase'%}">Añadir</a></li>
-                </ul>
-            <li><a href="{% url 'k2Usuario.views.getAlumnos'%}">Alumnos</a></li>
-                <ul>
-                    <li><a href="{% url 'k2Usuario.views.setAlumno'%}">Añadir</a></li>
-                </ul>
-        </ul>
-    </div>
-    <div class="row">
-        <h1>Ejercicios</h1>
-            <ul>
-            <li><a href="{% url 'k2Ejercicio.views.getCursos'%}">Cursos</a></li>
-                <ul>
-                    <li><a href="{% url 'k2Ejercicio.views.setCurso' %}">Añadir</a></li>
-                </ul>
-            <li><a href="{% url 'k2Ejercicio.views.getMaterias' %}">Materias</a></li>
-                <ul>
-                    <li><a href="{% url 'k2Ejercicio.views.setMateria' %}">Añadir</a></li>
-                </ul>
-            <li><a href="{% url 'k2Ejercicio.views.getTemas' %}">Temas</a></li>
-                <ul>
-                    <li><a href="{% url 'k2Ejercicio.views.setTema' %}">Añadir</a></li>
-                </ul>
-            <li><a href="{% url 'k2Ejercicio.views.getEjercicios' %}">Ejercicios</a></li>
-                <ul>
-                    <li><a href="{% url 'k2Ejercicio.views.setEjercicio' %}">Añadir</a></li>
-                </ul>
-        </ul>
-    </div>
-    <div class="row">
-        <br />
-        <a class="btn btn-primary" href="/logout/">Salir</a>
-    </div>
-
-
-</div>-->
 
 {% endblock %}

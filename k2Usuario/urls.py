@@ -1,9 +1,10 @@
 #-*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = patterns('',
-    (r'^logintab/$', 'k2Usuario.tabviews.login'),
-    (r'^logoutab/$', 'k2Usuario.tabviews.logout'),
+    (r'^logintab/$', 'k2Usuario.viewstab.login'),
+    (r'^logoutab/$', 'k2Usuario.viewstab.logout'),
     (r'^clases/nueva/$', 'k2Usuario.views.setClase'),
     (r'^clases/$', 'k2Usuario.views.getClases'),
     (r'^clases/alumnos/nuevo/$', 'k2Usuario.views.setAlumno'),
