@@ -44,7 +44,7 @@ coverage.xml
 
 #local_settings
 konecta2/local_settings.py
-konecta2/requirements_local.py
+konecta2/requirements_local.txt
 
 # Rope
 .ropeproject
