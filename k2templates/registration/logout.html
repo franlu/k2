@@ -2,11 +2,14 @@
 
 {% block title %}Sesion finalizada{% endblock %}
 {% block header %}
-<img src="{{ MEDIA_URL }}logos/konecta2.jpg" />
+
 {% endblock %}
 
 {% block content %}
-<div id="frontal" class="container">
-    <p>Gracias por su visita. Volver a <a href="/">Inicio</a>.</p>
-</div>
+    <div name="logout" class="container">
+        <div class="form-singin">
+            <img src="{{ MEDIA_URL }}konecta2/static/k2logo.png" alt="k2logo" class="logo img-responsive">
+            <p>Gracias por su visita. Volver a <a href="/">Inicio</a>.</p>
+        </div>
+    </div>
 {% endblock %}
