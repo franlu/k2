@@ -8,11 +8,20 @@
     {% block contentinset %}
 
         {%if clases %}
-            <ul class="list-group">
+            <table class="table table-responsive table-striped">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Alumnos</th>
+                </tr>
                 {% for c in clases %}
-                    <li class="list-group-item">Nombre: {{ c.nombre }} ( <a href="{% url 'alumnosclaselist' c.id %}">Mostrar alumnos</a>)</li>
+                    <tr>
+                            <td class="">{{ c.id }}</td>
+                            <td class="">{{ c.nombre }}</td>
+                            <td class=""><a href="{% url 'alumnosclaselist' c.id %}">Ver</td>
+                    </tr>
                 {% endfor %}
-            </ul>
+            </table>
         {% else %}
              <p>No hay clases. Registrelas <a href="">aqui</a>.</p>
         {% endif%}

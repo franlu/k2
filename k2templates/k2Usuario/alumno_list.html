@@ -7,12 +7,24 @@
 
     {% block contentinset %}
         {% if alumnos %}
-            <p>Usuario :: Nombre :: Estado<p>
-            <ul class="list-group">
+            <table class="table table-responsive table-striped">
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                </tr>
                 {% for a in alumnos %}
-                    <li class="list-group-item">{{ a.idusuario.username }} :: {{ a.nombre }} :: {{ a.estado }} </li>
+                    <tr>
+                            <td class="">{{ a.id }}</td>
+                            <td class="">{{ a.idusuario.username }}</td>
+                            <td class="">{{ a.nombre }}</td>
+                            <td class="">{{ a.estado }}</td>
+
+                    </tr>
                 {% endfor %}
-            </ul>
+
+            </table>
         {% else %}
             <p>No hay alumnos. Registrelos <a href="{% url 'k2Usuario.views.setAlumno' %}">aqui</a>.</p>
         {% endif%}
