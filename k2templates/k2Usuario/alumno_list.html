@@ -1,0 +1,22 @@
+{% extends "pizarra.html" %}
+
+{% block pagecontent %}
+
+    {% block contentheader %}
+    {% endblock %}
+
+    {% block contentinset %}
+        {% if alumnos %}
+            <p>Usuario :: Nombre :: Estado<p>
+            <ul class="list-group">
+                {% for a in alumnos %}
+                    <li class="list-group-item">{{ a.idusuario.username }} :: {{ a.nombre }} :: {{ a.estado }} </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay alumnos. Registrelos <a href="{% url 'k2Usuario.views.setAlumno' %}">aqui</a>.</p>
+        {% endif%}
+
+    {% endblock %}
+
+{% endblock %}

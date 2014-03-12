@@ -17,8 +17,4 @@ def inicio(request):
 
 @login_required()
 def pizarra(request):
-
-    return render(request, 'pizarra.html', {
-        'username': request.user.username,
-    })
-    #return render_to_response('pizarra.html',context_instance=RequestContext(request))
+    return render_to_response('pizarra.html',context_instance=RequestContext(request))

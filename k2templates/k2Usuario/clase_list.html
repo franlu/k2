@@ -3,23 +3,16 @@
 {% block pagecontent %}
 
     {% block contentheader %}
-
-
-
     {% endblock %}
 
     {% block contentinset %}
 
-        {%if object_list %}
-            <div class="row">
-                <ul class="list-group">
-
-                    {% for c in object_list %}
-                        <li class="list-group-item">Nombre: {{ c.nombre }} ( <a href="">Mostrar alumnos</a>)</li>
-                    {% endfor %}
-
-                 </ul>
-            </div>
+        {%if clases %}
+            <ul class="list-group">
+                {% for c in clases %}
+                    <li class="list-group-item">Nombre: {{ c.nombre }} ( <a href="{% url 'alumnosclaselist' c.id %}">Mostrar alumnos</a>)</li>
+                {% endfor %}
+            </ul>
         {% else %}
              <p>No hay clases. Registrelas <a href="">aqui</a>.</p>
         {% endif%}
