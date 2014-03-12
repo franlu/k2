@@ -16,6 +16,10 @@ urlpatterns = patterns('',
     url(r'^pizarra/', include('k2Ejercicio.urls')),
     url(r'^pizarra/', include('k2Usuario.urls')),
 
+    #Direcciones para las tablets
+    url(r'^', include('k2Usuario.urlstab')),
+    url(r'^', include('k2Ejercicio.urlstab')),
+
     url(r'^admin/', include(admin.site.urls)),
 
     # Media
