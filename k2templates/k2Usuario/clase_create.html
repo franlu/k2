@@ -1,0 +1,17 @@
+{% extends "pizarra.html" %}
+{% block pagecontent %}
+
+    {% block contentheader %}
+    {% endblock %}
+
+    {% block contentinset %}
+
+        <div id='frontal' class="container">
+            <form class="form-signin" action="{% url 'clasecreate' %}" method="post">{% csrf_token %}
+                {{ form.as_p }}
+                <button id="submit" name="submit" class="btn btn-primary" type="submit" value="Añadir" >Añadir</button>
+            </form>
+        </div>
+
+    {% endblock %}
+{% endblock %}

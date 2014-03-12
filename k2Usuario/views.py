@@ -9,27 +9,55 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template.context import RequestContext
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic import ListView
 
 from k2Usuario.models import Alumno, Clase, Profesor
 from k2Usuario.forms import AlumnoForm, ClaseForm
 
-@login_required
-def setClase(request):
+class ClaseCreate(FormView):
+    template_name = 'k2Usuario/clase_create.html'
+    form_class = ClaseForm
 
-    if request.method == 'POST':
-        data = request.POST
-        form = ClaseForm(data)
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
 
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
         if form.is_valid():
             form.save()
-            return http.HttpResponseRedirect('/pizarra/')
-    else:
-        form = ClaseForm()
+            return http.HttpResponseRedirect('/pizarra/clases/')
 
-    return render(request, 'k2Usuario/nuevaclase.html', {
-        'form': form,
-    })
+        return render(request, self.template_name, {'form': form})
+
+class ClaseUpdate(FormView):
+    template_name = 'k2Usuario/clase_update.html'
+    form_class = ClaseForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST or None, instance=Clase)
+        if form.is_valid():
+            form.save()
+            return http.HttpResponseRedirect('/pizarra/clases/')
+
+        return render(request, self.template_name, {'form': form})
+
+class ClaseDelete(DeleteView):
+    template_name = 'k2Usuario/clase_delete.html'
+
+    def get(self, request, *args, **kwargs):
+        clase = get_object_or_404(Clase, pk=self.kwargs['pk'])
+        return render(request, self.template_name, {'clase': clase})
+
+    def post(self, request, *args, **kwargs):
+        clase = get_object_or_404(Clase, pk=self.kwargs['pk'])
+        clase.delete()
+        return http.HttpResponseRedirect('/pizarra/clases/')
 
 class ClaseList(ListView):
     model = Clase

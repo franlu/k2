@@ -13,17 +13,23 @@
                     <th>ID</th>
                     <th>Nombre</th>
                     <th>Alumnos</th>
+                    <th>Editar</th>
+                    <th>Borrar</th>
                 </tr>
                 {% for c in clases %}
                     <tr>
                             <td class="">{{ c.id }}</td>
                             <td class="">{{ c.nombre }}</td>
                             <td class=""><a href="{% url 'alumnosclaselist' c.id %}">Ver</td>
+                            <td class=""><a href="{% url 'claseupdate' c.id %}">Editar</td>
+                            <td class=""><a href="{% url 'clasedelete' c.id %}">Borrar</td>
                     </tr>
                 {% endfor %}
             </table>
+            <a href="{% url 'clasecreate' %}"  name="clasecreate" class="">Nueva clase</a>
+
         {% else %}
-             <p>No hay clases. Registrelas <a href="">aqui</a>.</p>
+             <p>No hay clases. Registrelas <a href="{% url 'clasecreate' %}">aqui</a>.</p>
         {% endif%}
 
     {% endblock %}
