@@ -30,10 +30,10 @@
 
             </table>
             {% else %}
-                <p>No hay alumnos en {{ clase }}. Registrelos <a href="{% url 'k2Usuario.views.setAlumno' %}">aqui</a>.</p>
+                <p>No hay alumnos en {{ clase }}. Registrelos <a href="{% url 'alumnocreate' %}">aqui</a>.</p>
             {% endif%}
         {% else %}
-            <p>No hay alumnos. Registrelos <a href="{% url 'k2Usuario.views.setAlumno' %}">aqui</a>.</p>
+            <p>No hay alumnos. Registrelos <a href="{% url 'alumnocreate' %}">aquí</a>.</p>
         {% endif%}
     {% endblock %}
 

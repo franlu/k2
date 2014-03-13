@@ -20,9 +20,9 @@
                     <tr>
                             <td class="">{{ c.id }}</td>
                             <td class="">{{ c.nombre }}</td>
-                            <td class=""><a href="{% url 'alumnosclaselist' c.id %}">Ver</td>
-                            <td class=""><a href="{% url 'claseupdate' c.id %}">Editar</td>
-                            <td class=""><a href="{% url 'clasedelete' c.id %}">Borrar</td>
+                            <td class=""><a href="{% url 'clasealumnoslist' c.id %}">Ver</a></td>
+                            <td class=""><a href="{% url 'claseupdate' c.id %}">Editar</a></td>
+                            <td class=""><a href="{% url 'clasedelete' c.id %}">Borrar</a></td>
                     </tr>
                 {% endfor %}
             </table>

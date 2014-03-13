@@ -9,7 +9,7 @@
         <div id='frontal' class="container">
             <form class="form-signin" action="{% url 'clasecreate' %}" method="post">{% csrf_token %}
                 {{ form.as_p }}
-                <a href="{% url 'claselist' %}" name="submit" class="btn btn-warning" type="submit" >Atrás</a>
+                <a href="{% url 'claselist' %}" class="btn btn-warning" type="submit" >Atrás</a>
                 <button id="submit" name="submit" class="btn btn-primary" type="submit" value="Añadir" >Editar</button>
             </form>
         </div>

@@ -7,10 +7,8 @@
     {% block contentinset %}
 
         <div id='frontal' class="container">
-            <form class="form-signin" action="{% url 'clasedelete' clase.id %}" method="post">{% csrf_token %}
-                <p>Al eliminar una clase, se eliminaran todos los alumnos que pertenece a dicha clase.</p>
-                <p>Si no necesita eliminar a los alumnos, cambielos a otra clase antes de eliminar la clase.</p>
-                <p>¿ Estas segur@ de eliminar "{{ clase.nombre }}" ?</p>
+            <form class="form-signin" action="{% url 'alumnodelete' alumno.id %}" method="post">{% csrf_token %}
+              ¿ Estas segur@ de eliminar "{{ alumno.nombre }} {{ alumno.apellido1 }} {{ alumno.apellido2 }}" ?
               <a href="{% url 'claselist' %}" name="submit" class="btn btn-warning" type="submit" >Atrás</a>
               <button name="submit" class="btn btn-danger" type="submit" >Eliminar</button>
             </form>

@@ -12,21 +12,28 @@
                     <th>ID</th>
                     <th>Usuario</th>
                     <th>Nombre</th>
+                    <th>Apellidos</th>
                     <th>Estado</th>
+                    <th>Editar</th>
+                    <th>Borrar</th>
                 </tr>
                 {% for a in alumnos %}
                     <tr>
                             <td class="">{{ a.id }}</td>
                             <td class="">{{ a.idusuario.username }}</td>
                             <td class="">{{ a.nombre }}</td>
+                            <td class="">{{ a.apellido1 }} {{ a.apellido2 }}</td>
                             <td class="">{{ a.estado }}</td>
+                            <td class=""><a href="{% url 'alumnoupdate' a.id %}">Editar</a></td>
+                            <td class=""><a href="{% url 'alumnodelete' a.id %}">Borrar</a></td>
 
                     </tr>
                 {% endfor %}
 
             </table>
+            <a href="{% url 'alumnocreate' %}" class="">Añadir alumno</a>
         {% else %}
-            <p>No hay alumnos. Registrelos <a href="{% url 'k2Usuario.views.setAlumno' %}">aqui</a>.</p>
+            <p>No hay alumnos. Registrelos <a href="{% url 'alumnocreate' %}">aqui</a>.</p>
         {% endif%}
 
     {% endblock %}
