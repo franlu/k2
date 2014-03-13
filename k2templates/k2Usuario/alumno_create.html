@@ -7,7 +7,7 @@
     {% block contentinset %}
 
         <div id='frontal' class="container">
-            <form class="form-signin" action="{% url 'alumnocreate' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+            <form class="form-signin" action="{{ url }}" method="post" enctype="multipart/form-data">{% csrf_token %}
                 {{ uf.as_p }}
                 {{ af.as_p }}
                 <a href="/pizarra/" class="btn btn-warning">Atrás</a>

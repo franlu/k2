@@ -8,8 +8,8 @@
 
         <div id='frontal' class="container">
             <form class="form-signin" method="post">{% csrf_token %}
-                {{ form.as_p }}
-                <a href="{% url 'claselist' %}" class="btn btn-warning" type="submit" >Atrás</a>
+                {{ af.as_p }}
+                <a href="{% url 'alumnolist' %}" class="btn btn-warning" type="submit" >Atrás</a>
                 <button class="btn btn-primary" type="submit" >Editar</button>
             </form>
         </div>
