@@ -1,0 +1,19 @@
+{% extends "pizarra.html" %}
+{% block pagecontent %}
+
+    {% block contentheader %}
+    {% endblock %}
+
+    {% block contentinset %}
+
+        <div id='frontal' class="container">
+            <form class="form-signin" action="{% url 'temadelete' tema.id %}" method="post">{% csrf_token %}
+                <p>Al eliminar un tema, se eliminaran todos los ejercicios que pertenecen a dicho tema.</p>
+                <p>¿ Estas segur@ de eliminar "{{ tema.nombre }}" ?</p>
+              <a href="{% url 'temalist' %}" class="btn btn-warning" type="submit" >Atrás</a>
+              <button class="btn btn-danger" type="submit" >Eliminar</button>
+            </form>
+        </div>
+
+    {% endblock %}
+{% endblock %}

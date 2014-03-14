@@ -1,0 +1,18 @@
+{% extends "pizarra.html" %}
+{% block pagecontent %}
+
+    {% block contentheader %}
+    {% endblock %}
+
+    {% block contentinset %}
+
+        <div id='frontal' class="container">
+            <form class="form-signin" action="{% url 'ejerciciodelete' ejercicio.id %}" method="post">{% csrf_token %}
+                <p>¿ Estas segur@ de eliminar "{{ ejercicio.titulo }}" ?</p>
+              <a href="{% url 'ejerciciolist' %}" class="btn btn-warning" type="submit" >Atrás</a>
+              <button class="btn btn-danger" type="submit" >Eliminar</button>
+            </form>
+        </div>
+
+    {% endblock %}
+{% endblock %}

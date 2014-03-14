@@ -1,0 +1,35 @@
+{% extends "pizarra.html" %}
+
+{% block pagecontent %}
+
+    {% block contentheader %}
+    {% endblock %}
+
+    {% block contentinset %}
+
+        {%if cursos %}
+            <table class="table table-responsive table-striped">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Editar</th>
+                    <th>Borrar</th>
+                </tr>
+                {% for c in cursos %}
+                    <tr>
+                            <td class="">{{ c.id }}</td>
+                            <td class="">{{ c.nombre }}</td>
+                            <td class=""><a href="{% url 'cursoupdate' c.id %}">Editar</a></td>
+                            <td class=""><a href="{% url 'cursodelete' c.id %}">Borrar</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <a href="{% url 'cursocreate' %}"  name="cursocreate" class="">Nuevo curso</a>
+
+        {% else %}
+             <p>No hay cursos. Registrelos <a href="{% url 'cursocreate' %}">aquí</a>.</p>
+        {% endif%}
+
+    {% endblock %}
+
+{% endblock %}

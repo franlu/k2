@@ -1,0 +1,16 @@
+{% extends "pizarra.html" %}
+{% block pagecontent %}
+
+    {% block contentheader %}
+    {% endblock %}
+
+    {% block contentinset %}
+        <div id='frontal' class="container">
+            <form class="form-signin" action="{% url 'materiacreate' %}" method="post">{% csrf_token %}
+                {{ form.as_p }}
+                <a href="{% url 'materialist' %}" class="btn btn-warning">Atrás</a>
+                <button class="btn btn-primary" type="submit" >Añadir</button>
+            </form>
+        </div>
+    {% endblock %}
+{% endblock %}

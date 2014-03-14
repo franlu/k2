@@ -1,0 +1,35 @@
+{% extends "pizarra.html" %}
+
+{% block pagecontent %}
+
+    {% block contentheader %}
+    {% endblock %}
+
+    {% block contentinset %}
+
+        {% if materias %}
+            <table class="table table-responsive table-striped">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Editar</th>
+                    <th>Borrar</th>
+                </tr>
+                {% for m in materias %}
+                    <tr>
+                            <td class="">{{ m.id }}</td>
+                            <td class="">{{ m.nombre }}</td>
+                            <td class=""><a href="{% url 'materiaupdate' m.id %}">Editar</a></td>
+                            <td class=""><a href="{% url 'materiadelete' m.id %}">Borrar</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <a href="{% url 'materiacreate' %}"  name="materiacreate" class="">Nueva materia</a>
+
+        {% else %}
+             <p>No hay materias. Registrelas <a href="{% url 'materiacreate' %}">aquí</a>.</p>
+        {% endif%}
+
+    {% endblock %}
+
+{% endblock %}

@@ -1,126 +1,249 @@
 #-*- coding: utf-8 -*-
 
-import django.contrib.auth as auth
-import django.contrib.auth.views as authviews
 import django.http as http
 
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, render_to_response
-from django.template.context import RequestContext
-from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
 
-from annoying.functions import get_object_or_None
+from django.shortcuts import render, get_object_or_404
+from django.views.generic.edit import UpdateView, DeleteView, FormView
+from django.views.generic import ListView
+
 from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio
 from k2Ejercicio.forms import CursoForm, MateriaForm, TemaForm, EjercicioForm
 
-import datetime
-import json
-import pytz
-import random
-import string
+class CursoCreate(FormView):
 
-def setCurso(request):
+    template_name = 'k2Ejercicio/curso_create.html'
+    form_class = CursoForm
 
-    if request.method == 'POST':
-        data = request.POST
-        form = CursoForm(data)
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
 
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
         if form.is_valid():
             form.save()
-            return http.HttpResponseRedirect('/pizarra/')
-    else:
-        form = CursoForm()
+            return http.HttpResponseRedirect('/pizarra/cursos/')
 
-    return render(request, 'k2Ejercicio/nuevocurso.html', {
-        'form': form,
-    })
+        return render(request, self.template_name, {'form': form})
 
-def getCursos(request):
+class CursoUpdate(UpdateView):
 
-    cu = None
-    if Curso.objects.all().count() > 0:
-        cu = Curso.objects.all()
+    template_name = 'k2Ejercicio/curso_update.html'
+    form_class = CursoForm
 
-    return render(request, 'k2Ejercicio/cursos.html', {
-        'cursos': cu,
-    })
+    def get_object(self, queryset=None):
+        return get_object_or_404(Curso, pk=self.kwargs['pk'])
 
-def setMateria(request):
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial, instance=self.get_object())
+        return render(request, self.template_name, {'form': form})
 
-    if request.method == 'POST':
-        data = request.POST
-        form = MateriaForm(data)
-
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST or None, instance=self.get_object())
         if form.is_valid():
             form.save()
-            return http.HttpResponseRedirect('/pizarra/')
-    else:
-        form = MateriaForm()
+            return http.HttpResponseRedirect('/pizarra/cursos/')
 
-    return render(request, 'k2Ejercicio/nuevamateria.html', {
-        'form': form,
-    })
+        return render(request, self.template_name, {'form': form,})
 
-def getMaterias(request):
+class CursoDelete(DeleteView):
 
-    ma = None
-    if Materia.objects.all().count() > 0:
-        ma = Materia.objects.all()
+    template_name = 'k2Ejercicio/curso_delete.html'
 
-    return render(request, 'k2Ejercicio/materias.html', {
-        'materias': ma,
-    })
+    def get(self, request, *args, **kwargs):
+        curso = get_object_or_404(Curso, pk=self.kwargs['pk'])
+        return render(request, self.template_name, {'curso': curso})
 
-def setTema(request):
+    def post(self, request, *args, **kwargs):
+        curso = get_object_or_404(Curso, pk=self.kwargs['pk'])
+        curso.delete()
+        return http.HttpResponseRedirect('/pizarra/cursos/')
 
-    if request.method == 'POST':
-        data = request.POST
-        form = TemaForm(data)
+class CursoList(ListView):
 
+    context_object_name = 'cursos'
+
+    def get_queryset(self):
+        by_id = Curso.objects.all().order_by('id')
+        return by_id
+
+
+class MateriaCreate(FormView):
+
+    template_name = 'k2Ejercicio/materia_create.html'
+    form_class = MateriaForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
         if form.is_valid():
             form.save()
-            return http.HttpResponseRedirect('/pizarra/')
-    else:
-        form = TemaForm()
+            return http.HttpResponseRedirect('/pizarra/materias/')
 
-    return render(request, 'k2Ejercicio/nuevotema.html', {
-        'form': form,
-    })
+        return render(request, self.template_name, {'form': form})
 
-def getTemas(request):
+class MateriaUpdate(UpdateView):
 
-    te = None
-    if Tema.objects.all().count() > 0:
-        te = Tema.objects.all()
+    template_name = 'k2Ejercicio/materia_update.html'
+    form_class = MateriaForm
 
-    return render(request, 'k2Ejercicio/temas.html', {
-        'temas': te,
-    })
+    def get_object(self, queryset=None):
+        return get_object_or_404(Materia, pk=self.kwargs['pk'])
 
-def setEjercicio(request):
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial, instance=self.get_object())
+        return render(request, self.template_name, {'form': form})
 
-    if request.method == 'POST':
-        data = request
-        form = EjercicioForm(data.POST, data.FILES)
-
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST or None, instance=self.get_object())
         if form.is_valid():
             form.save()
-            return http.HttpResponseRedirect('/pizarra/')
-    else:
-        form = EjercicioForm()
+            return http.HttpResponseRedirect('/pizarra/materias/')
 
-    return render(request, 'k2Ejercicio/nuevoejercicio.html', {
-        'form': form,
-    })
+        return render(request, self.template_name, {'form': form,})
 
-def getEjercicios(request):
+class MateriaDelete(DeleteView):
 
-    ej = None
-    if Ejercicio.objects.all().count() > 0:
-        ej = Ejercicio.objects.all()
+    template_name = 'k2Ejercicio/materia_delete.html'
 
-    return render(request, 'k2Ejercicio/ejercicios.html', {
-        'ejercicios': ej,
-    })
+    def get(self, request, *args, **kwargs):
+        materia = get_object_or_404(Materia, pk=self.kwargs['pk'])
+        return render(request, self.template_name, {'materia': materia})
+
+    def post(self, request, *args, **kwargs):
+        materia = get_object_or_404(Materia, pk=self.kwargs['pk'])
+        materia.delete()
+        return http.HttpResponseRedirect('/pizarra/materias/')
+
+class MateriaList(ListView):
+
+    context_object_name = 'materias'
+
+    def get_queryset(self):
+        by_id = Materia.objects.all().order_by('id')
+        return by_id
+
+
+class TemaCreate(FormView):
+
+    template_name = 'k2Ejercicio/tema_create.html'
+    form_class = TemaForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.save()
+            return http.HttpResponseRedirect('/pizarra/temas/')
+
+        return render(request, self.template_name, {'form': form})
+
+class TemaUpdate(UpdateView):
+
+    template_name = 'k2Ejercicio/tema_update.html'
+    form_class = TemaForm
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Tema, pk=self.kwargs['pk'])
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial, instance=self.get_object())
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST or None, instance=self.get_object())
+        if form.is_valid():
+            form.save()
+            return http.HttpResponseRedirect('/pizarra/temas/')
+
+        return render(request, self.template_name, {'form': form,})
+
+class TemaDelete(DeleteView):
+
+    template_name = 'k2Ejercicio/tema_delete.html'
+
+    def get(self, request, *args, **kwargs):
+        tema = get_object_or_404(Tema, pk=self.kwargs['pk'])
+        return render(request, self.template_name, {'tema': tema})
+
+    def post(self, request, *args, **kwargs):
+        tema = get_object_or_404(Tema, pk=self.kwargs['pk'])
+        tema.delete()
+        return http.HttpResponseRedirect('/pizarra/temas/')
+
+class TemaList(ListView):
+
+    context_object_name = 'temas'
+
+    def get_queryset(self):
+        by_id = Tema.objects.all().order_by('id')
+        return by_id
+
+
+class EjercicioCreate(FormView):
+
+    template_name = 'k2Ejercicio/ejercicio_create.html'
+    form_class = EjercicioForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.save()
+            return http.HttpResponseRedirect('/pizarra/ejercicios/')
+
+        return render(request, self.template_name, {'form': form})
+
+class EjercicioUpdate(UpdateView):
+
+    template_name = 'k2Ejercicio/ejercicio_update.html'
+    form_class = EjercicioForm
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial, instance=self.get_object())
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST or None, instance=self.get_object())
+        if form.is_valid():
+            form.save()
+            return http.HttpResponseRedirect('/pizarra/ejercicios/')
+
+        return render(request, self.template_name, {'form': form,})
+
+class EjercicioDelete(DeleteView):
+
+    template_name = 'k2Ejercicio/ejercicio_delete.html'
+
+    def get(self, request, *args, **kwargs):
+        ejercicio = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
+        return render(request, self.template_name, {'ejercicio': ejercicio})
+
+    def post(self, request, *args, **kwargs):
+        ejercicio = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
+        ejercicio.delete()
+        return http.HttpResponseRedirect('/pizarra/ejercicios/')
+
+class EjercicioList(ListView):
+
+    context_object_name = 'ejercicios'
+
+    def get_queryset(self):
+        by_id = Ejercicio.objects.all().order_by('id')
+        return by_id

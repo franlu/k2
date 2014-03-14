@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
 
-import django.contrib.auth as auth
-import django.contrib.auth.views as authviews
 import django.http as http
 
 from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, render_to_response, get_object_or_404
-from django.template.context import RequestContext
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
+
+from django.shortcuts import render, get_object_or_404
+from django.views.generic.edit import UpdateView, DeleteView, FormView
 from django.views.generic import ListView
 
-from k2Usuario.models import Alumno, Clase, Profesor
+from k2Usuario.models import Alumno, Clase
 from k2Usuario.forms import AlumnoForm, ClaseForm
 
 class ClaseCreate(FormView):
