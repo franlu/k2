@@ -8,8 +8,10 @@ urlpatterns = patterns('',
     (r'^dificultad_ejercicios/$', 'k2Ejercicio.viewstab.dificultad_ejercicios'),
     (r'^ejercicios_totales/$', 'k2Ejercicio.viewstab.ejercicios_totales'),
     (r'^detalles_ejercicio/$', 'k2Ejercicio.viewstab.detalles_ejercicio'),
+
     (r'^favorito_crear/$', 'k2Ejercicio.viewstab.favorito_crear'),
     (r'^favorito_borrar/$', 'k2Ejercicio.viewstab.favorito_borrar'),
+
     (r'^consultar_notificacion/$', 'k2Ejercicio.viewstab.consultar_notificacion'),
     (r'^crear_notificacion/$', 'k2Ejercicio.viewstab.crear_notificacion'),
     (r'^borrar_notificacion/$', 'k2Ejercicio.viewstab.borrar_notificacion'),
