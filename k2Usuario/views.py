@@ -1,107 +1,103 @@
 # -*- coding: utf-8 -*-
 
-import django.contrib.auth as auth
-import django.contrib.auth.views as authviews
 import django.http as http
 
 from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, render_to_response
-from django.template.context import RequestContext
+from django.contrib.auth.models import User
+
+from django.shortcuts import render, get_object_or_404
+from django.views.generic.edit import UpdateView, DeleteView, FormView
 from django.views.generic import ListView
 
-from k2Usuario.models import Alumno, Clase, Profesor
+from k2Usuario.models import Alumno, Clase
 from k2Usuario.forms import AlumnoForm, ClaseForm
 
-def accesoweb(request):
+class ClaseCreate(FormView):
+    template_name = 'k2Usuario/clase_create.html'
+    form_class = ClaseForm
 
-    """
-        Acceso a la web para profesores
-    """
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
 
-    if request.method == 'POST':
-        username = request.POST["username"]
-        password = request.POST["password"]
-
-        user = auth.authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-
-                if Profesor.objects.filter(idusuario=user).count() >0:
-
-                    auth.login(request, user)
-                    try:
-                        return http.HttpResponseRedirect("/pizarra/")
-                    except:
-
-                        salida = auth.logout(request)
-                        return authviews.login(request)
-                else:
-
-                    salida = auth.logout(request)
-                    return http.HttpResponseRedirect("/")
-            else:
-
-                salida = auth.logout(request)
-                return authviews.login(request)
-        else:
-
-            salida = auth.logout(request)
-            return authviews.login(request)
-    else:
-
-        salida = auth.logout(request)
-        return authviews.login(request)
-
-@login_required
-def logoutweb(request):
-
-    """
-        Cerrar sesión en la web para profesores
-    """
-    auth.logout(request)
-    return render_to_response('registration/logout.html', context_instance=RequestContext(request))
-
-@login_required
-def setClase(request):
-
-    if request.method == 'POST':
-        data = request.POST
-        form = ClaseForm(data)
-
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
         if form.is_valid():
             form.save()
-            return http.HttpResponseRedirect('/pizarra/')
-    else:
-        form = ClaseForm()
+            return http.HttpResponseRedirect('/pizarra/clases/')
 
-    return render(request, 'k2Usuario/nuevaclase.html', {
-        'form': form,
-    })
+        return render(request, self.template_name, {'form': form})
 
+class ClaseUpdate(UpdateView):
+    model = Clase
+    template_name = 'k2Usuario/clase_update.html'
+    form_class = ClaseForm
 
+    def get_object(self, queryset=None):
+        return get_object_or_404(self.model, pk=self.kwargs['pk'])
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial, instance=self.get_object())
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST or None, instance=self.get_object())
+        if form.is_valid():
+
+            form.save()
+            return http.HttpResponseRedirect('/pizarra/clases/')
+
+        return render(request, self.template_name, {'form': form,})
+
+class ClaseDelete(DeleteView):
+    template_name = 'k2Usuario/clase_delete.html'
+
+    def get(self, request, *args, **kwargs):
+        clase = get_object_or_404(Clase, pk=self.kwargs['pk'])
+        return render(request, self.template_name, {'clase': clase})
+
+    def post(self, request, *args, **kwargs):
+        clase = get_object_or_404(Clase, pk=self.kwargs['pk'])
+        clase.delete()
+        return http.HttpResponseRedirect('/pizarra/clases/')
 
 class ClaseList(ListView):
+
     model = Clase
+    context_object_name = 'clases'
 
+    def get_queryset(self):
+        by_id = Clase.objects.all().order_by('id')
+        return by_id
 
-@login_required
-def getClases(request):
+class ClaseAlumnosList(ListView):
 
-    cl = None
-    if Clase.objects.all().count() > 0:
-        cl = Clase.objects.all()
+    context_object_name = 'alumnos'
+    template_name = 'k2Usuario/alumnos_clase_list.html'
 
-    return render(request, 'k2Usuario/clase_list.html', {
-        'object_list': cl,
-    })
+    def get_queryset(self):
+        self.clase = get_object_or_404(Clase, id=self.kwargs['clase_id'])
+        return Alumno.objects.filter(clase=self.clase).order_by('id')
 
-@login_required
-def setAlumno(request):
+    def get_context_data(self, **kwargs):
+    # Call the base implementation first to get a context
+        context = super(ClaseAlumnosList, self).get_context_data(**kwargs)
+    # Add in the publisher
+        context['clase'] = self.clase
+        return context
 
-    data = None
-    if request.method == 'POST':
+class AlumnoCreate(FormView):
+    template_name = 'k2Usuario/alumno_create.html'
+    form_class = AlumnoForm
+    second_form_class = UserCreationForm
+
+    def get(self, request, *args, **kwargs):
+        al = self.form_class(initial=self.initial, prefix='alumno')
+        uf = self.second_form_class(initial=self.initial, prefix='usuario')
+        return render(request, self.template_name, {'uf': uf, 'af': al, 'url': "{% url 'alumnocreate' %}"})
+
+    def post(self, request, *args, **kwargs):
         data = request
         us = UserCreationForm(data.POST, prefix='usuario')
         al = AlumnoForm(data.POST, data.FILES, prefix='alumno')
@@ -111,35 +107,54 @@ def setAlumno(request):
             alumno = al.save(commit=False)
             alumno.idusuario = usuario
             alumno.save()
-            return http.HttpResponseRedirect(reverse('pizarra'))
+            return http.HttpResponseRedirect(reverse('alumnolist'))
 
-    else:
-        us = UserCreationForm(prefix='usuario')
-        al = AlumnoForm(prefix='alumno')
+        return render(request, self.template_name, {
+            'uf': us,
+            'af': al,
+            'url': "{% url 'alumnocreate' %}",
+        })
 
+class AlumnoUpdate(FormView):
+    template_name = 'k2Usuario/alumno_update.html'
+    model = Alumno
+    second_model = User
+    form_class = AlumnoForm
 
-    return render(request, 'k2Usuario/nuevoalumno.html', {
-        'uf': us,
-        'af': al,
-    })
+    def get_object(self, queryset=None):
+        return get_object_or_404(self.model, pk=self.kwargs['pk'])
 
-@login_required
-def getAlumnos(request):
+    def get(self, request, *args, **kwargs):
+        al = self.form_class(initial=self.initial, prefix='alumno', instance=self.get_object())
+        return render(request, self.template_name, {'af': al})
 
-    al = None
-    if Alumno.objects.all().count() > 0:
-        al = Alumno.objects.all()
+    def post(self, request, *args, **kwargs):
+        data = request
+        al = self.form_class(data.POST, data.FILES, prefix='alumno', instance=self.get_object())
+        if al.is_valid():
+            al.save()
+            return http.HttpResponseRedirect(reverse('alumnolist'))
 
-    return render(request, 'k2Usuario/alumnos.html', {
-        'alumnos': al,
-    })
+        return render(request, self.template_name, {
+            'af': al,
+        })
 
-@login_required
-def getAlumnosClase(request,clase_id):
+class AlumnoDelete(DeleteView):
+    template_name = 'k2Usuario/alumno_delete.html'
 
-    al = Alumno.objects.filter(clase=clase_id) or None
-    clase = Clase.objects.get(id=clase_id) or None
-    return render(request, 'k2Usuario/alumnos.html', {
-        'alumnos': al,
-        'clase': clase,
-    })
+    def get(self, request, *args, **kwargs):
+        alumno = get_object_or_404(Alumno, pk=self.kwargs['pk'])
+        return render(request, self.template_name, {'alumno': alumno})
+
+    def post(self, request, *args, **kwargs):
+        alumno = get_object_or_404(Alumno, pk=self.kwargs['pk'])
+        alumno.delete()
+        return http.HttpResponseRedirect(reverse('alumnolist'))
+
+class AlumnoList(ListView):
+    model = Alumno
+    context_object_name = 'alumnos'
+
+    def get_queryset(self):
+        by_id = Alumno.objects.all().order_by('id')
+        return by_id

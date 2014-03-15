@@ -63,6 +63,7 @@ STATICFILES_DIRS = (
 
 TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     'django.core.context_processors.request',
+    'konecta2.processors.comun',
 )
 
 ROOT_URLCONF = 'konecta2.urls'

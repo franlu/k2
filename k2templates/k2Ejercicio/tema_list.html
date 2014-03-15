@@ -1,0 +1,37 @@
+{% extends "pizarra.html" %}
+
+{% block pagecontent %}
+
+    {% block contentheader %}
+    {% endblock %}
+
+    {% block contentinset %}
+
+        {%if temas %}
+            <table class="table table-responsive table-striped">
+                <tr>
+                    <th>ID</th>
+                    <th>Materia</th>
+                    <th>Nombre</th>
+                    <th>Editar</th>
+                    <th>Borrar</th>
+                </tr>
+                {% for t in temas %}
+                    <tr>
+                            <td class="">{{ t.id }}</td>
+                            <td class="">{{ t.materia }}</td>
+                            <td class="">{{ t.nombre }}</td>
+                            <td class=""><a href="{% url 'temaupdate' t.id %}">Editar</a></td>
+                            <td class=""><a href="{% url 'temadelete' t.id %}">Borrar</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <a href="{% url 'temacreate' %}"  name="temacreate" class="">Nuevo tema</a>
+
+        {% else %}
+             <p>No hay temas. Registrelos <a href="{% url 'temacreate' %}">aquí</a>.</p>
+        {% endif%}
+
+    {% endblock %}
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "pizarra.html" %}
+
+{% block pagecontent %}
+
+    {% block contentheader %}
+    {% endblock %}
+
+    {% block contentinset %}
+        {% if clase %}
+            <p>Clase: {{ clase }}</p>
+            {% if alumnos %}
+            <table class="table table-responsive table-striped">
+                <caption></caption>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Apellidos</th>
+                    <th>Estado</th>
+                </tr>
+                {% for a in alumnos %}
+                    <tr>
+                            <td class="">{{ a.id }}</td>
+                            <td class="">{{ a.idusuario.username }}</td>
+                            <td class="">{{ a.nombre }}</td>
+                            <td class="">{{ a.apellido1 }} {{ a.apellido2 }}</td>
+                            <td class="">{{ a.estado }}</td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+            {% else %}
+                <p>No hay alumnos en {{ clase }}. Registrelos <a href="{% url 'alumnocreate' %}">aqui</a>.</p>
+            {% endif%}
+        {% else %}
+            <p>No hay alumnos. Registrelos <a href="{% url 'alumnocreate' %}">aquí</a>.</p>
+        {% endif%}
+    {% endblock %}
+
+{% endblock %}

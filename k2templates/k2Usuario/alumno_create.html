@@ -1,0 +1,30 @@
+{% extends "pizarra.html" %}
+{% block pagecontent %}
+
+    {% block contentheader %}
+    {% endblock %}
+
+    {% block contentinset %}
+
+        <div id='frontal' class="container">
+            <form class="form-signin" action="{{ url }}" method="post" enctype="multipart/form-data">{% csrf_token %}
+                {{ uf.as_p }}
+                {{ af.as_p }}
+                <a href="/pizarra/" class="btn btn-warning">Atrás</a>
+                <button id="submit" name="submit" class="btn btn-primary" type="submit" value="Añadir" >Añadir</button>
+            </form>
+
+        </div>
+    {% endblock %}
+
+{% endblock %}
+
+{% block extrajs %}
+
+    <script src="{{ STATIC_URL }}js/bootstrap-datepicker.js"></script>
+    <script>
+        $( "#id_alumno-nacimiento" ).datepicker();
+    </script>
+
+
+{% endblock %}

@@ -1,3 +1,4 @@
+<<<<<<< Temporary merge branch 1
 #-*- coding: utf-8 -*-
 import django.contrib.auth as auth
 import django.http as http

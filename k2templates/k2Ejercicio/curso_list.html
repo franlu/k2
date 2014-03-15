@@ -7,29 +7,27 @@
 
     {% block contentinset %}
 
-        {%if clases %}
+        {%if cursos %}
             <table class="table table-responsive table-striped">
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
-                    <th>Alumnos</th>
                     <th>Editar</th>
                     <th>Borrar</th>
                 </tr>
-                {% for c in clases %}
+                {% for c in cursos %}
                     <tr>
                             <td class="">{{ c.id }}</td>
                             <td class="">{{ c.nombre }}</td>
-                            <td class=""><a href="{% url 'clasealumnoslist' c.id %}">Ver</a></td>
-                            <td class=""><a href="{% url 'claseupdate' c.id %}">Editar</a></td>
-                            <td class=""><a href="{% url 'clasedelete' c.id %}">Borrar</a></td>
+                            <td class=""><a href="{% url 'cursoupdate' c.id %}">Editar</a></td>
+                            <td class=""><a href="{% url 'cursodelete' c.id %}">Borrar</a></td>
                     </tr>
                 {% endfor %}
             </table>
-            <a href="{% url 'clasecreate' %}"  name="clasecreate" class="">Nueva clase</a>
+            <a href="{% url 'cursocreate' %}"  name="cursocreate" class="">Nuevo curso</a>
 
         {% else %}
-             <p>No hay clases. Registrelas <a href="{% url 'clasecreate' %}">aqui</a>.</p>
+             <p>No hay cursos. Registrelos <a href="{% url 'cursocreate' %}">aquí</a>.</p>
         {% endif%}
 
     {% endblock %}
