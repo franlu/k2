@@ -16,6 +16,9 @@ urlpatterns = patterns('',
     (r'^crear_notificacion/$', 'k2Ejercicio.viewstab.crear_notificacion'),
     (r'^borrar_notificacion/$', 'k2Ejercicio.viewstab.borrar_notificacion'),
 
+    (r'^enviar_ejercicio_individual/$', 'k2Ejercicio.viewstab.enviar_ejercicio_individual'),
+    (r'^ejercicios_pendientes/$', 'k2Ejercicio.viewstab_alumno.ejercicios_pendientes'),
+
 
 
 

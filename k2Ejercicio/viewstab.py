@@ -7,8 +7,8 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
 from k2Usuario.models import Alumno, Profesor,Clase, Tokenregister
-from k2Ejercicio.models import Ejercicio, Curso, Materia, Tema, Dificultad, Notificacion
-from k2utils.token import id_generator
+from k2Ejercicio.models import Ejercicio, Curso, Materia, Tema, Dificultad, Notificacion, EjercicioEnviado,EstadoEjercicios
+from k2utils import tags
 
 import datetime
 import json
@@ -461,5 +461,74 @@ def borrar_notificacion(request):
             response_data = {'result':'fail', 'message':'Token no encontrado'}
         return http.HttpResponse(json.dumps(response_data), content_type="application/json")
     except BaseException, e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@csrf_exempt
+def enviar_ejercicio_individual(request):
+    """
+        {
+        data:
+            {
+            "token":"token"
+            "idejercicio":"idejercicio"
+            "idalumno":"idalumno"
+            }
+        }
+        Esta vista le envia un ejercicio a un alumno.
+    """
+    try:
+        data = json.loads(request.POST['data'])
+        token = data.get('token', 'null')
+        idejercicio = data.get('idejercicio', 'null')
+        idalumno = data.get('idalumno', 'null')
+
+        comprobar_usuario = Tokenregister.objects.filter(token=token)
+        if comprobar_usuario.count() > 0:
+            token_usuario = Tokenregister.objects.get(token=token)
+            comprobar_profesor = Profesor.objects.filter(idusuario=token_usuario.userid.id)
+            if comprobar_profesor.count() > 0:
+                obtener_profesor = Profesor.objects.get(idusuario=token_usuario.userid.id)
+                obtener_usuario = User.objects.filter(id=idalumno)
+                if obtener_usuario.count() > 0:
+                    alumno = Alumno.objects.get(idusuario=idalumno)
+                    clase= alumno.clase
+                    obtener_ejercicio = Ejercicio.objects.filter(id=idejercicio)
+                    if obtener_ejercicio.count() > 0:
+                        fecha = datetime.datetime.now(pytz.utc)
+                        obtener_ejercicio = Ejercicio.objects.get(id=idejercicio)
+                        curso=obtener_ejercicio.curso
+                        tipoejercicio=obtener_ejercicio.tipo
+                        materia=obtener_ejercicio.materia
+                        estado=EstadoEjercicios.objects.get(id=tags.estado_ejercicio_pendiente)
+
+
+                        ejercicio_enviado = EjercicioEnviado(ejercicio=obtener_ejercicio,
+                                                          profesor=obtener_profesor,
+                                                          alumno=alumno,
+                                                          curso=curso,
+                                                          materia=materia,
+                                                          fecha_envio=fecha,
+                                                          estadoejercicio=estado,
+                                                          tipoejercicio=tipoejercicio,
+                                                          bien_mal=False
+                                                          )
+                        ejercicio_enviado.save()
+
+                        print "llego"
+                        response_data = {'result': 'ok', 'message': 'Ejercicio enviado'}
+                    else:
+                        response_data = {'result': 'fail', 'message': 'Ejercicio no encontrado'}
+                else:
+                    response_data = {'result': 'fail', 'message': 'Usuario no encontrado'}
+            else:
+                response_data = {'result': 'fail', 'message': 'El usuario no es un profesor'}
+        else:
+            response_data = {'result': 'fail', 'message': 'Token no encontrado'}
+
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    except Exception as e:
+
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
         return http.HttpResponse(json.dumps(response_data), content_type="application/json")
