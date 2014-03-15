@@ -36,7 +36,6 @@ coverage.xml
 
 # Mr Developer
 .mr.developer.cfg
-#.project
 .pydevproject
 .idea/*.*
 .idea/
@@ -45,6 +44,7 @@ coverage.xml
 
 #konecta2/local_settings.py
 konecta2/requirements_local.txt
+dbsqlite
 
 #media
 k2media/k2Usuario/profesor/avatar/
