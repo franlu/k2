@@ -27,8 +27,6 @@ def ejercicios_pendientes(request):
         }
         Esta vista muestra al usuario que envia el token, los ejercicios pendientes por hacer que tiene.
     """
-    import pdb
-    pdb.set_trace()
     try:
         data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
