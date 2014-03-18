@@ -178,3 +178,6 @@ class Pregunta(models.Model):
     enunciado = models.CharField(max_length=2000, null=True, blank=True)
     respuesta = models.CharField(max_length=2000, null=True, blank=True)
     consejo = models.CharField(max_length=2000, null=True, blank=True)
+
+    def __unicode__(self):
+        return u"%s" % self.id

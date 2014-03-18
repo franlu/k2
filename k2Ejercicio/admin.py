@@ -1,5 +1,5 @@
 from django.contrib import admin
-from k2Ejercicio.models import Ejercicio, Dificultad, TipoEjercicio, Tema, Materia, Curso,EjercicioEnviado, EstadoEjercicios
+from k2Ejercicio.models import Ejercicio, Dificultad, TipoEjercicio, Tema, Materia, Curso,EjercicioEnviado, EstadoEjercicios, Pregunta
 
 admin.site.register(Curso)
 admin.site.register(Materia)
@@ -9,6 +9,8 @@ admin.site.register(Dificultad)
 admin.site.register(Ejercicio)
 admin.site.register(EjercicioEnviado)
 admin.site.register(EstadoEjercicios)
+admin.site.register(Pregunta)
+
 
 """admin.site.register(Notificacion)
 admin.site.register(Corregir)
