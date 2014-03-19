@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     #urls para el alumno
     (r'^enviar_ejercicio_individual/$', 'k2Ejercicio.viewstab.enviar_ejercicio_individual'),
     (r'^ejercicios_pendientes/$', 'k2Ejercicio.viewstab_alumno.ejercicios_pendientes'),
-    (r'^pregunta/$', 'k2Ejercicio.viewstab_alumno.pregunta'),
+    (r'^getpregunta/$', 'k2Ejercicio.viewstab_alumno.getpregunta'),
 
 
 

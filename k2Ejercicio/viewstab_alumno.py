@@ -64,7 +64,7 @@ def ejercicios_pendientes(request):
         return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @csrf_exempt
-def pregunta(request):
+def getpregunta(request):
     """
     {
         data:
