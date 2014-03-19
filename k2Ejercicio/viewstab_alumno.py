@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
 from k2Usuario.models import Alumno, Profesor,Clase, Tokenregister
-from k2Ejercicio.models import Ejercicio, Curso, Materia, Tema, Dificultad, Notificacion, EjercicioEnviado,EstadoEjercicios
+from k2Ejercicio.models import Ejercicio, Curso, Materia, Tema, Dificultad, Notificacion, EjercicioEnviado,EstadoEjercicios,Pregunta
 from k2utils import tags
 
 import datetime
@@ -56,6 +56,45 @@ def ejercicios_pendientes(request):
                 response_data = {'result':'fail', 'message':'Ejercicio no encontrado'}
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
+
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    except Exception as e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@csrf_exempt
+def pregunta(request):
+    """
+    {
+        data:
+            {
+            "token" : "token"
+            "idpregunta" : "idpregunta"
+            }
+        }
+        esta vista nos da los detalles de una pregunta a partir del id
+    """
+
+    try:
+        data = json.loads(request.POST['data'])
+        token = data.get('token', 'null')
+        idpregunta= data.get('idpregunta','null')
+
+        comprobar_usuario = Tokenregister.objects.filter(token=token)
+        if comprobar_usuario.count() > 0:
+            if idpregunta != 'null':
+                pregunta= Pregunta.objects.filter(id=idpregunta)
+                if pregunta.count() > 0:
+                    pregunta= Pregunta.objects.get(id=idpregunta)
+                    response_data = {'result': 'ok', 'enunciado':pregunta.enunciado, 'respuesta':pregunta.respuesta, 'consejo':pregunta.consejo }
+                else:
+                    response_data = {'result':'fail', 'message':'Pregunta no encontrada'}
+            else:
+                response_data = {'result':'fail', 'message':'Id de pregunta no recibido'}
+        else:
+            response_data = {'result': 'fail', 'message': 'Token no encontrado'}
+
 
         return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 

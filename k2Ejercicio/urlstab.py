@@ -2,6 +2,8 @@
 from django.conf.urls import patterns, url
 
 urlpatterns = patterns('',
+
+    #urls del profesor
     (r'^cursos_ejercicios/$', 'k2Ejercicio.viewstab.cursos_ejercicios'),
     (r'^materias_ejercicios/$', 'k2Ejercicio.viewstab.materias_ejercicios'),
     (r'^temas_ejercicios/$', 'k2Ejercicio.viewstab.temas_ejercicios'),
@@ -16,8 +18,10 @@ urlpatterns = patterns('',
     (r'^crear_notificacion/$', 'k2Ejercicio.viewstab.crear_notificacion'),
     (r'^borrar_notificacion/$', 'k2Ejercicio.viewstab.borrar_notificacion'),
 
+    #urls para el alumno
     (r'^enviar_ejercicio_individual/$', 'k2Ejercicio.viewstab.enviar_ejercicio_individual'),
     (r'^ejercicios_pendientes/$', 'k2Ejercicio.viewstab_alumno.ejercicios_pendientes'),
+    (r'^pregunta/$', 'k2Ejercicio.viewstab_alumno.pregunta'),
 
 
 
