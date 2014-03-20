@@ -5,6 +5,7 @@ from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio
 
 
 class CursoForm(forms.ModelForm):
+    error_css_class = 'alert alert-danger'
     class Meta:
         model = Curso
         exclude = {
@@ -15,6 +16,7 @@ class CursoForm(forms.ModelForm):
         }
 
 class MateriaForm(forms.ModelForm):
+    error_css_class = 'alert alert-danger'
     class Meta:
         model = Materia
         exclude = {
@@ -22,6 +24,7 @@ class MateriaForm(forms.ModelForm):
         }
 
 class TemaForm(forms.ModelForm):
+    error_css_class = 'alert alert-danger'
     class Meta:
         model = Tema
         exclude = {
@@ -29,8 +32,14 @@ class TemaForm(forms.ModelForm):
         }
 
 class EjercicioForm(forms.ModelForm):
+    error_css_class = 'alert alert-danger'
     class Meta:
         model = Ejercicio
         exclude = {
+            'profesor',
             'favorito',
+            'centro',
+            'descripcion',
+            'herramientas',
+
         }

@@ -7,6 +7,9 @@ from konecta2.settings import MEDIA_ROOT
 from django.contrib import admin
 admin.autodiscover()
 
+from dajaxice.core import dajaxice_autodiscover, dajaxice_config
+dajaxice_autodiscover()
+
 urlpatterns = patterns('',
 
     url(r'^$', 'konecta2.views.inicio', name='inicio'),
@@ -21,6 +24,9 @@ urlpatterns = patterns('',
     url(r'^', include('k2Ejercicio.urlstab')),
 
     url(r'^admin/', include(admin.site.urls)),
+
+    #dajaxice
+    url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
 
     # Media
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),

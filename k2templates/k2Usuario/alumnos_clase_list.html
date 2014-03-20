@@ -1,40 +1,93 @@
-{% extends "pizarra.html" %}
+{% extends "pizarra_digital.html" %}
 
-{% block pagecontent %}
+{% block extracss %}
+    <!-- Page-Level Plugin CSS - Tables -->
+    <link href="{{ STATIC_URL }}css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+{% endblock %}
 
-    {% block contentheader %}
-    {% endblock %}
+{% block content %}
+        <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Clases</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel">
+                        <div class="row">
+                            <div class="col-lg-12">
+                        <a href="{% url 'claselist' %}" class="btn btn-warning pull-right"><i class="fa fa-users fa-fw"></i> Todas las clases</a>
+                            </div>
+                            </div>
+                        </div>
+                </div>
+               <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <i class="fa fa-users fa-fw"></i> Clase: {{ clase }}
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {% if clase %}
+                                        {% if alumnos %}
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover table-striped" id="clase-list">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Usuario</th>
+                                                        <th>Nombre</th>
+                                                        <th>Apellidos</th>
+                                                        <th>Estado</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for a in alumnos %}
+                                                    <tr>
+                                                            <td class="">{{ forloop.counter }}</td>
+                                                            <td class="">{{ a.idusuario.username }}</td>
+                                                            <td class="">{{ a.nombre }}</td>
+                                                            <td class="">{{ a.apellido1 }} {{ a.apellido2 }}</td>
+                                                            <td class="">{{ a.estado }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        {% else %}
+                                            <p>No hay alumnos en {{ clase }}. Registrelos <a href="{% url 'alumnocreate' %}">aqui</a>.</p>
+                                        {% endif%}
 
-    {% block contentinset %}
-        {% if clase %}
-            <p>Clase: {{ clase }}</p>
-            {% if alumnos %}
-            <table class="table table-responsive table-striped">
-                <caption></caption>
-                <tr>
-                    <th>ID</th>
-                    <th>Usuario</th>
-                    <th>Nombre</th>
-                    <th>Apellidos</th>
-                    <th>Estado</th>
-                </tr>
-                {% for a in alumnos %}
-                    <tr>
-                            <td class="">{{ a.id }}</td>
-                            <td class="">{{ a.idusuario.username }}</td>
-                            <td class="">{{ a.nombre }}</td>
-                            <td class="">{{ a.apellido1 }} {{ a.apellido2 }}</td>
-                            <td class="">{{ a.estado }}</td>
-                    </tr>
-                {% endfor %}
+                                    {% else %}
+                                        <p>No hay alumnos. Registrelos <a href="{% url 'alumnocreate' %}">aquí</a>.</p>
+                                    {% endif%}
+                                </div>
 
-            </table>
-            {% else %}
-                <p>No hay alumnos en {{ clase }}. Registrelos <a href="{% url 'alumnocreate' %}">aqui</a>.</p>
-            {% endif%}
-        {% else %}
-            <p>No hay alumnos. Registrelos <a href="{% url 'alumnocreate' %}">aquí</a>.</p>
-        {% endif%}
-    {% endblock %}
+                                <!-- /.col-lg-8 (nested) -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
 
+                </div>
+        </div>
+{% endblock %}
+
+{% block extrajs %}
+    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+    <script>
+    $(document).ready(function() {
+        $('#clase-list').dataTable({
+            "oLanguage": {
+			    "sUrl": "{{ STATIC_URL }}datatables/i18n/es_ES.txt"
+		    }
+
+        });
+    });
+    </script>
 {% endblock %}

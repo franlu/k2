@@ -1,19 +1,39 @@
-{% extends "pizarra.html" %}
-{% block pagecontent %}
+{% extends "pizarra_digital.html" %}
+{% load bootstrap %}
 
-    {% block contentheader %}
-    {% endblock %}
-
-    {% block contentinset %}
-
-        <div id='frontal' class="container">
-            <form class="form-signin" action="{% url 'cursodelete' curso.id %}" method="post">{% csrf_token %}
-                <p>Al eliminar un curso, se eliminaran todas las materias, temas, ejercicios que pertenece a dicho curso.</p>
-                <p>¿ Estas segur@ de eliminar "{{ curso.nombre }}" ?</p>
-              <a href="{% url 'cursolist' %}" class="btn btn-warning" type="submit" >Atrás</a>
-              <button class="btn btn-danger" type="submit" >Eliminar</button>
-            </form>
+{% block content %}
+        <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Cursos</h1>
+                </div>
+                <!-- /.col-lg-12 -->
         </div>
+        <!-- /.row -->
+        <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <i class="fa fa-briefcase fa-fw"></i> Eliminar curso {{ curso.nombre }}
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                   <form class="form-signin" action="{% url 'cursodelete' curso.id %}" method="post">{% csrf_token %}
+                                        <p>Al eliminar un curso, se eliminaran todas las materias, temas, ejercicios que pertenece a dicho curso.</p>
+                                        <p>¿ Estas segur@ de eliminar "{{ curso.nombre }}" ?</p>
+                                      <a href="{% url 'cursolist' %}" class="btn btn-warning" type="submit" ><i class="fa fa-arrow-left fa-fw"></i> Atrás</a>
+                                      <button class="btn btn-danger" type="submit" ><i class="fa fa-trash-o fa-fw"></i> Eliminar</button>
+                                    </form>
+                                </div>
 
-    {% endblock %}
+                                <!-- /.col-lg-8 (nested) -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+
+                </div>
+        </div>
 {% endblock %}

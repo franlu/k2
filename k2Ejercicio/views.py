@@ -10,8 +10,10 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic.edit import UpdateView, DeleteView, FormView
 from django.views.generic import ListView
 
+from konecta2.settings import COLLEGE_ID
 from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio
 from k2Ejercicio.forms import CursoForm, MateriaForm, TemaForm, EjercicioForm
+from k2Usuario.models import Profesor
 
 class CursoCreate(FormView):
 
@@ -130,7 +132,6 @@ class MateriaList(ListView):
         by_id = Materia.objects.all().order_by('id')
         return by_id
 
-
 class TemaCreate(FormView):
 
     template_name = 'k2Ejercicio/tema_create.html'
@@ -202,7 +203,10 @@ class EjercicioCreate(FormView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            form.save()
+            ejercicio = form.save(commit=False)
+            ejercicio.profesor = get_object_or_404(Profesor, idusuario=request.user)
+            ejercicio.centro = COLLEGE_ID
+            ejercicio.save()
             return http.HttpResponseRedirect('/pizarra/ejercicios/')
 
         return render(request, self.template_name, {'form': form})
@@ -222,7 +226,9 @@ class EjercicioUpdate(UpdateView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST or None, instance=self.get_object())
         if form.is_valid():
-            form.save()
+            ejercicio = form.save(commit=False)
+            ejercicio.profesor = get_object_or_404(Profesor, idusuario=request.user)
+            ejercicio.save()
             return http.HttpResponseRedirect('/pizarra/ejercicios/')
 
         return render(request, self.template_name, {'form': form,})

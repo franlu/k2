@@ -1,0 +1,165 @@
+{% load i18n %}
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Konecta2Profesor{% endblock %}</title>
+
+    <!-- Core CSS - Include with every page -->
+    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}font-awesome-4.0.3/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- SB Admin CSS - Include with every page -->
+    <link href="{{ STATIC_URL }}css/sb-admin.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="{{ STATIC_URL }}js/3.7.0/html5shiv.js"></script>
+      <script src="{{ STATIC_URL }}js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    {% block extracss %}
+    {% endblock %}
+    {% block extrahead %}
+    {% endblock %}
+
+</head>
+
+<body>
+{% block wrapper %}
+    <div id="wrapper">
+        {% block navbar %}
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/pizarra/">Konecta2Profesor</a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul class="nav navbar-top-links navbar-right">
+
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> {{ username }} <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> Mi perfil</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Cambiar clave</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+
+        </nav>
+        <!-- /.navbar-static-top -->
+
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li>
+                        <a href="/pizarra/"><i class="fa fa-laptop fa-fw"></i> Pizarra digital</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-users fa-fw"></i> k2Alumnos<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="/pizarra/clases/"><i class="fa fa-users fa-fw"></i> Clases</a>
+                            </li>
+                            <li>
+                                <a href="/pizarra/alumnos/"><i class="fa fa-user fa-fw"></i>Alumnos</a>
+                            </li>
+                        </ul>
+                        <!-- /.nav-second-level -->
+                    </li>
+
+                    <li>
+                        <a href="#"><i class="fa fa-edit fa-fw"></i> k2Ejercicios<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="/pizarra/cursos/"><i class="fa fa-briefcase fa-fw"></i> Cursos</a>
+                            </li>
+                            <li>
+                                <a href="/pizarra/materias/"><i class="fa fa-book fa-fw"></i> Materias</a>
+                            </li>
+                            <li>
+                                <a href="/pizarra/temas/"><i class="fa fa-list-alt fa-fw"></i> Temas</a>
+                            </li>
+                            <li>
+                                <a href="/pizarra/ejercicios/"><i class="fa fa-edit fa-fw"></i> Ejercicios</a>
+                            </li>
+                        </ul>
+                        <!-- /.nav-second-level -->
+                    </li>
+
+                </ul>
+                <!-- /#side-menu -->
+            </div>
+            <!-- /.sidebar-collapse -->
+        </nav>
+        <!-- /.navbar-static-side -->
+        {% endblock %}
+        <div id="page-wrapper">
+            {% block content %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Pizarra digital</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-8">
+
+                <!-- /.col-lg-8 -->
+                <div class="col-lg-4">
+                </div>
+
+                </div>
+                <!-- /.col-lg-4 -->
+            </div>
+            <!-- /.row -->
+            {% endblock %}
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+{% endblock %}
+
+    <!-- Core Scripts - Include with every page -->
+    <script src="{{ STATIC_URL }}js/1.11.0/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}js/plugins/metisMenu/jquery.metisMenu.js"></script>
+
+    <!-- Page-Level Plugin Scripts - Tables -->
+    <script src="{{ STATIC_URL }}js/plugins/dataTables/jquery.dataTables.js"></script>
+    <script src="{{ STATIC_URL }}js/plugins/dataTables/dataTables.bootstrap.js"></script>
+
+    <!-- SB Admin Scripts - Include with every page -->
+    <script src="{{ STATIC_URL }}js/sb-admin.js"></script>
+
+    {% block extrajs %}
+    {% endblock %}
+</body>
+
+</html>

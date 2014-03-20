@@ -1,16 +1,121 @@
-{% extends "pizarra.html" %}
-{% block pagecontent %}
+{% extends "pizarra_digital.html" %}
+{% load bootstrap %}
+{% load dajaxice_templatetags %}
 
-    {% block contentheader %}
-    {% endblock %}
 
-    {% block contentinset %}
-        <div id='frontal' class="container">
-            <form class="form-signin" action="{% url 'ejerciciocreate' %}" method="post">{% csrf_token %}
-                {{ form.as_p }}
-                <a href="{% url 'ejerciciolist' %}" class="btn btn-warning">Atrás</a>
-                <button class="btn btn-primary" type="submit" >Añadir</button>
-            </form>
-        </div>
-    {% endblock %}
+{% block extracss %}
+    <!-- Page-Level Plugin CSS - Tables -->
+    <link href="{{ STATIC_URL }}css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
 {% endblock %}
+
+{% block extrahead %}
+    <script src="{{ STATIC_URL }}js/dajax/jquery.dajax.core.js"></script>
+        <script src="{{ STATIC_URL }}js/dajax/dajaxice.core.js"></script>
+        {% dajaxice_js_import %}
+{% endblock %}
+
+
+{% block content %}
+        <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Añadir ejercicio</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <i class="fa fa-edit fa-fw"></i> Datos de registro
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <form class="form-signin" action="{% url 'ejerciciocreate' %}" method="post">{% csrf_token %}
+                                        {{ form | bootstrap }}
+                                        <a href="{% url 'ejerciciolist' %}" class="btn btn-warning">Atrás</a>
+                                        <button class="btn btn-primary" type="submit" >Añadir</button>
+                                    </form>
+                                </div>
+
+                            </div>
+                            <!-- /.row -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+
+                </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                        <div class="panel">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                         <a href="" class="btn btn-success pull-right"><i class="fa fa-plus-circle fa-fw"></i> Añadir video</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <i class="fa fa-edit fa-fw"></i> Videos
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                   <div class="col-lg-12">
+                                    <p>Añadir videos</p>
+                                </div>
+                             </div>
+
+                            </div>
+                            <!-- /.row -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+            </div>
+        <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                         <a href="" class="btn btn-success pull-right"><i class="fa fa-plus-circle fa-fw"></i> Añadir imagen</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <i class="fa fa-edit fa-fw"></i> Imágenes
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <p>Añadir imagenes</p>
+                                </div>
+
+                            </div>
+                            <!-- /.row -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+        </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+
+    <script>
+    $( "#id_curso" ).change(function() {
+        Dajaxice.k2Ejercicio.updateMaterias(Dajax.process, {'option':this.value});
+    });
+    $( "#id_materia" ).change(function() {
+        Dajaxice.k2Ejercicio.updateTemas(Dajax.process, {'option':this.value});
+    });
+    </script>
+    {% endblock %}
