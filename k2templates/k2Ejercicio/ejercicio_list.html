@@ -1,35 +1,95 @@
-{% extends "pizarra.html" %}
+{% extends "pizarra_digital.html" %}
 
-{% block pagecontent %}
+{% block extracss %}
+    <!-- Page-Level Plugin CSS - Tables -->
+    <link href="{{ STATIC_URL }}css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+{% endblock %}
 
-    {% block contentheader %}
-    {% endblock %}
+{% block content %}
+        <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Ejercicios</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel">
+                        <div class="row">
+                            <div class="col-lg-12">
+                        <a href="{% url 'ejerciciocreate' %}" class="btn btn-success pull-right"><i class="fa fa-plus-circle fa-fw"></i> Añadir</a>
+                            </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <i class="fa fa-edit fa-fw"></i> Ejercicios
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {%if ejercicios %}
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover table-striped" id="ejercicio-list">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Nombre</th>
+                                                    <th>Curso</th>
+                                                    <th>Materia</th>
+                                                    <th>Tema</th>
+                                                    <th>Editar</th>
+                                                    <th>Borrar</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for e in ejercicios %}
+                                                    <tr>
+                                                        <td>{{ forloop.counter }}</td>
+                                                        <td>{{ e.titulo }}</td>
+                                                        <td>{{ e.curso }}</td>
+                                                        <td>{{ e.materia }}</td>
+                                                        <td>{{ e.tema }}</td>
+                                                        <td><a href="">Editar</a></td>
+                                                        <td><a href="{% url 'ejerciciodelete' e.id %}">Borrar</a></td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.table-responsive -->
+                                    {% else %}
+                                        <p>No hay ejercicios. Registrelos <a href="{% url 'ejerciciocreate' %}">aqui</a>.</p>
+                                    {% endif %}
+                                </div>
 
-    {% block contentinset %}
 
-        {%if ejercicios %}
-            <table class="table table-responsive table-striped">
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Editar</th>
-                    <th>Borrar</th>
-                </tr>
-                {% for e in ejercicios %}
-                    <tr>
-                            <td class="">{{ e.id }}</td>
-                            <td class="">{{ e.titulo }}</td>
-                            <td class=""><a href="{% url 'ejercicioupdate' e.id %}">Editar</a></td>
-                            <td class=""><a href="{% url 'ejerciciodelete' e.id %}">Borrar</a></td>
-                    </tr>
-                {% endfor %}
-            </table>
-            <a href="{% url 'ejerciciocreate' %}"  name="ejerciciocreate" class="">Nuevo ejercicio</a>
+                                <!-- /.col-lg-8 (nested) -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
 
-        {% else %}
-             <p>No hay ejercicios. Registrelos <a href="{% url 'ejerciciocreate' %}">aquí</a>.</p>
-        {% endif%}
+                </div>
 
-    {% endblock %}
+        </div>
+{% endblock %}
 
+{% block extrajs %}
+    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+    <script>
+    $(document).ready(function() {
+        $('#ejercicio-list').dataTable({
+            "oLanguage": {
+			    "sUrl": "{{ STATIC_URL }}datatables/i18n/es_ES.txt"
+		    }
+
+        });
+    });
+    </script>
 {% endblock %}

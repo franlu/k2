@@ -1,41 +1,93 @@
-{% extends "pizarra.html" %}
+{% extends "pizarra_digital.html" %}
 
-{% block pagecontent %}
+{% block extracss %}
+    <!-- Page-Level Plugin CSS - Tables -->
+    <link href="{{ STATIC_URL }}css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+{% endblock %}
 
-    {% block contentheader %}
-    {% endblock %}
+{% block content %}
+        <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Alumnos</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <a href="{% url 'alumnocreate' %}" class="btn btn-success pull-right"><i class="fa fa-plus-circle fa-fw"></i> Añadir</a>
+                            </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <i class="fa fa-user fa-fw"></i> Alumnos registrados en el sistema
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {% if alumnos %}
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover table-striped" id="alumno-list">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Usuario</th>
+                                                    <th>Nombre</th>
+                                                    <th>Apellidos</th>
+                                                    <th>Estado</th>
+                                                    <th>Editar</th>
+                                                    <th>Borrar</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for a in alumnos %}
+                                                    <tr>
+                                                        <td class="">{{ forloop.counter }}</td>
+                                                        <td class="">{{ a.idusuario.username }}</td>
+                                                        <td class="">{{ a.nombre }}</td>
+                                                        <td class="">{{ a.apellido1 }} {{ a.apellido2 }}</td>
+                                                        <td class="">{{ a.estado }}</td>
+                                                        <td class=""><a href="{% url 'alumnoupdate' a.id %}">Editar</a></td>
+                                                        <td class=""><a href="{% url 'alumnodelete' a.id %}">Borrar</a></td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.table-responsive -->
+                                    {% else %}
+                                        <p>No hay alumnos. Registrelos <a href="{% url 'alumnocreate' %}">aquí</a>.</p>
+                                    {% endif %}
+                                </div>
 
-    {% block contentinset %}
-        {% if alumnos %}
-            <table class="table table-responsive table-striped">
-                <tr>
-                    <th>ID</th>
-                    <th>Usuario</th>
-                    <th>Nombre</th>
-                    <th>Apellidos</th>
-                    <th>Estado</th>
-                    <th>Editar</th>
-                    <th>Borrar</th>
-                </tr>
-                {% for a in alumnos %}
-                    <tr>
-                            <td class="">{{ a.id }}</td>
-                            <td class="">{{ a.idusuario.username }}</td>
-                            <td class="">{{ a.nombre }}</td>
-                            <td class="">{{ a.apellido1 }} {{ a.apellido2 }}</td>
-                            <td class="">{{ a.estado }}</td>
-                            <td class=""><a href="{% url 'alumnoupdate' a.id %}">Editar</a></td>
-                            <td class=""><a href="{% url 'alumnodelete' a.id %}">Borrar</a></td>
+                                <!-- /.col-lg-8 (nested) -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
 
-                    </tr>
-                {% endfor %}
+                </div>
+        </div>
+{% endblock %}
 
-            </table>
-            <a href="{% url 'alumnocreate' %}" class="">Añadir alumno</a>
-        {% else %}
-            <p>No hay alumnos. Registrelos <a href="{% url 'alumnocreate' %}">aqui</a>.</p>
-        {% endif%}
+        {% block extrajs %}
+    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+    <script>
+    $(document).ready(function() {
+        $('#alumno-list').dataTable({
+            "oLanguage": {
+			    "sUrl": "{{ STATIC_URL }}datatables/i18n/es_ES.txt"
+		    }
 
-    {% endblock %}
-
+        });
+    });
+    </script>
 {% endblock %}

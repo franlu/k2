@@ -7,6 +7,7 @@ from k2Usuario.models import Alumno, Clase, Profesor
 
 
 class AlumnoForm(forms.ModelForm):
+    error_css_class = 'alert alert-danger'
     class Meta:
         model = Alumno
         exclude = {
@@ -29,6 +30,7 @@ class ProfesorForm(forms.ModelForm):
         }
 
 class ClaseForm(forms.ModelForm):
+    error_css_class = 'alert alert-danger'
     class Meta:
         model = Clase
         widgets = {

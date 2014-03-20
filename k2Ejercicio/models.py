@@ -22,7 +22,7 @@ class Curso(models.Model):
 class Materia(models.Model):
     curso = models.ForeignKey(Curso)
     favorito = models.ManyToManyField(User)
-    nombre = models.CharField(max_length=30, unique=True)
+    nombre = models.CharField(max_length=30)
 
     class Meta:
         verbose_name_plural = "Materias"
@@ -67,7 +67,7 @@ class Ejercicio(models.Model):
     dificultad = models.ForeignKey(Dificultad)
     tipo = models.ForeignKey(TipoEjercicio)
     centro = models.CharField(max_length=10, blank=True)
-    titulo = models.CharField(max_length=50)
+    titulo = models.CharField(max_length=50, unique=True)
     descripcion = models.CharField(max_length=3000)
     herramientas = models.CharField(max_length=200)
 

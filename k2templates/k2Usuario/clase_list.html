@@ -1,37 +1,89 @@
-{% extends "pizarra.html" %}
+{% extends "pizarra_digital.html" %}
 
-{% block pagecontent %}
+{% block extracss %}
+    <!-- Page-Level Plugin CSS - Tables -->
+    <link href="{{ STATIC_URL }}css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+{% endblock %}
 
-    {% block contentheader %}
-    {% endblock %}
+{% block content %}
+        <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Clases</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel">
+                        <div class="row">
+                            <div class="col-lg-12">
+                        <a href="{% url 'clasecreate' %}" class="btn btn-success pull-right"><i class="fa fa-plus-circle fa-fw"></i> Añadir</a>
+                            </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <i class="fa fa-users fa-fw"></i> Clases
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {%if clases %}
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover table-striped" id="clase-list">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Nombre</th>
+                                                    <th>Alumnos</th>
+                                                    <th>Editar</th>
+                                                    <th>Borrar</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for c in clases %}
+                                                    <tr>
+                                                        <td class="">{{ forloop.counter }}</td>
+                                                        <td class="">{{ c.nombre }}</td>
+                                                        <td class=""><a href="{% url 'clasealumnoslist' c.id %}">Ver</a></td>
+                                                        <td class=""><a href="{% url 'claseupdate' c.id %}">Editar</a></td>
+                                                        <td class=""><a href="{% url 'clasedelete' c.id %}">Borrar</a></td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.table-responsive -->
+                                    {% else %}
+                                        <p>No hay clases. Registrelas <a href="{% url 'clasecreate' %}">aquí</a>.</p>
+                                    {% endif %}
+                                </div>
 
-    {% block contentinset %}
+                                <!-- /.col-lg-8 (nested) -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
 
-        {%if clases %}
-            <table class="table table-responsive table-striped">
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Alumnos</th>
-                    <th>Editar</th>
-                    <th>Borrar</th>
-                </tr>
-                {% for c in clases %}
-                    <tr>
-                            <td class="">{{ c.id }}</td>
-                            <td class="">{{ c.nombre }}</td>
-                            <td class=""><a href="{% url 'clasealumnoslist' c.id %}">Ver</a></td>
-                            <td class=""><a href="{% url 'claseupdate' c.id %}">Editar</a></td>
-                            <td class=""><a href="{% url 'clasedelete' c.id %}">Borrar</a></td>
-                    </tr>
-                {% endfor %}
-            </table>
-            <a href="{% url 'clasecreate' %}"  name="clasecreate" class="">Nueva clase</a>
+                </div>
+        </div>
+{% endblock %}
 
-        {% else %}
-             <p>No hay clases. Registrelas <a href="{% url 'clasecreate' %}">aqui</a>.</p>
-        {% endif%}
+{% block extrajs %}
+    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+    <script>
+    $(document).ready(function() {
+        $('#clase-list').dataTable({
+            "oLanguage": {
+			    "sUrl": "{{ STATIC_URL }}datatables/i18n/es_ES.txt"
+		    }
 
-    {% endblock %}
-
+        });
+    });
+    </script>
 {% endblock %}

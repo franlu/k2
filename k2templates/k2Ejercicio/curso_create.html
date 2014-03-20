@@ -1,16 +1,39 @@
-{% extends "pizarra.html" %}
-{% block pagecontent %}
+{% extends "pizarra_digital.html" %}
+{% load bootstrap %}
 
-    {% block contentheader %}
-    {% endblock %}
-
-    {% block contentinset %}
-        <div id='frontal' class="container">
-            <form class="form-signin" action="{% url 'cursocreate' %}" method="post">{% csrf_token %}
-                {{ form.as_p }}
-                <a href="{% url 'cursolist' %}" class="btn btn-warning">Atrás</a>
-                <button class="btn btn-primary" type="submit" >Añadir</button>
-            </form>
+{% block content %}
+        <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Cursos</h1>
+                </div>
+                <!-- /.col-lg-12 -->
         </div>
-    {% endblock %}
+        <!-- /.row -->
+        <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <i class="fa fa-briefcase fa-fw"></i> Nuevo curso
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                   <form class="form-signin" action="{% url 'cursocreate' %}" method="post">{% csrf_token %}
+                                        {{ form | bootstrap }}
+                                        <a href="{% url 'cursolist' %}" class="btn btn-warning"><i class="fa fa-arrow-left fa-fw"></i> Atrás</a>
+                                        <button class="btn btn-primary" type="submit" ><i class="fa fa-save fa-fw"></i> Guardar</button>
+                                    </form>
+
+                                </div>
+
+                                <!-- /.col-lg-8 (nested) -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+
+                </div>
+        </div>
 {% endblock %}

@@ -50,6 +50,8 @@ dbsqlite
 k2media/k2Usuario/profesor/avatar/
 k2media/k2Usuario/alumno/avatar/
 
+Procfile
+
 # Rope
 .ropeproject
 
