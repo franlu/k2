@@ -9,7 +9,8 @@
                 <div class="login-panel panel panel-default">
                     <div class="panel-body">
                         <form action="/login/" method="post" >{% csrf_token %}
-                            <img src="{{ MEDIA_URL }}konecta2/static/k2logo.png" alt="k2logo" class="logo img-responsive">
+                            <img src="{{ MEDIA_URL }}konecta2/static/k2alqueria.png" alt="k2alqueria" class="logo img-responsive">
+                            <br />
                             {{ form | bootstrap }}
                             <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
                         </form>
