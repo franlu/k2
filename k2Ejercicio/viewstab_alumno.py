@@ -31,17 +31,17 @@ def ejercicios_pendientes(request):
         data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
         comprobar_usuario = Tokenregister.objects.filter(token=token)
-
         if comprobar_usuario.count() > 0:
             token_usuario = Tokenregister.objects.get(token=token)
             alumno=Alumno.objects.get(idusuario=token_usuario.userid)
-            comprobar_ejercicios= EjercicioEnviado.objects.filter(alumno=alumno)
+            estado_pendiente=EstadoEjercicios.objects.get(id=tags.estado_ejercicio_pendiente)
+            comprobar_ejercicios= EjercicioEnviado.objects.filter(alumno=alumno, estadoejercicio=estado_pendiente)
             if comprobar_ejercicios.count() > 0:
                 response_data = {'result': 'ok', 'ejercicios': []}
                 for ejercicios in comprobar_ejercicios:
-                    obtener_ejercicio = Ejercicio.objects.filter(id=ejercicios.id)
+                    obtener_ejercicio = Ejercicio.objects.filter(id=ejercicios.ejercicio.id)
                     if obtener_ejercicio.count() > 0:
-                        obtener_ejercicio = Ejercicio.objects.get(id=ejercicios.id)
+                        obtener_ejercicio = Ejercicio.objects.get(id=ejercicios.ejercicio.id)
                         response_data['ejercicios'].append({'fecha': str(ejercicios.fecha_envio),
                                                             'idcorregir':ejercicios.id,
                                                             'idprofesor': ejercicios.profesor.idusuario.id,
