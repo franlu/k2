@@ -6,8 +6,6 @@ from k2Ejercicio.models import Materia, Tema
 @dajaxice_register
 def updateMaterias(request, option):
     dajax = Dajax()
-    boo = int.__instancecheck__(option)
-    print boo, option, type(option)
     options = Materia.objects.filter(curso=int(option))
     out = []
     out.append('<option value="" selected="selected">---------</option>')
@@ -22,11 +20,8 @@ def updateMaterias(request, option):
 @dajaxice_register
 def updateTemas(request, option):
     dajax = Dajax()
-    boo = int.__instancecheck__(option)
-    print boo, option, type(option)
     options = Tema.objects.filter(materia=int(option))
     out = []
-    print "temas"
     out.append('<option value="" selected="selected">---------</option>')
     if options.count > 0:
         for option in options:

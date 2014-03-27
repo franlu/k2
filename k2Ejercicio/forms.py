@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 import floppyforms as forms
-from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio
+from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio, Contenido
 
 
 class CursoForm(forms.ModelForm):
@@ -10,9 +10,6 @@ class CursoForm(forms.ModelForm):
         model = Curso
         exclude = {
             'favorito',
-        }
-        widgets = {
-            'nombre': forms.TextInput
         }
 
 class MateriaForm(forms.ModelForm):
@@ -41,5 +38,13 @@ class EjercicioForm(forms.ModelForm):
             'centro',
             'descripcion',
             'herramientas',
+        }
 
+
+class ContenidoForm(forms.ModelForm):
+    error_css_class = 'alert alert-danger'
+    class Meta:
+        model = Contenido
+        exclude = {
+            'texto',
         }

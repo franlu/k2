@@ -36,11 +36,12 @@ coverage.xml
 
 # Mr Developer
 .mr.developer.cfg
-#.project
+.project
 .pydevproject
 .idea/*.*
 .idea/
 .idea
+
 
 
 #konecta2/local_settings.py
