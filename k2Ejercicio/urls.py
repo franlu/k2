@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from k2Ejercicio.views import CursoList, CursoCreate, CursoUpdate, CursoDelete
 from k2Ejercicio.views import MateriaList, MateriaCreate, MateriaUpdate, MateriaDelete
 from k2Ejercicio.views import TemaList, TemaCreate, TemaUpdate, TemaDelete
-from k2Ejercicio.views import EjercicioList, EjercicioCreate, EjercicioUpdate, EjercicioDelete
+from k2Ejercicio.views import EjercicioList, EjercicioCreate, EjercicioUpdate, EjercicioDelete, EjercicioDetailView
+from k2Ejercicio.views import videocreate 
 
 
 urlpatterns = patterns('',
@@ -31,5 +32,9 @@ urlpatterns = patterns('',
     url(r'^ejercicios/nuevo/$', login_required(EjercicioCreate.as_view()) , name='ejerciciocreate'),
     url(r'^ejercicios/editar/(?P<pk>\d+)$', login_required(EjercicioUpdate.as_view()) , name='ejercicioupdate'),
     url(r'^ejercicios/borrar/(?P<pk>\d+)$', login_required(EjercicioDelete.as_view()) , name='ejerciciodelete'),
+    url(r'^ejercicios/ver/(?P<pk>\d+)/$', login_required(EjercicioDetailView.as_view()) , name='ejerciciodetail'),
+
+
+     url(r'^ejercicios/(?P<pk>\d+)/video/nuevo/$', login_required(videocreate.as_view()), name='videocreate'),
 
  )

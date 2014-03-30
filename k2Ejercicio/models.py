@@ -58,6 +58,11 @@ class TipoEjercicio(models.Model):
     def __unicode__(self):
         return u"%s" % self.nombre
 
+class Contenido(models.Model):
+    url = models.URLField( null=True, blank=True)
+    file = models.FileField(upload_to='k2Ejercicio/contenido/', max_length=24576, null=True, blank=True)
+    texto = models.CharField(max_length=500, null=True, blank=True)
+    
 
 class Ejercicio(models.Model):
     profesor = models.ForeignKey(Profesor)
