@@ -145,8 +145,13 @@ class TemaCreate(FormView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            form.save()
-            return http.HttpResponseRedirect('/pizarra/temas/')
+            tema = form.save(commit=False)
+            if tema.tipo == '0':
+                tema.tipo = request.user.id
+            else:
+                tema.tipo = 'Público'
+            tema.save()
+            return http.HttpResponseRedirect(reverse('temalist'))
 
         return render(request, self.template_name, {'form': form})
 

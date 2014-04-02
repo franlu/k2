@@ -34,7 +34,7 @@ class Tema(models.Model):
     materia = models.ForeignKey(Materia)
     favorito = models.ManyToManyField(User)
     nombre = models.CharField(max_length=100, unique=True)
-    tipo = models.CharField(max_length=20) #Publico Privado ...
+    tipo = models.CharField(max_length=10)
 
     def __unicode__(self):
         return u"%s" % self.nombre
