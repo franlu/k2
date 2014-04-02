@@ -106,6 +106,28 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/pizarra/'
 
 try:
-    from local_settings import *
-except ImportError, e:
-    print 'Unable to load local_settings.py:', e
+  import local_settings
+except ImportError:
+  print """
+    -------------------------------------------------------------------------
+    You need to create a local_settings.py file which needs to contain at least
+    database connection information.
+    -------------------------------------------------------------------------
+    """
+  import sys
+  sys.exit(1)
+else:
+  # Import any symbols that begin with A-Z. Append to lists any symbols that
+  # begin with "EXTRA_".
+  import re
+  for attr in dir(local_settings):
+    match = re.search('^EXTRA_(\w+)', attr)
+    if match:
+      name = match.group(1)
+      value = getattr(local_settings, attr)
+      try:
+        globals()[name] += value
+      except KeyError:
+        globals()[name] = value
+    elif re.search('^[A-Z]', attr):
+      globals()[attr] = getattr(local_settings, attr)

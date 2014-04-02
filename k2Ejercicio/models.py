@@ -31,10 +31,14 @@ class Materia(models.Model):
         return u"%s" % self.nombre
 
 class Tema(models.Model):
+    TIPO_CHOICES = {
+            ('-1',"Público"),
+            ('%s',"Privado"),
+        }
     materia = models.ForeignKey(Materia)
     favorito = models.ManyToManyField(User)
     nombre = models.CharField(max_length=100, unique=True)
-    tipo = models.CharField(max_length=20) #Publico Privado ...
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES, default='-1')
 
     def __unicode__(self):
         return u"%s" % self.nombre
@@ -59,23 +63,35 @@ class TipoEjercicio(models.Model):
         return u"%s" % self.nombre
 
 class Contenido(models.Model):
-    url = models.URLField( null=True, blank=True)
-    file = models.FileField(upload_to='k2Ejercicio/contenido/', max_length=24576, null=True, blank=True)
-    texto = models.CharField(max_length=500, null=True, blank=True)
-    
+    TIPO = (
+        (0,"MEDIA"),
+        (1,"VIDEO"),
+        (2,"AUDIO"),
+        (3,"IMAGEN"),
+    )
+    fecha = models.DateTimeField(auto_now_add=True)
+    tipo = models.CharField(max_length=500, choices=TIPO, default=0)
+    path = models.CharField(max_length=500)
+
+class Pregunta(models.Model):
+    enunciado = models.CharField(max_length=2000)
+    respuesta = models.CharField(max_length=2000)
+    consejo = models.CharField(max_length=2000)
 
 class Ejercicio(models.Model):
-    profesor = models.ForeignKey(Profesor)
     curso = models.ForeignKey(Curso)
-    materia = models.ForeignKey(Materia)
-    tema = models.ForeignKey(Tema)
     dificultad = models.ForeignKey(Dificultad)
+    materia = models.ForeignKey(Materia)
+    media = models.ManyToManyField(Contenido)
+    pregunta = models.ManyToManyField(Pregunta)
+    profesor = models.ForeignKey(Profesor)
+    tema = models.ForeignKey(Tema)
     tipo = models.ForeignKey(TipoEjercicio)
     centro = models.CharField(max_length=10, blank=True)
-    titulo = models.CharField(max_length=50, unique=True)
     descripcion = models.CharField(max_length=3000)
+    fecha = models.DateTimeField(auto_now_add=True)
     herramientas = models.CharField(max_length=200)
-
+    titulo = models.CharField(max_length=50, unique=True)
 
     class Meta:
         verbose_name_plural = "Ejercicios"
@@ -174,15 +190,6 @@ class EjercicioEnviado(models.Model):
 
     class Meta:
         verbose_name_plural = "Todos los ejercicios"
-
-    def __unicode__(self):
-        return u"%s" % self.id
-
-
-class Pregunta(models.Model):
-    enunciado = models.CharField(max_length=2000, null=True, blank=True)
-    respuesta = models.CharField(max_length=2000, null=True, blank=True)
-    consejo = models.CharField(max_length=150, null=True, blank=True)
 
     def __unicode__(self):
         return u"%s" % self.id

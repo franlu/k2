@@ -38,6 +38,8 @@ class EjercicioForm(forms.ModelForm):
             'centro',
             'descripcion',
             'herramientas',
+            'media',
+            'pregunta',
         }
 
 
@@ -46,5 +48,11 @@ class ContenidoForm(forms.ModelForm):
     class Meta:
         model = Contenido
         exclude = {
-            'texto',
+            'fecha',
+            'tipo',
+            'path',
+        }
+        widgets = {
+            'url': forms.URLField(),
+            'archivo' : forms.FileField()
         }

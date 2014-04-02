@@ -145,8 +145,13 @@ class TemaCreate(FormView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            form.save()
-            return http.HttpResponseRedirect('/pizarra/temas/')
+            tema = form.save(commit=False)
+            if tema.tipo == '0':
+                tema.tipo = request.user.id
+            else:
+                tema.tipo = 'Público'
+            tema.save()
+            return http.HttpResponseRedirect(reverse('temalist'))
 
         return render(request, self.template_name, {'form': form})
 
@@ -208,7 +213,7 @@ class EjercicioCreate(FormView):
             ejercicio.profesor = get_object_or_404(Profesor, idusuario=request.user)
             ejercicio.centro = COLLEGE_ID
             ejercicio.save()
-            return http.HttpResponseRedirect('/pizarra/ejercicios/ver/%s/' % ejercicio.id)
+            return http.HttpResponseRedirect(reverse('ejerciciodetail', args=[ejercicio.id]))
 
         return render(request, self.template_name, {'form': form})
 
@@ -230,7 +235,7 @@ class EjercicioUpdate(UpdateView):
             ejercicio = form.save(commit=False)
             ejercicio.profesor = get_object_or_404(Profesor, idusuario=request.user)
             ejercicio.save()
-            return http.HttpResponseRedirect('/pizarra/ejercicios/')
+            return http.HttpResponseRedirect(reverse('ejerciciolist'))
 
         return render(request, self.template_name, {'form': form,})
 
@@ -245,14 +250,14 @@ class EjercicioDelete(DeleteView):
     def post(self, request, *args, **kwargs):
         ejercicio = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
         ejercicio.delete()
-        return http.HttpResponseRedirect('/pizarra/ejercicios/')
+        return http.HttpResponseRedirect(reverse('ejerciciolist'))
 
 class EjercicioList(ListView):
 
     context_object_name = 'ejercicios'
 
     def get_queryset(self):
-        by_id = Ejercicio.objects.all().order_by('id')
+        by_id = Ejercicio.objects.all().order_by('-fecha')
         return by_id
     
 
@@ -263,6 +268,7 @@ class EjercicioDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(EjercicioDetailView, self).get_context_data(**kwargs)
+        context['contenido'] = ContenidoForm
         return context
 
 
@@ -273,14 +279,15 @@ class videocreate(CreateView):
 
     def get(self, request, *args, **kwargs):
         form = self.form_class(initial=self.initial)
-        return render(request, self.template_name, {'contenido' : form})
-    
+        ej = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
+        return render(request, self.template_name, {'e': ej,'contenido' : form})
+
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        form = self.form_class(request.POST, request.FILES)
         print "asdfasdfasdfasd"
         if form.is_valid():
-            
-            return http.HttpResponseRedirect('/pizarra/ejercicios/ver/%s' % self.kwargs['pk'])
+            arg1 = "{% include 'k2Ejercicio/video_create.html' %}"
+            return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(self.kwargs['pk'],)))
 
         return render(request, self.template_name, {'form': form})
     
