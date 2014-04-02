@@ -31,10 +31,14 @@ class Materia(models.Model):
         return u"%s" % self.nombre
 
 class Tema(models.Model):
+    TIPO_CHOICES = {
+            ('-1',"Público"),
+            ('%s',"Privado"),
+        }
     materia = models.ForeignKey(Materia)
     favorito = models.ManyToManyField(User)
     nombre = models.CharField(max_length=100, unique=True)
-    tipo = models.CharField(max_length=10)
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES, default='-1')
 
     def __unicode__(self):
         return u"%s" % self.nombre

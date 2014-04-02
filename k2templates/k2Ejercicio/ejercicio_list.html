@@ -54,7 +54,7 @@
                                                         <td>{{ e.curso }}</td>
                                                         <td>{{ e.materia }}</td>
                                                         <td>{{ e.tema }}</td>
-                                                        <td><a href="">Editar</a></td>
+                                                        <td><a href="{% url 'ejercicioupdate' e.id %}">Editar</a></td>
                                                         <td><a href="{% url 'ejerciciodelete' e.id %}">Borrar</a></td>
                                                     </tr>
                                                 {% endfor %}

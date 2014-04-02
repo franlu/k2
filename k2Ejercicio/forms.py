@@ -27,13 +27,6 @@ class TemaForm(forms.ModelForm):
         exclude = {
             'favorito',
         }
-        TIPO_CHOICES = {
-            (1,"Público"),
-            (0,"Privado"),
-        }
-        widgets = {
-            'tipo': forms.Select(choices=TIPO_CHOICES)
-        }
 
 class EjercicioForm(forms.ModelForm):
     error_css_class = 'alert alert-danger'
