@@ -32,7 +32,7 @@ urlpatterns = patterns('',
     url(r'^ejercicios/nuevo/$', login_required(EjercicioCreate.as_view()) , name='ejerciciocreate'),
     url(r'^ejercicios/editar/(?P<pk>\d+)$', login_required(EjercicioUpdate.as_view()) , name='ejercicioupdate'),
     url(r'^ejercicios/borrar/(?P<pk>\d+)$', login_required(EjercicioDelete.as_view()) , name='ejerciciodelete'),
-    url(r'^ejercicios/ver/(?P<pk>\d+)/$', login_required(EjercicioDetailView.as_view()) , name='ejerciciodetail'),
+    url(r'^ejercicios/ref/(?P<pk>\d+)/$', login_required(EjercicioDetailView.as_view()) , name='ejerciciodetail'),
 
 
      url(r'^ejercicios/(?P<pk>\d+)/video/nuevo/$', login_required(videocreate.as_view()), name='videocreate'),

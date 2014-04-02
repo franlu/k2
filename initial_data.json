@@ -1,0 +1,67 @@
+[
+  {
+    "model": "k2Ejercicio.dificultad",
+    "pk": 1,
+    "fields": {
+      "nombre": "Fácil"
+    }
+  },
+  {
+    "model": "k2Ejercicio.dificultad",
+    "pk": 2,
+    "fields": {
+      "nombre": "Muy fácil"
+    }
+  },
+  {
+    "model": "k2Ejercicio.dificultad",
+    "pk": 3,
+    "fields": {
+      "nombre": "Media"
+    }
+  },
+  {
+    "model": "k2Ejercicio.dificultad",
+    "pk": 4,
+    "fields": {
+      "nombre": "Difícil"
+    }
+  },
+  {
+    "model": "k2Ejercicio.dificultad",
+    "pk": 5,
+    "fields": {
+      "nombre": "Muy difícil"
+    }
+  },
+
+  {
+    "model": "k2Ejercicio.tipoejercicio",
+    "pk": 1,
+    "fields": {
+      "nombre": "Exámen"
+    }
+  },
+  {
+    "model": "k2Ejercicio.tipoejercicio",
+    "pk": 2,
+    "fields": {
+      "nombre": "Control"
+    }
+  },
+  {
+    "model": "k2Ejercicio.tipoejercicio",
+    "pk": 3,
+    "fields": {
+      "nombre": "Ejercicio de clase"
+    }
+  },
+  {
+    "model": "k2Ejercicio.tipoejercicio",
+    "pk": 4,
+    "fields": {
+      "nombre": "Global"
+    }
+  }
+
+ ]

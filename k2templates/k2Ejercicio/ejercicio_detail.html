@@ -30,11 +30,11 @@
             <div class="col-lg-4 col-md-offset-4">
                 <div class="panel">
                     <div class="panel-body">
-                        <button type="button" class="btn btn-primary btn-circle btn-xl" data-toggle="modal" data-target="#videocreate"><i class="fa fa-video-camera fa-fw"></i></button>
-                        <button type="button" class="btn btn-primary btn-circle btn-xl" data-toggle="modal" data-target=".mymodal"><i class="fa fa-music fa-fw"></i></button>
-                        <button type="button" class="btn btn-primary btn-circle btn-xl"><i class="fa fa-picture-o fa-fw"></i></button>
-                        <button type="button" class="btn btn-primary btn-circle btn-xl"><i class="fa fa-font fa-fw"></i></button>
-                        <button type="button" class="btn btn-primary btn-circle btn-xl"><i class="fa fa-question fa-fw"></i></button>
+                        <a href="{% url 'videocreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-video-camera fa-fw"></i></a>
+                        <a href="{% url 'videocreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-music fa-fw"></i></a>
+                        <a href="{% url 'videocreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-picture-o fa-fw"></i></a>
+                        <a href="{% url 'videocreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-font fa-fw"></i></a>
+                        <a href="{% url 'videocreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-question fa-fw"></i></a>
                         <!--<a href="#"><img src="{{ MEDIA_URL}}konecta2/static/video.png" height="48" width="48"></a>
                         <a href="#"><img src="{{ MEDIA_URL}}konecta2/static/video.png" height="48" width="48"></a>
                         <a href="#"><img src="{{ MEDIA_URL}}konecta2/static/video.png" height="48" width="48"></a>
@@ -47,7 +47,7 @@
         </div>
         <!-- /.row Botonera-->
 
-        {% include 'k2Ejercicio/video_create.html' %}
+
 
         {% else %}
         <div class="row">
