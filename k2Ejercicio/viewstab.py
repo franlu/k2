@@ -117,7 +117,7 @@ def temas_ejercicios(request):
             id_materia = Materia.objects.get(id=idmateria)
             response_data = {'result':'ok', 'temas_publicos':[], 'temas_publicos_favoritos':[], 'temas_privados':[], 'temas_privados_favoritos':[]}
             for temas in Tema.objects.filter(materia=id_materia):
-                if temas.tipo == "publico":
+                if temas.tipo == "-1":
 
                     es_favorito=False
                     for favorito in temas.favorito.all():

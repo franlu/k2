@@ -77,12 +77,14 @@ class Pregunta(models.Model):
     enunciado = models.CharField(max_length=2000)
     respuesta = models.CharField(max_length=2000)
     consejo = models.CharField(max_length=2000)
+    def __unicode__(self):
+        return u"%s" % self.id
 
 class Ejercicio(models.Model):
     curso = models.ForeignKey(Curso)
     dificultad = models.ForeignKey(Dificultad)
     materia = models.ForeignKey(Materia)
-    media = models.ManyToManyField(Contenido)
+    media = models.ManyToManyField(Contenido, blank=True)
     pregunta = models.ManyToManyField(Pregunta)
     profesor = models.ForeignKey(Profesor)
     tema = models.ForeignKey(Tema)

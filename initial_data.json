@@ -62,6 +62,27 @@
     "fields": {
       "nombre": "Global"
     }
+  },
+  {
+    "model": "k2Ejercicio.estadoejercicios",
+    "pk": 1,
+    "fields": {
+      "nombre": "Pendiente"
+    }
+  },
+  {
+    "model": "k2Ejercicio.estadoejercicios",
+    "pk": 2,
+    "fields": {
+      "nombre": "Corregir"
+    }
+  },
+  {
+    "model": "k2Ejercicio.estadoejercicios",
+    "pk": 3,
+    "fields": {
+      "nombre": "Terminado"
+    }
   }
 
  ]
