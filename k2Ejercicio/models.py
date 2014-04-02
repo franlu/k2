@@ -114,7 +114,7 @@ class Notificacion(models.Model):
 
 class Incidencias(models.Model):
     usuario = models.ForeignKey(User)
-    comentario = models.CharField(max_length=2000, unique=True)
+    comentario = models.CharField(max_length=2000)
 
     class Meta:
         verbose_name_plural = "Incidencias"
@@ -125,7 +125,7 @@ class Incidencias(models.Model):
 
 class Observaciones(models.Model):
     usuario = models.ForeignKey(User)
-    comentario = models.CharField(max_length=2000, unique=True)
+    comentario = models.CharField(max_length=2000)
 
     class Meta:
         verbose_name_plural = "Observaciones"
