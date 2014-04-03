@@ -43,16 +43,14 @@ class EjercicioForm(forms.ModelForm):
         }
 
 
-class ContenidoForm(forms.ModelForm):
+class ContenidoForm(forms.Form):
     error_css_class = 'alert alert-danger'
+
+    url = forms.URLField(required=False)
+    archivo = forms.FileField(required=False)
+
     class Meta:
-        model = Contenido
-        exclude = {
-            'fecha',
-            'tipo',
-            'path',
-        }
         widgets = {
             'url': forms.URLField(),
-            'archivo' : forms.FileField()
+            'archivo' : forms.ClearableFileInput()
         }

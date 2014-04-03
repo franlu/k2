@@ -11,10 +11,10 @@ from django.views.generic.edit import CreateView,UpdateView, DeleteView, FormVie
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 
-from konecta2.settings import COLLEGE_ID
-from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio
+from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio, Contenido
 from k2Ejercicio.forms import CursoForm, MateriaForm, TemaForm, EjercicioForm, ContenidoForm
 from k2Usuario.models import Profesor
+
 
 class CursoCreate(FormView):
 
@@ -211,7 +211,6 @@ class EjercicioCreate(FormView):
         if form.is_valid():
             ejercicio = form.save(commit=False)
             ejercicio.profesor = get_object_or_404(Profesor, idusuario=request.user)
-            ejercicio.centro = COLLEGE_ID
             ejercicio.save()
             return http.HttpResponseRedirect(reverse('ejerciciodetail', args=[ejercicio.id]))
 
@@ -284,9 +283,16 @@ class videocreate(CreateView):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
-        print "asdfasdfasdfasd"
+
         if form.is_valid():
-            arg1 = "{% include 'k2Ejercicio/video_create.html' %}"
+            url = form['url'].value()
+            #if url != '':
+                #url = get_url_local(url)
+            c = Contenido(tipo='VIDEO', path=url)
+            c.save()
+            ej = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
+            ej.media.add(c)
+
             return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(self.kwargs['pk'],)))
 
         return render(request, self.template_name, {'form': form})
