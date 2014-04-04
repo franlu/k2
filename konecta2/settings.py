@@ -102,6 +102,8 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(PROJECT_PATH, 'k2media')
 MEDIA_URL = '/media/'
 MEDIA_VIDEO = MEDIA_ROOT + '/video/'
+MEDIA_AUDIO = MEDIA_ROOT + '/audio/'
+MEDIA_IMAGE = MEDIA_ROOT + '/image/'
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/pizarra/'
