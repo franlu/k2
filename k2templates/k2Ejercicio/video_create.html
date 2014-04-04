@@ -61,7 +61,16 @@
         {% endif %}
 {% endblock %}
 {% block extrajs %}
-
+<script>
+  $( document ).ready(function() {
+    $( "#id_url" ).change(function() {
+        $( "#id_archivo" ).prop( "disabled", true );
+    });
+    $( "#id_archivo" ).change(function() {
+        $( "#id_url" ).prop( "disabled", true );
+    });
+  });
+  </script>
 {% endblock %}
 
 

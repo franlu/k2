@@ -65,7 +65,7 @@ class TipoEjercicio(models.Model):
 
 class Contenido(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
-    tipo = models.CharField(max_length=500, default='MEDIA')
+    tipo = models.CharField(max_length=10, default='MEDIA')
     path = models.CharField(max_length=500)
 
 class Pregunta(models.Model):

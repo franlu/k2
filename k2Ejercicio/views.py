@@ -15,6 +15,9 @@ from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio, Contenido
 from k2Ejercicio.forms import CursoForm, MateriaForm, TemaForm, EjercicioForm, ContenidoForm
 from k2Usuario.models import Profesor
 
+from konecta2.settings import MEDIA_VIDEO
+from k2utils.media import get_video
+
 
 class CursoCreate(FormView):
 
@@ -283,15 +286,22 @@ class videocreate(CreateView):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
-
+        ej = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
+        lurl = ''
         if form.is_valid():
-            url = form['url'].value()
-            #if url != '':
-                #url = get_url_local(url)
-            c = Contenido(tipo='VIDEO', path=url)
-            c.save()
-            ej = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
-            ej.media.add(c)
+            if request.FILES['archivo']:
+                lurl = '%s_%s' %(self.kwargs['pk'], request.FILES['archivo'].name)
+                destination = open(MEDIA_VIDEO + lurl, 'wb+')
+                for chunk in request.FILES['archivo'].chunks():
+                    destination.write(chunk)
+                destination.close()
+
+            else:
+                print form['url']
+                url = form['url'].value()
+                lurl = get_video(url)
+
+            ej.media.create(tipo='VIDEO', path=lurl)
 
             return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(self.kwargs['pk'],)))
 

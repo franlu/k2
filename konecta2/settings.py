@@ -101,9 +101,22 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(PROJECT_PATH, 'k2media')
 MEDIA_URL = '/media/'
+MEDIA_VIDEO = MEDIA_ROOT + '/video/'
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/pizarra/'
+
+# Add to your settings file
+CONTENT_TYPES = ['image', 'video', 'audio']
+# 2.5MB - 2621440
+# 5MB - 5242880
+# 10MB - 10485760
+# 20MB - 20971520
+# 50MB - 5242880
+# 100MB 104857600
+# 250MB - 214958080
+# 500MB - 429916160
+MAX_UPLOAD_SIZE = "5242880"
 
 try:
   import local_settings
