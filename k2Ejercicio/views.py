@@ -290,22 +290,22 @@ class videocreate(CreateView):
         lurl = ''
         if form.is_valid():
             if request.FILES:
-                lurl = '%s_%s' %(self.kwargs['pk'], request.FILES['archivo'].name)
-                destination = open(MEDIA_VIDEO + lurl, 'wb+')
+                url = '%s_%s' %(self.kwargs['pk'], request.FILES['archivo'].name)
+                lurl = MEDIA_VIDEO + url
+                destination = open(lurl, 'wb+')
                 for chunk in request.FILES['archivo'].chunks():
                     destination.write(chunk)
                 destination.close()
-
             else:
-                print form['url']
                 url = form['url'].value()
                 try:
                     lurl = get_video(url,self.kwargs['pk'])
                 except Exception, e:
                     print e
-
             #ej.media.create(tipo='VIDEO', path=lurl)
-
+            xml = "<Video %s>%s</Video>" % (1,lurl)
+            ej.descripcion = ej.descripcion + xml
+            ej.save()
             return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(self.kwargs['pk'],)))
 
         return render(request, self.template_name, {'form': form})
