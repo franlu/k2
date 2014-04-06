@@ -176,6 +176,10 @@ class EjercicioEnviado(models.Model):
     estadoejercicio = models.ForeignKey(EstadoEjercicios)
     fecha_envio = models.DateTimeField()
     fecha_recibido = models.DateTimeField(null=True, blank=True)
+
+    correccion_alumno = models.CharField(max_length=2000, null=True, blank=True)
+    correccion_profesor = models.CharField(max_length=2000, null=True, blank=True)
+
     nota = models.CharField(max_length=10, null=True, blank=True)
     bien_mal = models.BooleanField(blank=True)
     tiempo_realizacion = models.IntegerField(null=True, blank=True, default=0)
@@ -191,7 +195,7 @@ class EjercicioEnviado(models.Model):
     globales = GlobalManager()  # 4
 
     class Meta:
-        verbose_name_plural = "Todos los ejercicios"
+        verbose_name_plural = "Ejercicios Enviados"
 
     def __unicode__(self):
         return u"%s" % self.id

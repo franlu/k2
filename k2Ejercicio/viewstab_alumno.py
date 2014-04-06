@@ -6,14 +6,13 @@ from annoying.functions import get_object_or_None
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
-from k2Usuario.models import Alumno, Profesor,Clase, Tokenregister
-from k2Ejercicio.models import Ejercicio, Curso, Materia, Tema, Dificultad, Notificacion, EjercicioEnviado,EstadoEjercicios,Pregunta
+from k2Usuario.models import Alumno, Profesor, Clase, Tokenregister
+from k2Ejercicio.models import Ejercicio, Curso, Materia, Tema, Dificultad, Notificacion, EjercicioEnviado, EstadoEjercicios, Pregunta
 from k2utils import tags
 
 import datetime
 import json
 import pytz
-
 
 
 @csrf_exempt
@@ -33,9 +32,9 @@ def ejercicios_pendientes(request):
         comprobar_usuario = Tokenregister.objects.filter(token=token)
         if comprobar_usuario.count() > 0:
             token_usuario = Tokenregister.objects.get(token=token)
-            alumno=Alumno.objects.get(idusuario=token_usuario.userid)
-            estado_pendiente=EstadoEjercicios.objects.get(id=tags.estado_ejercicio_pendiente)
-            comprobar_ejercicios= EjercicioEnviado.objects.filter(alumno=alumno, estadoejercicio=estado_pendiente)
+            alumno = Alumno.objects.get(idusuario=token_usuario.userid)
+            estado_pendiente = EstadoEjercicios.objects.get(id=tags.estado_ejercicio_pendiente)
+            comprobar_ejercicios = EjercicioEnviado.objects.filter(alumno=alumno, estadoejercicio=estado_pendiente)
             if comprobar_ejercicios.count() > 0:
                 response_data = {'result': 'ok', 'ejercicios': []}
                 for ejercicios in comprobar_ejercicios:
@@ -43,7 +42,7 @@ def ejercicios_pendientes(request):
                     if obtener_ejercicio.count() > 0:
                         obtener_ejercicio = Ejercicio.objects.get(id=ejercicios.ejercicio.id)
                         response_data['ejercicios'].append({'fecha': str(ejercicios.fecha_envio),
-                                                            'idcorregir':ejercicios.id,
+                                                            'idcorregir': ejercicios.id,
                                                             'idprofesor': ejercicios.profesor.idusuario.id,
                                                             'titulo': obtener_ejercicio.titulo,
                                                             'descripcion': obtener_ejercicio.descripcion,
@@ -53,7 +52,7 @@ def ejercicios_pendientes(request):
                                                             'materia': obtener_ejercicio.materia.nombre,
                                                             'idmateria': obtener_ejercicio.materia.id})
             else:
-                response_data = {'result':'fail', 'message':'Ejercicio no encontrado'}
+                response_data = {'result': 'fail', 'message': 'Ejercicio no encontrado'}
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
@@ -62,6 +61,7 @@ def ejercicios_pendientes(request):
     except Exception as e:
         response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
         return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
 
 @csrf_exempt
 def getpregunta(request):
@@ -79,22 +79,67 @@ def getpregunta(request):
     try:
         data = json.loads(request.POST['data'])
         token = data.get('token', 'null')
-        idpregunta= data.get('idpregunta','null')
+        idpregunta = data.get('idpregunta', 'null')
 
         comprobar_usuario = Tokenregister.objects.filter(token=token)
         if comprobar_usuario.count() > 0:
             if idpregunta != 'null':
-                pregunta= Pregunta.objects.filter(id=idpregunta)
+                pregunta = Pregunta.objects.filter(id=idpregunta)
                 if pregunta.count() > 0:
-                    pregunta= Pregunta.objects.get(id=idpregunta)
-                    response_data = {'result': 'ok', 'enunciado':pregunta.enunciado, 'respuesta':pregunta.respuesta, 'consejo':pregunta.consejo }
+                    pregunta = Pregunta.objects.get(id=idpregunta)
+                    response_data = {'result': 'ok', 'enunciado': pregunta.enunciado, 'respuesta': pregunta.respuesta,
+                                     'consejo': pregunta.consejo}
                 else:
-                    response_data = {'result':'fail', 'message':'Pregunta no encontrada'}
+                    response_data = {'result': 'fail', 'message': 'Pregunta no encontrada'}
             else:
-                response_data = {'result':'fail', 'message':'Id de pregunta no recibido'}
+                response_data = {'result': 'fail', 'message': 'Id de pregunta no recibido'}
         else:
             response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    except Exception as e:
+        response_data = {'errorcode': 'E000', 'result': 'fail', 'message': e.args}
+        return http.HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+@csrf_exempt
+def enviar_ejercicio_corregir(request):
+    """
+    {
+        data:
+            {
+            "token" : "token"
+            "idcorregir" : "idcorregir"
+            "corregir" : "descripcion y urls de lo que el niño ha hecho"
+            }
+        }
+        esta vista nos da los detalles de una pregunta a partir del id
+    """
+    try:
+        data = json.loads(request.POST['data'])
+        token = data.get('token', 'null')
+        idcorregir = data.get('idcorregir', 'null')
+        corregir = data.get('corregir', '')
+
+        comprobar_usuario = Tokenregister.objects.filter(token=token)
+        if comprobar_usuario.count() > 0:
+            if idcorregir != 'null':
+                ejercicio_enviado = EjercicioEnviado.objects.filter(id=idcorregir)
+                if ejercicio_enviado.count() > 0:
+                    ejercicio_enviado = EjercicioEnviado.objects.get(id=idcorregir)
+                    ejercicio_enviado.estadoejercicio = EstadoEjercicios.objects.get(id=tags.estado_ejercicio_corregir)
+                    ejercicio_enviado.correccion_alumno = corregir
+                    ejercicio_enviado.save()
+
+
+                    response_data = {'result': 'ok', 'message': 'Ejercicio enviado a corregir'}
+                else:
+                    response_data = {'result': 'fail', 'message': 'Ejercicio enviado no encontrado'}
+            else:
+                response_data = {'result': 'fail', 'message': 'Id de ejercicio no recibido'}
+        else:
+            response_data = {'result': 'fail', 'message': 'Token no encontrado'}
 
         return http.HttpResponse(json.dumps(response_data), content_type="application/json")
 

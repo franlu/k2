@@ -3,14 +3,14 @@
     "model": "k2Ejercicio.dificultad",
     "pk": 1,
     "fields": {
-      "nombre": "Fácil"
+      "nombre": "Muy Fácil"
     }
   },
   {
     "model": "k2Ejercicio.dificultad",
     "pk": 2,
     "fields": {
-      "nombre": "Muy fácil"
+      "nombre": "Fácil"
     }
   },
   {

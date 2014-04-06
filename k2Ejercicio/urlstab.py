@@ -14,14 +14,17 @@ urlpatterns = patterns('',
     (r'^favorito_crear/$', 'k2Ejercicio.viewstab.favorito_crear'),
     (r'^favorito_borrar/$', 'k2Ejercicio.viewstab.favorito_borrar'),
 
+    (r'^enviar_ejercicio_individual/$', 'k2Ejercicio.viewstab.enviar_ejercicio_individual'),
+
+    #urls de ambos, aunque estan en el archivo del profesor
     (r'^consultar_notificacion/$', 'k2Ejercicio.viewstab.consultar_notificacion'),
     (r'^crear_notificacion/$', 'k2Ejercicio.viewstab.crear_notificacion'),
     (r'^borrar_notificacion/$', 'k2Ejercicio.viewstab.borrar_notificacion'),
 
     #urls para el alumno
-    (r'^enviar_ejercicio_individual/$', 'k2Ejercicio.viewstab.enviar_ejercicio_individual'),
     (r'^ejercicios_pendientes/$', 'k2Ejercicio.viewstab_alumno.ejercicios_pendientes'),
     (r'^getpregunta/$', 'k2Ejercicio.viewstab_alumno.getpregunta'),
+    (r'^enviar_ejercicio_corregir/$', 'k2Ejercicio.viewstab_alumno.enviar_ejercicio_corregir'),
 
 
 
