@@ -302,7 +302,7 @@ class videocreate(CreateView):
                     lurl = get_video(url,self.kwargs['pk'])
                 except Exception, e:
                     print e
-            #ej.media.create(tipo='VIDEO', path=lurl)
+            ej.media.create(tipo='VIDEO', path=lurl)
             xml = "<Video %s>%s</Video>" % (1,lurl)
             ej.descripcion = ej.descripcion + xml
             ej.save()

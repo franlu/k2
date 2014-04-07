@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from konecta2.settings import MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE
+from konecta2.settings import MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE, COLLEGE_ID
 
 import os
 import pafy # DOC http://np1.github.io/pafy/
@@ -13,7 +13,7 @@ def get_video(urlvideo,id):
         video = pafy.new(urlvideo)
         name = video.title.replace(" ", "_").replace("\t", "_")
         name = str(name).decode(encoding='utf-8',errors='strict')
-        lname = "%s_%s" % (id, name)
+        lname = "%s_%s_%s" % (COLLEGE_ID,id, name)
         lpath = MEDIA_VIDEO + lname
         streams = video.streams
 
