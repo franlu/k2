@@ -5,7 +5,7 @@ from k2Ejercicio.views import CursoList, CursoCreate, CursoUpdate, CursoDelete
 from k2Ejercicio.views import MateriaList, MateriaCreate, MateriaUpdate, MateriaDelete
 from k2Ejercicio.views import TemaList, TemaCreate, TemaUpdate, TemaDelete
 from k2Ejercicio.views import EjercicioList, EjercicioCreate, EjercicioUpdate, EjercicioDelete, EjercicioDetailView
-from k2Ejercicio.views import videocreate 
+from k2Ejercicio.views import videocreate, videodelete, imagecreate, imagedelete
 
 
 urlpatterns = patterns('',
@@ -36,5 +36,9 @@ urlpatterns = patterns('',
 
 
      url(r'^ejercicios/(?P<pk>\d+)/video/nuevo/$', login_required(videocreate.as_view()), name='videocreate'),
+     url(r'^ejercicios/(?P<pk>\d+)/video/borrar/(?P<pk1>\d+)/$', videodelete, name='videodelete'),
+     url(r'^ejercicios/(?P<pk>\d+)/image/nuevo/$', login_required(imagecreate.as_view()), name='imagecreate'),
+     url(r'^ejercicios/(?P<pk>\d+)/image/borrar/(?P<pk1>\d+)/$', imagedelete, name='imagedelete'),
+
 
  )

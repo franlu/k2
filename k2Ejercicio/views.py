@@ -15,8 +15,10 @@ from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio, Contenido
 from k2Ejercicio.forms import CursoForm, MateriaForm, TemaForm, EjercicioForm, ContenidoForm
 from k2Usuario.models import Profesor
 
-from konecta2.settings import MEDIA_VIDEO
-from k2utils.media import get_video
+from konecta2.settings import MEDIA_VIDEO, MEDIA_IMAGE, MEDIA_AUDIO, COLLEGE_ID
+from k2utils.media import get_video, get_audio, get_image
+
+import os
 
 
 class CursoCreate(FormView):
@@ -290,7 +292,7 @@ class videocreate(CreateView):
         lurl = ''
         if form.is_valid():
             if request.FILES:
-                url = '%s_%s' %(self.kwargs['pk'], request.FILES['archivo'].name)
+                url = '%s_%s_%s' %(COLLEGE_ID, self.kwargs['pk'], request.FILES['archivo'].name)
                 lurl = MEDIA_VIDEO + url
                 destination = open(lurl, 'wb+')
                 for chunk in request.FILES['archivo'].chunks():
@@ -309,5 +311,78 @@ class videocreate(CreateView):
             return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(self.kwargs['pk'],)))
 
         return render(request, self.template_name, {'form': form})
-    
-    
+
+
+def videodelete(request,pk, pk1):
+    try:
+        c = get_object_or_404(Contenido, pk=pk1)
+        lpath = c.path
+        xml = '<Video 1>%s</Video>' % c.path
+        c.delete()
+        e = get_object_or_404(Ejercicio, pk=pk)
+        e.descripcion = e.descripcion.replace(xml,'')
+        e.save()
+        if os.path.exists(lpath):
+            os.remove(lpath)
+            print "BORRADO: %s" % lpath
+        else:
+            print "No existe el fichero: %s" % lpath
+    except Exception, e:
+        print e
+
+    return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(pk,)))
+
+class imagecreate(CreateView):
+
+    template_name = 'k2Ejercicio/image_create.html'
+    form_class = ContenidoForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        ej = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
+        return render(request, self.template_name, {'e': ej,'contenido' : form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, request.FILES)
+        ej = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
+        lurl = ''
+        if form.is_valid():
+            if request.FILES:
+                url = '%s_%s_%s' % (COLLEGE_ID, self.kwargs['pk'], request.FILES['archivo'].name)
+                lurl = MEDIA_IMAGE + url
+                destination = open(lurl, 'wb+')
+                for chunk in request.FILES['archivo'].chunks():
+                    destination.write(chunk)
+                destination.close()
+            else:
+                url = form['url'].value()
+                try:
+                    lurl = get_image(url,self.kwargs['pk'])
+                except Exception, e:
+                    print e
+            ej.media.create(tipo='IMAGE', path=lurl)
+            xml = "<Image %s>%s</Image>" % (1,lurl)
+            ej.descripcion = ej.descripcion + xml
+            ej.save()
+            return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(self.kwargs['pk'],)))
+
+        return render(request, self.template_name, {'form': form})
+
+def imagedelete(request,pk, pk1):
+    try:
+        c = get_object_or_404(Contenido, pk=pk1)
+        lpath = c.path
+        xml = '<Image 1>%s</Image>' % c.path
+        c.delete()
+        e = get_object_or_404(Ejercicio, pk=pk)
+        e.descripcion = e.descripcion.replace(xml,'')
+        e.save()
+        if os.path.exists(lpath):
+            os.remove(lpath)
+            print "BORRADO: %s" % lpath
+        else:
+            print "No existe el fichero: %s" % lpath
+    except Exception, e:
+        print e
+
+    return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(pk,)))

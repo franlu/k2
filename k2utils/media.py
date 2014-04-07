@@ -63,9 +63,9 @@ def get_audio(urlaudio,id):
 
 def get_image(urlimg,id):
 
-    lname = "%s_%s" % (id, urlimg.split('/')[-1])
+    lname = "%s_%s_%s" % (COLLEGE_ID,id, urlimg.split('/')[-1])
     lpath = MEDIA_IMAGE + lname
-
+    print lpath
     if os.path.exists(lpath):
         os.remove(lpath)
 

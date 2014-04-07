@@ -33,7 +33,7 @@
                         <a href="{% url 'ejerciciolist' %}" type="button" class="btn btn-warning btn-lg"><i class="fa fa-arrow-left fa-fw"></i></a>
                         <a href="{% url 'videocreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-video-camera fa-fw"></i></a>
                         <a href="{% url 'videocreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-music fa-fw"></i></a>
-                        <a href="{% url 'videocreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-picture-o fa-fw"></i></a>
+                        <a href="{% url 'imagecreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-picture-o fa-fw"></i></a>
                         <a href="{% url 'videocreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-font fa-fw"></i></a>
                         <a href="{% url 'videocreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-question fa-fw"></i></a>
                     </div>
@@ -44,6 +44,7 @@
         <!-- /.row Botonera-->
         {% if e.media.all %}
             {% for m in e.media.all %}
+                {% if m.tipo == 'VIDEO' %}
                 <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-primary">
@@ -56,7 +57,7 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu pull-right" role="menu">
-                                        <li><a href="#"><i class="fa fa-trash-o fa-fw"></i>Eliminar</a>
+                                        <li><a href="{% url 'videodelete' pk=e.id pk1=m.id %}"><i class="fa fa-trash-o fa-fw"></i>Eliminar</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -70,9 +71,9 @@
                                       controls preload="auto"
                                       width="640" height="264"
                                       data-setup='{"example_option":true}'>
-                                        <source src="{{ MEDIA_URL}}{{ m.path | cut:'k2media'}}" type='video/webm' />
-                                        <source src="{{ MEDIA_URL}}{{ m.path | cut:'k2media'}}" type='video/mp4' />
-                                        <source src="{{ MEDIA_URL}}{{ m.path | cut:'k2media'}}" type='video/3gp' />
+                                        <source src="{{ MEDIA_URL}}{{ m.path | cut:'k2media/'}}" type='video/webm' />
+                                        <source src="{{ MEDIA_URL}}{{ m.path | cut:'k2media/'}}" type='video/mp4' />
+                                        <source src="{{ MEDIA_URL}}{{ m.path | cut:'k2media/'}}" type='video/3gp' />
                                      </video>
                                 </div>
 
@@ -83,7 +84,43 @@
                     </div>
 
                 </div>
-        </div>
+                </div>
+                {% elif m.tipo == 'AUDIO' %}
+                    <p>Es un audio</p>
+                {% elif m.tipo == 'IMAGE' %}
+                    <div class="row">
+                    <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <i class="fa fa-video-camera fa-fw"></i> {{ m.fecha }}
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                        Opciones
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right" role="menu">
+                                        <li><a href="{% url 'imagedelete' pk=e.id pk1=m.id %}"><i class="fa fa-trash-o fa-fw"></i>Eliminar</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <img src="{{ MEDIA_URL}}{{ m.path | cut:'k2media/'}}" alt="Archivo corrupto">
+                                </div>
+                            </div>
+                            <!-- /.row -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+
+                </div>
+                </div>
+                {% endif %}
             {% endfor %}
         {% else %}
             <p>No hay contenido multimedia.</p>
