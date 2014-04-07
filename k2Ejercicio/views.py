@@ -152,7 +152,7 @@ class TemaCreate(FormView):
             if tema.tipo == '0':
                 tema.tipo = request.user.id
             else:
-                tema.tipo = 'Público'
+                tema.tipo = '-1'
             tema.save()
             return http.HttpResponseRedirect(reverse('temalist'))
 
