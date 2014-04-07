@@ -2,6 +2,7 @@
 
 from django.contrib.auth.models import User
 from django.db import models
+from konecta2.settings import COLLEGE_ID
 
 from k2Usuario.models import Alumno, Profesor
 
@@ -63,20 +64,16 @@ class TipoEjercicio(models.Model):
         return u"%s" % self.nombre
 
 class Contenido(models.Model):
-    TIPO = (
-        (0,"MEDIA"),
-        (1,"VIDEO"),
-        (2,"AUDIO"),
-        (3,"IMAGEN"),
-    )
     fecha = models.DateTimeField(auto_now_add=True)
-    tipo = models.CharField(max_length=500, choices=TIPO, default=0)
+    tipo = models.CharField(max_length=10, default='MEDIA')
     path = models.CharField(max_length=500)
 
 class Pregunta(models.Model):
     enunciado = models.CharField(max_length=2000)
     respuesta = models.CharField(max_length=2000)
     consejo = models.CharField(max_length=2000)
+    nota_maxima = models.IntegerField(null=True, blank=True)
+    
     def __unicode__(self):
         return u"%s" % self.id
 
@@ -89,11 +86,11 @@ class Ejercicio(models.Model):
     profesor = models.ForeignKey(Profesor)
     tema = models.ForeignKey(Tema)
     tipo = models.ForeignKey(TipoEjercicio)
-    centro = models.CharField(max_length=10, blank=True)
+    centro = models.CharField(max_length=10, default=COLLEGE_ID)
     descripcion = models.CharField(max_length=3000)
     fecha = models.DateTimeField(auto_now_add=True)
-    herramientas = models.CharField(max_length=200)
     titulo = models.CharField(max_length=50, unique=True)
+    herramientas = models.CharField(max_length=200)
 
     class Meta:
         verbose_name_plural = "Ejercicios"

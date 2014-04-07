@@ -44,7 +44,7 @@ coverage.xml
 
 
 
-#konecta2/local_settings.py
+konecta2/local_settings.py
 konecta2/requirements_local.txt
 dbsqlite
 

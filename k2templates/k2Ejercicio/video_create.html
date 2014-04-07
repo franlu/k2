@@ -60,5 +60,24 @@
         </div>
         {% endif %}
 {% endblock %}
+{% block extrajs %}
+<script>
+  $( document ).ready(function() {
+    $( "#id_archivo" ).prop( "required", true );
+    $( "#id_url" ).prop( "required", true );
+
+    $( "#id_url" ).change(function() {
+        if ($( "#id_url" ).val()) != ""){
+            $( "#id_archivo" ).prop( "disabled", true );
+        }
+    });
+    $( "#id_archivo" ).change(function() {
+        if ($( "#id_archivo" ).val()) != ""){
+            $( "#id_url" ).prop( "disabled", true );
+        }
+    });
+  });
+  </script>
+{% endblock %}
 
 

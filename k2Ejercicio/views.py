@@ -11,10 +11,13 @@ from django.views.generic.edit import CreateView,UpdateView, DeleteView, FormVie
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 
-from konecta2.settings import COLLEGE_ID
-from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio
+from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio, Contenido
 from k2Ejercicio.forms import CursoForm, MateriaForm, TemaForm, EjercicioForm, ContenidoForm
 from k2Usuario.models import Profesor
+
+from konecta2.settings import MEDIA_VIDEO
+from k2utils.media import get_video
+
 
 class CursoCreate(FormView):
 
@@ -211,7 +214,6 @@ class EjercicioCreate(FormView):
         if form.is_valid():
             ejercicio = form.save(commit=False)
             ejercicio.profesor = get_object_or_404(Profesor, idusuario=request.user)
-            ejercicio.centro = COLLEGE_ID
             ejercicio.save()
             return http.HttpResponseRedirect(reverse('ejerciciodetail', args=[ejercicio.id]))
 
@@ -284,9 +286,26 @@ class videocreate(CreateView):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
-        print "asdfasdfasdfasd"
+        ej = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
+        lurl = ''
         if form.is_valid():
-            arg1 = "{% include 'k2Ejercicio/video_create.html' %}"
+            if request.FILES:
+                url = '%s_%s' %(self.kwargs['pk'], request.FILES['archivo'].name)
+                lurl = MEDIA_VIDEO + url
+                destination = open(lurl, 'wb+')
+                for chunk in request.FILES['archivo'].chunks():
+                    destination.write(chunk)
+                destination.close()
+            else:
+                url = form['url'].value()
+                try:
+                    lurl = get_video(url,self.kwargs['pk'])
+                except Exception, e:
+                    print e
+            #ej.media.create(tipo='VIDEO', path=lurl)
+            xml = "<Video %s>%s</Video>" % (1,lurl)
+            ej.descripcion = ej.descripcion + xml
+            ej.save()
             return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(self.kwargs['pk'],)))
 
         return render(request, self.template_name, {'form': form})
