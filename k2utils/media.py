@@ -11,9 +11,7 @@ def get_video(urlvideo,id):
     lpath = ''
     try:
         video = pafy.new(urlvideo)
-        name = video.title.replace(" ", "_").replace("\t", "_")
-        name = str(name).decode(encoding='utf-8',errors='strict')
-        lname = "%s_%s_%s" % (COLLEGE_ID,id, name)
+        lname = "%s_%s" % (COLLEGE_ID,id)
         lpath = MEDIA_VIDEO + lname
         streams = video.streams
 
@@ -50,8 +48,7 @@ def get_audio(urlaudio,id):
     lpath = ''
     try:
         audio = pafy.new(urlaudio)
-        name = audio.title.replace(" ", "_").replace("\t", "_")
-        lname = "%s_%s" % (id, name)
+        lname = "%s_%s" % (COLLEGE_ID,id)
         lpath = MEDIA_AUDIO + lname
         best = audio.getbestaudio()
         lpath = lpath + '.' + best.extension
@@ -63,7 +60,7 @@ def get_audio(urlaudio,id):
 
 def get_image(urlimg,id):
 
-    lname = "%s_%s_%s" % (COLLEGE_ID,id, urlimg.split('/')[-1])
+    lname = "%s_%s.%s" % (COLLEGE_ID,id, urlimg.split('/')[-1].split('.')[-1])
     lpath = MEDIA_IMAGE + lname
     print lpath
     if os.path.exists(lpath):

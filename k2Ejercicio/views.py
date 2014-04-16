@@ -348,7 +348,7 @@ class imagecreate(CreateView):
         lurl = ''
         if form.is_valid():
             if request.FILES:
-                url = '%s_%s_%s' % (COLLEGE_ID, self.kwargs['pk'], request.FILES['archivo'].name)
+                url = '%s_%s' % (COLLEGE_ID, self.kwargs['pk'])
                 lurl = MEDIA_IMAGE + url
                 destination = open(lurl, 'wb+')
                 for chunk in request.FILES['archivo'].chunks():
