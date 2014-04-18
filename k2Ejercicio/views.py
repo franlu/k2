@@ -442,7 +442,7 @@ class escrituralibrecreate(CreateView):
             el.tipo = 'ESCRITURALIBRE'
             el.save()
             ej.pregunta.add(el)
-            xml = "<Texto %s>%s</Texto><Respuesta 1>%s</Respuesta>" % (1,el.enunciado,el.respuesta)
+            xml = "<Texto %s>%s</Texto><RespuestaTexto 1>%s</RespuestaTexto>" % (1,el.enunciado,el.respuesta)
             ej.descripcion = ej.descripcion + xml
             ej.save()
             return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(self.kwargs['pk'],)))
@@ -452,7 +452,7 @@ class escrituralibrecreate(CreateView):
 def escrituralibredelete(request,pk, pk1):
     try:
         p = get_object_or_404(Pregunta, pk=pk1)
-        xml = "<Texto %s>%s</Texto><Respuesta 1>%s</Respuesta>" % (1,p.enunciado,p.respuesta)
+        xml = "<Texto %s>%s</Texto><RespuestaTexto 1>%s</RespuestaTexto>" % (1,p.enunciado,p.respuesta)
         p.delete()
         e = get_object_or_404(Ejercicio, pk=pk)
         e.descripcion = e.descripcion.replace(xml,'')
