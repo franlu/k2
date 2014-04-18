@@ -70,9 +70,10 @@ class Contenido(models.Model):
 
 class Pregunta(models.Model):
     enunciado = models.CharField(max_length=2000)
-    respuesta = models.CharField(max_length=2000)
-    consejo = models.CharField(max_length=2000)
+    respuesta = models.CharField(max_length=2000, blank=True)
+    consejo = models.CharField(max_length=2000, blank=True)
     nota_maxima = models.IntegerField(null=True, blank=True)
+    tipo = models.CharField(max_length=15, default='TEXTO')
     
     def __unicode__(self):
         return u"%s" % self.id

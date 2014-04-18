@@ -11,8 +11,8 @@ from django.views.generic.edit import CreateView,UpdateView, DeleteView, FormVie
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 
-from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio, Contenido
-from k2Ejercicio.forms import CursoForm, MateriaForm, TemaForm, EjercicioForm, ContenidoForm
+from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio, Contenido, Pregunta
+from k2Ejercicio.forms import CursoForm, MateriaForm, TemaForm, EjercicioForm, ContenidoForm, TextoForm, EscrituraLibreForm
 from k2Usuario.models import Profesor
 
 from konecta2.settings import MEDIA_VIDEO, MEDIA_IMAGE, MEDIA_AUDIO, COLLEGE_ID
@@ -382,6 +382,81 @@ def imagedelete(request,pk, pk1):
             print "BORRADO: %s" % lpath
         else:
             print "No existe el fichero: %s" % lpath
+    except Exception, e:
+        print e
+
+    return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(pk,)))
+
+
+class textocreate(CreateView):
+
+    template_name = 'k2Ejercicio/texto_create.html'
+    form_class = TextoForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        ej = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
+        return render(request, self.template_name, {'e': ej,'contenido' : form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        ej = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
+        if form.is_valid():
+            pregunta = form.save()
+            ej.pregunta.add(pregunta)
+            xml = "<Texto %s>%s</Texto>" % (1,pregunta.enunciado)
+            ej.descripcion = ej.descripcion + xml
+            ej.save()
+            return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(self.kwargs['pk'],)))
+
+        return render(request, self.template_name, {'form': form})
+
+def textodelete(request,pk, pk1):
+    try:
+        p = get_object_or_404(Pregunta, pk=pk1)
+        xml = '<Texto 1>%s</Texto>' % p.enunciado
+        p.delete()
+        e = get_object_or_404(Ejercicio, pk=pk)
+        e.descripcion = e.descripcion.replace(xml,'')
+        e.save()
+    except Exception, e:
+        print e
+
+    return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(pk,)))
+
+class escrituralibrecreate(CreateView):
+
+    template_name = 'k2Ejercicio/escrituralibre_create.html'
+    form_class = EscrituraLibreForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        ej = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
+        return render(request, self.template_name, {'e': ej,'contenido' : form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        ej = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
+        if form.is_valid():
+            el = form.save(commit=False)
+            el.tipo = 'ESCRITURALIBRE'
+            el.save()
+            ej.pregunta.add(el)
+            xml = "<Texto %s>%s</Texto><Respuesta 1>%s</Respuesta>" % (1,el.enunciado,el.respuesta)
+            ej.descripcion = ej.descripcion + xml
+            ej.save()
+            return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(self.kwargs['pk'],)))
+
+        return render(request, self.template_name, {'form': form})
+
+def escrituralibredelete(request,pk, pk1):
+    try:
+        p = get_object_or_404(Pregunta, pk=pk1)
+        xml = "<Texto %s>%s</Texto><Respuesta 1>%s</Respuesta>" % (1,p.enunciado,p.respuesta)
+        p.delete()
+        e = get_object_or_404(Ejercicio, pk=pk)
+        e.descripcion = e.descripcion.replace(xml,'')
+        e.save()
     except Exception, e:
         print e
 

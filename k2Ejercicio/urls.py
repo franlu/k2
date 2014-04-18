@@ -5,8 +5,8 @@ from k2Ejercicio.views import CursoList, CursoCreate, CursoUpdate, CursoDelete
 from k2Ejercicio.views import MateriaList, MateriaCreate, MateriaUpdate, MateriaDelete
 from k2Ejercicio.views import TemaList, TemaCreate, TemaUpdate, TemaDelete
 from k2Ejercicio.views import EjercicioList, EjercicioCreate, EjercicioUpdate, EjercicioDelete, EjercicioDetailView
-from k2Ejercicio.views import videocreate, videodelete, imagecreate, imagedelete
-
+from k2Ejercicio.views import videocreate, videodelete, imagecreate, imagedelete, textocreate, textodelete
+from k2Ejercicio.views import escrituralibrecreate, escrituralibredelete
 
 urlpatterns = patterns('',
     #curso
@@ -39,6 +39,10 @@ urlpatterns = patterns('',
      url(r'^ejercicios/(?P<pk>\d+)/video/borrar/(?P<pk1>\d+)/$', videodelete, name='videodelete'),
      url(r'^ejercicios/(?P<pk>\d+)/image/nuevo/$', login_required(imagecreate.as_view()), name='imagecreate'),
      url(r'^ejercicios/(?P<pk>\d+)/image/borrar/(?P<pk1>\d+)/$', imagedelete, name='imagedelete'),
+     url(r'^ejercicios/(?P<pk>\d+)/texto/nuevo/$', login_required(textocreate.as_view()), name='textocreate'),
+     url(r'^ejercicios/(?P<pk>\d+)/texto/borrar/(?P<pk1>\d+)/$', textodelete, name='textodelete'),
+     url(r'^ejercicios/(?P<pk>\d+)/escrituralibre/nuevo/$', login_required(escrituralibrecreate.as_view()), name='escrituralibrecreate'),
+     url(r'^ejercicios/(?P<pk>\d+)/escrituralibre/borrar/(?P<pk1>\d+)/$', escrituralibredelete, name='escrituralibredelete'),
 
 
  )

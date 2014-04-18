@@ -1,0 +1,68 @@
+{% extends "pizarra_digital.html" %}
+{% load bootstrap %}
+
+{% block content %}
+        {%if e %}
+        <div class="row">
+                <div class="col-lg-12">
+
+                </div>
+                <!-- /.col-lg-12 -->
+        </div>
+        <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">{{ e.titulo}}</h1>
+                    <ol class="breadcrumb">
+                        <li><a href=""><i class="fa fa-briefcase fa-fw"></i> {{ e.curso }}</a></li>
+                        <li><a href=""><i class="fa fa-book fa-fw"></i> {{ e.materia }}</a></li>
+                        <li><a href=""><i class="fa fa-list-alt fa-fw"></i> {{ e.tema }}</a></li>
+                        <li><a href=""><i class="fa fa-bars fa-fw"></i> {{ e.tipo }}</a></li>
+                        <li><a href=""><i class="fa fa-eye fa-fw"></i> {{ e.dificultad }}</a></li>
+                    </ol>
+                </div>
+                <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <i class="fa fa-edit fa-fw"></i> Datos de registro
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <form action="{% url 'textocreate' e.id %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                        {% if contenido %}
+                                            {{ contenido | bootstrap }}
+                                        {% else %}
+                                            <div class="col-lg-12">
+                                                <h1 class="page-header">No existe el form.</h1>
+                                            </div>
+                                        {% endif%}
+                                        <a href="{% url 'ejerciciodetail' e.id %}" class="btn btn-warning">Atrás</a>
+                                        <button class="btn btn-primary" type="submit" >Añadir</button>
+                                    </form>
+                                </div>
+
+                            </div>
+                            <!-- /.row -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+
+                </div>
+        </div>
+        {% else %}
+        <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">No existe el ejercicio.</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+        </div>
+        {% endif %}
+{% endblock %}
+
+
+

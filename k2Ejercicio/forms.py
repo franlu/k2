@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 import floppyforms as forms
-from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio, Contenido
+from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio, Contenido, Pregunta
 
 from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
@@ -57,3 +57,29 @@ class ContenidoForm(forms.Form):
             'url': forms.URLField(),
             'archivo' : forms.ClearableFileInput()
         }
+
+class TextoForm(forms.ModelForm):
+    error_css_class = 'alert alert-danger'
+
+    class Meta:
+        model = Pregunta
+        exclude = {
+            'respuesta',
+            'consejo',
+            'nota_maxima',
+            'tipo',
+        }
+        widgets = {
+            'enunciado': forms.Textarea(attrs={'maxlength':2000, 'cols':200, 'rows':10,}),
+        }
+
+class EscrituraLibreForm(forms.ModelForm):
+    error_css_class = 'alert alert-danger'
+
+    class Meta:
+        model = Pregunta
+        exclude = {
+            'nota_maxima',
+            'tipo',
+        }
+
