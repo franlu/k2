@@ -33,8 +33,14 @@ class TemaForm(forms.ModelForm):
 
 class EjercicioForm(forms.ModelForm):
     error_css_class = 'alert alert-danger'
+    calculadora = forms.CheckboxInput()
+    tiempo = forms.CheckboxInput()
     class Meta:
         model = Ejercicio
+        widgets = {
+            'calculadora' : forms.CheckboxInput() ,
+            'tiempo' : forms.CheckboxInput() ,
+        }
         exclude = {
             'profesor',
             'favorito',
@@ -73,7 +79,7 @@ class TextoForm(forms.ModelForm):
             'enunciado': forms.Textarea(attrs={'maxlength':2000, 'cols':200, 'rows':10,}),
         }
 
-class EscrituraLibreForm(forms.ModelForm):
+class RespuestaTextoForm(forms.ModelForm):
     error_css_class = 'alert alert-danger'
 
     class Meta:

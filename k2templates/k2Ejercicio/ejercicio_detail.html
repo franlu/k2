@@ -35,7 +35,7 @@
                         <a href="{% url 'videocreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-music fa-fw"></i></a>
                         <a href="{% url 'imagecreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-picture-o fa-fw"></i></a>
                         <a href="{% url 'textocreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-font fa-fw"></i></a>
-                        <a href="{% url 'escrituralibrecreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-question fa-fw"></i></a>
+                        <a href="{% url 'respuestatextocreate' e.id %}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-question fa-fw"></i></a>
                     </div>
 
                 </div>
@@ -122,10 +122,7 @@
                     </div>
                 {% endif %}
             {% endfor %}
-        {% else %}
-            <p>No hay contenido multimedia.</p>
         {% endif %}
-
         {% if e.pregunta.all %}
                 {% for p in e.pregunta.all %}
                     {% if p.tipo == 'TEXTO' %}
@@ -162,12 +159,12 @@
 
                         </div>
                         </div>
-                    {% elif p.tipo == 'ESCRITURALIBRE'%}
+                    {% elif p.tipo == 'RESPUESTATEXTO'%}
                         <div class="row">
                         <div class="col-lg-12">
                             <div class="panel panel-primary">
                                 <div class="panel-heading">
-                                    <i class="fa fa-font fa-fw"></i> Escritura libre
+                                    <i class="fa fa-font fa-fw"></i> Respuesta con teclado
                                     <div class="pull-right">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -175,7 +172,7 @@
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu pull-right" role="menu">
-                                                <li><a href="{% url 'escrituralibredelete' pk=e.id pk1=p.id %}"><i class="fa fa-trash-o fa-fw"></i>Eliminar</a>
+                                                <li><a href="{% url 'respuestatextodelete' pk=e.id pk1=p.id %}"><i class="fa fa-trash-o fa-fw"></i>Eliminar</a>
                                                 </li>
                                             </ul>
                                         </div>

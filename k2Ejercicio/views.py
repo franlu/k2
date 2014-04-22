@@ -12,7 +12,7 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 
 from k2Ejercicio.models import Curso, Materia, Tema, Ejercicio, Contenido, Pregunta
-from k2Ejercicio.forms import CursoForm, MateriaForm, TemaForm, EjercicioForm, ContenidoForm, TextoForm, EscrituraLibreForm
+from k2Ejercicio.forms import CursoForm, MateriaForm, TemaForm, EjercicioForm, ContenidoForm, TextoForm, RespuestaTextoForm
 from k2Usuario.models import Profesor
 
 from konecta2.settings import MEDIA_VIDEO, MEDIA_IMAGE, MEDIA_AUDIO, COLLEGE_ID
@@ -292,7 +292,7 @@ class videocreate(CreateView):
         lurl = ''
         if form.is_valid():
             if request.FILES:
-                url = '%s_%s_%s' %(COLLEGE_ID, self.kwargs['pk'], request.FILES['archivo'].name)
+                url = '%s_%s' %(COLLEGE_ID, self.kwargs['pk'])
                 lurl = MEDIA_VIDEO + url
                 destination = open(lurl, 'wb+')
                 for chunk in request.FILES['archivo'].chunks():
@@ -424,10 +424,10 @@ def textodelete(request,pk, pk1):
 
     return http.HttpResponseRedirect(reverse('ejerciciodetail', args=(pk,)))
 
-class escrituralibrecreate(CreateView):
+class respuestatextocreate(CreateView):
 
-    template_name = 'k2Ejercicio/escrituralibre_create.html'
-    form_class = EscrituraLibreForm
+    template_name = 'k2Ejercicio/respuestatexto_create.html'
+    form_class = RespuestaTextoForm
 
     def get(self, request, *args, **kwargs):
         form = self.form_class(initial=self.initial)
@@ -439,7 +439,7 @@ class escrituralibrecreate(CreateView):
         ej = get_object_or_404(Ejercicio, pk=self.kwargs['pk'])
         if form.is_valid():
             el = form.save(commit=False)
-            el.tipo = 'ESCRITURALIBRE'
+            el.tipo = 'RESPUESTATEXTO'
             el.save()
             ej.pregunta.add(el)
             xml = "<Texto %s>%s</Texto><RespuestaTexto 1>%s</RespuestaTexto>" % (1,el.enunciado,el.respuesta)
@@ -449,7 +449,7 @@ class escrituralibrecreate(CreateView):
 
         return render(request, self.template_name, {'form': form})
 
-def escrituralibredelete(request,pk, pk1):
+def respuestatextodelete(request,pk, pk1):
     try:
         p = get_object_or_404(Pregunta, pk=pk1)
         xml = "<Texto %s>%s</Texto><RespuestaTexto 1>%s</RespuestaTexto>" % (1,p.enunciado,p.respuesta)
