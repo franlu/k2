@@ -1,5 +1,5 @@
 Django==1.11.22
-Pillow==2.3.0
+Pillow==8.2.0
 argparse==1.2.1
 django-annoying==0.7.9
 django-bootstrap-form==3.1
